@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Mic, Send } from "lucide-react";
+import { Mic, Send, Volume2, VolumeX } from "lucide-react";
+import { toast } from "sonner";
 
 type Role = "user" | "assistant";
 type Lang = "ks" | "ur" | "en";
@@ -70,22 +71,63 @@ const UI_STRINGS: Record<Lang, {
 
 const LANG_ORDER: Lang[] = ["ks", "ur", "en"];
 
-function MessageBubble({ msg }: { msg: Message }) {
+// Pick the best available voice for Kashmiri (ur-PK preferred, hi-IN fallback).
+function pickVoice(): SpeechSynthesisVoice | null {
+  if (typeof window === "undefined" || !window.speechSynthesis) return null;
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices.length) return null;
+  return (
+    voices.find((v) => v.lang === "ur-PK") ||
+    voices.find((v) => v.lang.startsWith("ur")) ||
+    voices.find((v) => v.lang === "hi-IN") ||
+    voices.find((v) => v.lang.startsWith("hi")) ||
+    null
+  );
+}
+
+function speak(text: string) {
+  if (typeof window === "undefined" || !window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  const voice = pickVoice();
+  if (voice) {
+    utter.voice = voice;
+    utter.lang = voice.lang;
+  } else {
+    utter.lang = "ur-PK";
+  }
+  utter.rate = 0.95;
+  window.speechSynthesis.speak(utter);
+}
+
+function MessageBubble({ msg, onSpeak }: { msg: Message; onSpeak: (text: string) => void }) {
   const dir = msg.isRTL ? "rtl" : "ltr";
   const isUser = msg.role === "user";
   return (
     <div className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
-      <div
-        dir={dir}
-        className={[
-          "max-w-[85%] rounded-2xl px-5 py-3 text-[1.15rem] leading-relaxed shadow-sm",
-          msg.isRTL ? "font-nastaliq" : "",
-          isUser
-            ? "bg-primary text-primary-foreground rounded-br-sm"
-            : "bg-bot-bubble text-bot-bubble-foreground rounded-bl-sm border border-border",
-        ].join(" ")}
-      >
-        {msg.text}
+      <div className={`flex max-w-[85%] flex-col gap-1 ${isUser ? "items-end" : "items-start"}`}>
+        <div
+          dir={dir}
+          className={[
+            "rounded-2xl px-5 py-3 text-[1.15rem] leading-relaxed shadow-sm",
+            msg.isRTL ? "font-nastaliq" : "",
+            isUser
+              ? "bg-primary text-primary-foreground rounded-br-sm"
+              : "bg-bot-bubble text-bot-bubble-foreground rounded-bl-sm border border-border",
+          ].join(" ")}
+        >
+          {msg.text}
+        </div>
+        {!isUser && (
+          <button
+            type="button"
+            onClick={() => onSpeak(msg.text)}
+            aria-label="Read aloud"
+            className="ms-1 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs text-muted-foreground transition hover:text-foreground hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring"
+          >
+            <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
+          </button>
+        )}
       </div>
     </div>
   );
@@ -108,8 +150,26 @@ export default function KashmirBot() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isThinking, setIsThinking] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [muted, setMuted] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const recognitionRef = useRef<any>(null);
+  const mutedRef = useRef(muted);
   const t = UI_STRINGS[lang];
+
+  useEffect(() => { mutedRef.current = muted; }, [muted]);
+
+  // Prime voices list (Chrome loads asynchronously).
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.speechSynthesis) return;
+    const load = () => window.speechSynthesis.getVoices();
+    load();
+    window.speechSynthesis.onvoiceschanged = load;
+    return () => {
+      window.speechSynthesis.onvoiceschanged = null;
+      window.speechSynthesis.cancel();
+    };
+  }, []);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -118,6 +178,79 @@ export default function KashmirBot() {
   const cycleLang = () => {
     const idx = LANG_ORDER.indexOf(lang);
     setLang(LANG_ORDER[(idx + 1) % LANG_ORDER.length]);
+  };
+
+  const handleSpeak = (text: string) => {
+    if (typeof window === "undefined" || !window.speechSynthesis) {
+      toast.error("آپ کا براؤزر آواز کی سہولت نہیں دیتا");
+      return;
+    }
+    speak(text);
+  };
+
+  const toggleMute = () => {
+    setMuted((m) => {
+      const next = !m;
+      if (next && typeof window !== "undefined" && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+      return next;
+    });
+  };
+
+  const handleMicClick = () => {
+    const SR: any =
+      (typeof window !== "undefined" &&
+        ((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition)) ||
+      null;
+    if (!SR) {
+      toast.error("آپ کا براؤزر آواز کی سہولت نہیں دیتا");
+      return;
+    }
+
+    if (isListening && recognitionRef.current) {
+      recognitionRef.current.stop();
+      return;
+    }
+
+    const recognition = new SR();
+    recognition.lang = "ur-PK";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => setIsListening(true);
+    recognition.onend = () => {
+      setIsListening(false);
+      recognitionRef.current = null;
+    };
+    recognition.onerror = (e: any) => {
+      setIsListening(false);
+      recognitionRef.current = null;
+      if (e.error === "not-allowed" || e.error === "service-not-allowed") {
+        toast.error("مائیکروفون کی اجازت درکار ہے", {
+          description: "Please allow microphone access in your browser settings.",
+        });
+      } else if (e.error === "no-speech") {
+        toast("کوئی آواز نہیں سنی گئی");
+      } else if (e.error !== "aborted") {
+        toast.error("آواز کی شناخت میں مسئلہ");
+      }
+    };
+    recognition.onresult = (event: any) => {
+      const transcript = event.results?.[0]?.[0]?.transcript ?? "";
+      if (transcript) {
+        setInput((prev) => (prev ? prev + " " + transcript : transcript));
+      }
+    };
+
+    recognitionRef.current = recognition;
+    try {
+      recognition.start();
+    } catch {
+      setIsListening(false);
+      recognitionRef.current = null;
+    }
   };
 
   const handleSend = () => {
@@ -146,6 +279,7 @@ export default function KashmirBot() {
       };
       setMessages((m) => [...m, botMsg]);
       setIsThinking(false);
+      if (!mutedRef.current) speak(reply);
     }, 1500);
   };
 
@@ -174,17 +308,24 @@ export default function KashmirBot() {
               <p className="truncate text-sm sm:text-base text-muted-foreground">{t.subtitle}</p>
             </div>
           </div>
-          <button
-            onClick={cycleLang}
-            aria-label="Switch language"
-            className="shrink-0 rounded-full border border-border bg-secondary px-3 py-2 text-sm font-semibold text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring sm:px-4 sm:text-base"
-          >
-            <span className={lang === "ks" ? "font-nastaliq text-lg" : ""}>{t.langLabel}</span>
-            <span className="mx-2 text-muted-foreground">|</span>
-            <span className="text-muted-foreground text-xs sm:text-sm">
-              {LANG_ORDER.filter((l) => l !== lang).map((l) => UI_STRINGS[l].langLabel).join(" · ")}
-            </span>
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              onClick={toggleMute}
+              aria-label={muted ? "Unmute auto-read" : "Mute auto-read"}
+              aria-pressed={muted}
+              title={muted ? "Auto-read off" : "Auto-read on"}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              {muted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+            </button>
+            <button
+              onClick={cycleLang}
+              aria-label="Switch language"
+              className="rounded-full border border-border bg-secondary px-3 py-2 text-sm font-semibold text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring sm:px-4 sm:text-base"
+            >
+              <span className={lang === "ks" ? "font-nastaliq text-lg" : ""}>{t.langLabel}</span>
+            </button>
+          </div>
         </div>
       </header>
 
@@ -209,7 +350,7 @@ export default function KashmirBot() {
           ) : (
             <>
               {messages.map((m) => (
-                <MessageBubble key={m.id} msg={m} />
+                <MessageBubble key={m.id} msg={m} onSpeak={handleSpeak} />
               ))}
               {isThinking && <TypingIndicator />}
             </>
@@ -221,13 +362,21 @@ export default function KashmirBot() {
       <div className="border-t border-border bg-card">
         <div className="mx-auto w-full max-w-3xl px-4 py-3 sm:py-4">
           <div className="flex items-end gap-2 sm:gap-3">
-            <button
-              type="button"
-              aria-label={t.mic}
-              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            >
-              <Mic className="h-6 w-6" aria-hidden="true" />
-            </button>
+            <div className="relative shrink-0">
+              {isListening && <span className="mic-listening-ring" aria-hidden="true" />}
+              <button
+                type="button"
+                onClick={handleMicClick}
+                aria-label={t.mic}
+                aria-pressed={isListening}
+                className={[
+                  "flex h-14 w-14 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring",
+                  isListening ? "mic-listening" : "",
+                ].join(" ")}
+              >
+                <Mic className="h-6 w-6" aria-hidden="true" />
+              </button>
+            </div>
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
