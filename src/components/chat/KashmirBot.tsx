@@ -1,6 +1,9 @@
-import { useEffect, useRef, useState } from "react";
-import { Mic, Send, Volume2, VolumeX } from "lucide-react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { Mic, Send, Volume2, VolumeX, LogOut, Menu } from "lucide-react";
 import { toast } from "sonner";
+import type { Session } from "@supabase/supabase-js";
+import { supabase, type ChatSession, type ChatMessageRow } from "@/lib/supabase";
+import SessionsPanel from "@/components/chat/SessionsPanel";
 
 type Role = "user" | "assistant";
 type Lang = "ks" | "ur" | "en";
@@ -13,7 +16,6 @@ interface Message {
   isRTL: boolean;
 }
 
-// Detect RTL by looking for Arabic/Urdu/Kashmiri/Hebrew script in the text.
 const RTL_REGEX = /[\u0590-\u05FF\u0600-\u06FF\u0700-\u074F\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
 const isRTL = (text: string) => RTL_REGEX.test(text);
 
@@ -24,7 +26,6 @@ const MOCK_REPLIES = [
 ];
 
 const UI_STRINGS: Record<Lang, {
-  title: string;
   subtitle: string;
   empty: string;
   placeholder: string;
@@ -34,44 +35,13 @@ const UI_STRINGS: Record<Lang, {
   emptyDir: "rtl" | "ltr";
   emptyClass: string;
 }> = {
-  ks: {
-    title: "کٲشُر مددگار",
-    subtitle: "Your Kashmiri Assistant",
-    empty: "سلام! میٚ کیا مدد کٔری آپ کٕس?",
-    placeholder: "اَتہِ لیٚکھِو۔۔۔",
-    send: "بھیجِو",
-    mic: "آواز",
-    langLabel: "کٲشُر",
-    emptyDir: "rtl",
-    emptyClass: "font-nastaliq",
-  },
-  ur: {
-    title: "کٲشُر مددگار",
-    subtitle: "آپ کا کشمیری معاون",
-    empty: "سلام! میں آپ کی کیا مدد کر سکتا ہوں؟",
-    placeholder: "یہاں لکھیں...",
-    send: "بھیجیں",
-    mic: "آواز",
-    langLabel: "Urdu",
-    emptyDir: "rtl",
-    emptyClass: "font-nastaliq",
-  },
-  en: {
-    title: "کٲشُر مددگار",
-    subtitle: "Your Kashmiri Assistant",
-    empty: "Hello! How can I help you today?",
-    placeholder: "Type a message...",
-    send: "Send",
-    mic: "Voice",
-    langLabel: "English",
-    emptyDir: "ltr",
-    emptyClass: "",
-  },
+  ks: { subtitle: "Your Kashmiri Assistant", empty: "سلام! میٚ کیا مدد کٔری آپ کٕس?", placeholder: "اَتہِ لیٚکھِو۔۔۔", send: "بھیجِو", mic: "آواز", langLabel: "کٲشُر", emptyDir: "rtl", emptyClass: "font-nastaliq" },
+  ur: { subtitle: "آپ کا کشمیری معاون", empty: "سلام! میں آپ کی کیا مدد کر سکتا ہوں؟", placeholder: "یہاں لکھیں...", send: "بھیجیں", mic: "آواز", langLabel: "Urdu", emptyDir: "rtl", emptyClass: "font-nastaliq" },
+  en: { subtitle: "Your Kashmiri Assistant", empty: "Hello! How can I help you today?", placeholder: "Type a message...", send: "Send", mic: "Voice", langLabel: "English", emptyDir: "ltr", emptyClass: "" },
 };
 
 const LANG_ORDER: Lang[] = ["ks", "ur", "en"];
 
-// Pick the best available voice for Kashmiri (ur-PK preferred, hi-IN fallback).
 function pickVoice(): SpeechSynthesisVoice | null {
   if (typeof window === "undefined" || !window.speechSynthesis) return null;
   const voices = window.speechSynthesis.getVoices();
@@ -145,13 +115,27 @@ function TypingIndicator() {
   );
 }
 
-export default function KashmirBot() {
+function rowToMessage(r: ChatMessageRow): Message {
+  return {
+    id: r.id,
+    role: r.role,
+    text: r.content,
+    timestamp: new Date(r.created_at).getTime(),
+    isRTL: r.is_rtl,
+  };
+}
+
+export default function KashmirBot({ session }: { session: Session }) {
+  const userId = session.user.id;
   const [lang, setLang] = useState<Lang>("ks");
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isThinking, setIsThinking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [muted, setMuted] = useState(false);
+  const [sessions, setSessions] = useState<ChatSession[]>([]);
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+  const [panelOpen, setPanelOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const mutedRef = useRef(muted);
@@ -159,7 +143,7 @@ export default function KashmirBot() {
 
   useEffect(() => { mutedRef.current = muted; }, [muted]);
 
-  // Prime voices list (Chrome loads asynchronously).
+  // Load voices
   useEffect(() => {
     if (typeof window === "undefined" || !window.speechSynthesis) return;
     const load = () => window.speechSynthesis.getVoices();
@@ -170,6 +154,46 @@ export default function KashmirBot() {
       window.speechSynthesis.cancel();
     };
   }, []);
+
+  // Load sessions list + most recent session's messages
+  const refreshSessions = useCallback(async () => {
+    const { data, error } = await supabase
+      .from("chat_sessions")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+    if (error) {
+      toast.error("Couldn't load chats");
+      return [] as ChatSession[];
+    }
+    setSessions(data ?? []);
+    return data ?? [];
+  }, [userId]);
+
+  const loadMessagesFor = useCallback(async (sessionId: string) => {
+    const { data, error } = await supabase
+      .from("chat_messages")
+      .select("*")
+      .eq("session_id", sessionId)
+      .order("created_at", { ascending: false })
+      .limit(20);
+    if (error) {
+      toast.error("Couldn't load messages");
+      return;
+    }
+    const rows = (data ?? []).slice().reverse();
+    setMessages(rows.map(rowToMessage));
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const list = await refreshSessions();
+      if (list.length > 0) {
+        setCurrentSessionId(list[0].id);
+        await loadMessagesFor(list[0].id);
+      }
+    })();
+  }, [refreshSessions, loadMessagesFor]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -207,23 +231,17 @@ export default function KashmirBot() {
       toast.error("آپ کا براؤزر آواز کی سہولت نہیں دیتا");
       return;
     }
-
     if (isListening && recognitionRef.current) {
       recognitionRef.current.stop();
       return;
     }
-
     const recognition = new SR();
     recognition.lang = "ur-PK";
     recognition.continuous = false;
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
-
     recognition.onstart = () => setIsListening(true);
-    recognition.onend = () => {
-      setIsListening(false);
-      recognitionRef.current = null;
-    };
+    recognition.onend = () => { setIsListening(false); recognitionRef.current = null; };
     recognition.onerror = (e: any) => {
       setIsListening(false);
       recognitionRef.current = null;
@@ -239,21 +257,40 @@ export default function KashmirBot() {
     };
     recognition.onresult = (event: any) => {
       const transcript = event.results?.[0]?.[0]?.transcript ?? "";
-      if (transcript) {
-        setInput((prev) => (prev ? prev + " " + transcript : transcript));
-      }
+      if (transcript) setInput((prev) => (prev ? prev + " " + transcript : transcript));
     };
-
     recognitionRef.current = recognition;
-    try {
-      recognition.start();
-    } catch {
-      setIsListening(false);
-      recognitionRef.current = null;
-    }
+    try { recognition.start(); } catch { setIsListening(false); recognitionRef.current = null; }
   };
 
-  const handleSend = () => {
+  const ensureSession = async (firstUserText: string): Promise<string | null> => {
+    if (currentSessionId) return currentSessionId;
+    const title = firstUserText.slice(0, 60);
+    const { data, error } = await supabase
+      .from("chat_sessions")
+      .insert({ user_id: userId, title })
+      .select()
+      .single();
+    if (error || !data) {
+      toast.error("Couldn't start a new chat");
+      return null;
+    }
+    setCurrentSessionId(data.id);
+    setSessions((prev) => [data as ChatSession, ...prev]);
+    return data.id;
+  };
+
+  const persistMessage = async (sessionId: string, msg: Message) => {
+    const { error } = await supabase.from("chat_messages").insert({
+      session_id: sessionId,
+      role: msg.role,
+      content: msg.text,
+      is_rtl: msg.isRTL,
+    });
+    if (error) toast.error("Couldn't save message");
+  };
+
+  const handleSend = async () => {
     const text = input.trim();
     if (!text || isThinking) return;
     const userMsg: Message = {
@@ -267,8 +304,10 @@ export default function KashmirBot() {
     setInput("");
     setIsThinking(true);
 
-    // Mock reply
-    setTimeout(() => {
+    const sessionId = await ensureSession(text);
+    if (sessionId) await persistMessage(sessionId, userMsg);
+
+    setTimeout(async () => {
       const reply = MOCK_REPLIES[Math.floor(Math.random() * MOCK_REPLIES.length)];
       const botMsg: Message = {
         id: crypto.randomUUID(),
@@ -280,6 +319,7 @@ export default function KashmirBot() {
       setMessages((m) => [...m, botMsg]);
       setIsThinking(false);
       if (!mutedRef.current) speak(reply);
+      if (sessionId) await persistMessage(sessionId, botMsg);
     }, 1500);
   };
 
@@ -290,30 +330,62 @@ export default function KashmirBot() {
     }
   };
 
+  const handleSelectSession = async (id: string) => {
+    setCurrentSessionId(id);
+    await loadMessagesFor(id);
+  };
+
+  const handleNewChat = () => {
+    setCurrentSessionId(null);
+    setMessages([]);
+  };
+
+  const handleSignOut = async () => {
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+    await supabase.auth.signOut();
+  };
+
   const inputIsRTL = isRTL(input) || lang !== "en";
 
   return (
     <div className="flex h-[100dvh] flex-col bg-background">
+      <SessionsPanel
+        open={panelOpen}
+        onClose={() => setPanelOpen(false)}
+        sessions={sessions}
+        currentSessionId={currentSessionId}
+        onSelect={handleSelectSession}
+        onNew={handleNewChat}
+      />
+
       {/* Header */}
       <header className="border-b border-border bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/60">
-        <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-3 px-4 py-3 sm:py-4">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md">
+        <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-2 px-3 py-3 sm:gap-3 sm:px-4 sm:py-4">
+          <div className="flex items-center gap-2 min-w-0 sm:gap-3">
+            <button
+              onClick={() => setPanelOpen(true)}
+              aria-label="Previous chats"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+            <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md sm:flex">
               <span className="font-nastaliq text-2xl leading-none">ک</span>
             </div>
             <div className="min-w-0">
-              <h1 className="font-nastaliq truncate text-2xl sm:text-3xl text-foreground" dir="rtl">
+              <h1 className="font-nastaliq truncate text-2xl text-foreground sm:text-3xl" dir="rtl">
                 کٲشُر مددگار
               </h1>
-              <p className="truncate text-sm sm:text-base text-muted-foreground">{t.subtitle}</p>
+              <p className="truncate text-xs text-muted-foreground sm:text-sm">{t.subtitle}</p>
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             <button
               onClick={toggleMute}
               aria-label={muted ? "Unmute auto-read" : "Mute auto-read"}
               aria-pressed={muted}
-              title={muted ? "Auto-read off" : "Auto-read on"}
               className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
               {muted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
@@ -321,9 +393,17 @@ export default function KashmirBot() {
             <button
               onClick={cycleLang}
               aria-label="Switch language"
-              className="rounded-full border border-border bg-secondary px-3 py-2 text-sm font-semibold text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring sm:px-4 sm:text-base"
+              className="rounded-full border border-border bg-secondary px-3 py-2 text-sm font-semibold text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
               <span className={lang === "ks" ? "font-nastaliq text-lg" : ""}>{t.langLabel}</span>
+            </button>
+            <button
+              onClick={handleSignOut}
+              aria-label="Sign out"
+              title="Sign out"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <LogOut className="h-5 w-5" />
             </button>
           </div>
         </div>
@@ -342,9 +422,6 @@ export default function KashmirBot() {
                 className={`max-w-md text-2xl sm:text-3xl text-foreground ${t.emptyClass}`}
               >
                 {t.empty}
-              </p>
-              <p className="mt-4 text-base text-muted-foreground">
-                {lang === "en" ? "Tap the microphone or start typing below." : null}
               </p>
             </div>
           ) : (
