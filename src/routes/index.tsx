@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import KashmirBot from "@/components/chat/KashmirBot";
+import AppShell from "@/components/AppShell";
 
 export const Route = createFileRoute("/")({
+  ssr: false,
   head: () => ({
     meta: [
       { title: "KashmirBot — Your Kashmiri Assistant" },
@@ -10,5 +11,6 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: "A warm, accessible chat assistant that speaks Kashmiri, Urdu, and English." },
     ],
   }),
-  component: KashmirBot,
+  component: AppShell,
 });
+
