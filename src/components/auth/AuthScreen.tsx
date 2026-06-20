@@ -15,7 +15,15 @@ export default function AuthScreen() {
   const [otp, setOtp] = useState("");
   const [phoneStep, setPhoneStep] = useState<PhoneStep>("enter");
   const [loading, setLoading] = useState(false);
+  const [resendIn, setResendIn] = useState(0);
   const otpAbortRef = useRef<AbortController | null>(null);
+
+  // Countdown for resend button
+  useEffect(() => {
+    if (resendIn <= 0) return;
+    const id = setInterval(() => setResendIn((s) => (s > 0 ? s - 1 : 0)), 1000);
+    return () => clearInterval(id);
+  }, [resendIn]);
 
   // WebOTP API: auto-fill SMS OTP on Android Chrome when on the same device.
   useEffect(() => {
