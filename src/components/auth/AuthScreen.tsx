@@ -83,17 +83,34 @@ export default function AuthScreen() {
     }
   };
 
-  const sendOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const sendOtp = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     if (!phone) return;
     setLoading(true);
     try {
       const { error } = await supabase.auth.signInWithOtp({ phone });
       if (error) throw error;
       setPhoneStep("verify");
+      setResendIn(30);
       toast.success("OTP sent. Check your SMS.");
     } catch (err: any) {
       toast.error(err?.message ?? "Could not send OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    if (resendIn > 0 || loading) return;
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOtp({ phone });
+      if (error) throw error;
+      setResendIn(30);
+      setOtp("");
+      toast.success("New OTP sent.");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Could not resend OTP");
     } finally {
       setLoading(false);
     }
