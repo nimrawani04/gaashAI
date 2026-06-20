@@ -20,11 +20,6 @@ interface Message {
 const RTL_REGEX = /[\u0590-\u05FF\u0600-\u06FF\u0700-\u074F\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
 const isRTL = (text: string) => RTL_REGEX.test(text);
 
-const MOCK_REPLIES = [
-  "ہا، بہ چھُس تہند مدد کرنہٕ خٲطرٕ تیار۔ توہیہ کیا پوچھنہٕ چھِو؟",
-  "شکریہ توہند سوال خٲطرٕ۔ بہ کوشِش کرہ توہیہ بہترین جواب دِنہٕ۔",
-  "یہٕ اکھ دلچسپ سوال چھُ۔ ژِھ سیکنڈ، بہ سوچان چھُس...",
-];
 
 const UI_STRINGS: Record<Lang, {
   subtitle: string;
