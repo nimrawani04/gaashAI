@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import type { Session } from "@supabase/supabase-js";
 import { supabase, type ChatSession, type ChatMessageRow } from "@/lib/supabase";
 import SessionsPanel from "@/components/chat/SessionsPanel";
+import { findFallback } from "@/lib/fallbackQA";
 
 type Role = "user" | "assistant";
 type Lang = "ks" | "ur" | "en";
@@ -19,11 +20,6 @@ interface Message {
 const RTL_REGEX = /[\u0590-\u05FF\u0600-\u06FF\u0700-\u074F\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
 const isRTL = (text: string) => RTL_REGEX.test(text);
 
-const MOCK_REPLIES = [
-  "ہا، بہ چھُس تہند مدد کرنہٕ خٲطرٕ تیار۔ توہیہ کیا پوچھنہٕ چھِو؟",
-  "شکریہ توہند سوال خٲطرٕ۔ بہ کوشِش کرہ توہیہ بہترین جواب دِنہٕ۔",
-  "یہٕ اکھ دلچسپ سوال چھُ۔ ژِھ سیکنڈ، بہ سوچان چھُس...",
-];
 
 const UI_STRINGS: Record<Lang, {
   subtitle: string;
@@ -290,6 +286,69 @@ export default function KashmirBot({ session }: { session: Session }) {
     if (error) toast.error("Couldn't save message");
   };
 
+  const callChatBackend = async (
+    text: string,
+    history: { role: Role; content: string }[],
+  ): Promise<{ reply: string; usedFallback: boolean }> => {
+    const langMap: Record<Lang, "kashmiri" | "urdu" | "english"> = {
+      ks: "kashmiri",
+      ur: "urdu",
+      en: "english",
+    };
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    try {
+      const { data, error } = await supabase.functions.invoke("chat", {
+        body: { message: text, language: langMap[lang], history },
+      });
+      clearTimeout(timeoutId);
+      if (error) throw error;
+      const reply = (data as any)?.reply?.trim();
+      if (!reply) throw new Error("empty reply");
+      return { reply, usedFallback: false };
+    } catch (err: any) {
+      clearTimeout(timeoutId);
+      if (err?.name === "AbortError") {
+        toast.error("جواب آنے میں دیر ہو رہی ہے — دوبارہ کوشش کریں");
+      }
+      return { reply: findFallback(text), usedFallback: true };
+    }
+  };
+
+  const sendWithRetry = async (userMsg: Message, sessionId: string | null) => {
+    setIsThinking(true);
+    const thinkingToast = toast.loading("سوچ رہا ہوں...");
+    const history = messages.map((m) => ({ role: m.role, content: m.text }));
+    history.push({ role: userMsg.role, content: userMsg.text });
+
+    const { reply, usedFallback } = await callChatBackend(userMsg.text, history);
+    toast.dismiss(thinkingToast);
+
+    const botMsg: Message = {
+      id: crypto.randomUUID(),
+      role: "assistant",
+      text: reply,
+      timestamp: Date.now(),
+      isRTL: isRTL(reply),
+    };
+    setMessages((m) => [...m, botMsg]);
+    setIsThinking(false);
+    if (!mutedRef.current) speak(reply);
+    if (sessionId) await persistMessage(sessionId, botMsg);
+
+    if (usedFallback) {
+      toast.error("معاف کریں، کچھ غلطی ہوئی — دوبارہ کوشش کریں", {
+        action: {
+          label: "Retry",
+          onClick: () => {
+            setMessages((m) => m.filter((x) => x.id !== botMsg.id));
+            sendWithRetry(userMsg, sessionId);
+          },
+        },
+      });
+    }
+  };
+
   const handleSend = async () => {
     const text = input.trim();
     if (!text || isThinking) return;
@@ -302,25 +361,11 @@ export default function KashmirBot({ session }: { session: Session }) {
     };
     setMessages((m) => [...m, userMsg]);
     setInput("");
-    setIsThinking(true);
 
     const sessionId = await ensureSession(text);
     if (sessionId) await persistMessage(sessionId, userMsg);
 
-    setTimeout(async () => {
-      const reply = MOCK_REPLIES[Math.floor(Math.random() * MOCK_REPLIES.length)];
-      const botMsg: Message = {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        text: reply,
-        timestamp: Date.now(),
-        isRTL: isRTL(reply),
-      };
-      setMessages((m) => [...m, botMsg]);
-      setIsThinking(false);
-      if (!mutedRef.current) speak(reply);
-      if (sessionId) await persistMessage(sessionId, botMsg);
-    }, 1500);
+    await sendWithRetry(userMsg, sessionId);
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

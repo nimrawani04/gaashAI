@@ -15,7 +15,15 @@ export default function AuthScreen() {
   const [otp, setOtp] = useState("");
   const [phoneStep, setPhoneStep] = useState<PhoneStep>("enter");
   const [loading, setLoading] = useState(false);
+  const [resendIn, setResendIn] = useState(0);
   const otpAbortRef = useRef<AbortController | null>(null);
+
+  // Countdown for resend button
+  useEffect(() => {
+    if (resendIn <= 0) return;
+    const id = setInterval(() => setResendIn((s) => (s > 0 ? s - 1 : 0)), 1000);
+    return () => clearInterval(id);
+  }, [resendIn]);
 
   // WebOTP API: auto-fill SMS OTP on Android Chrome when on the same device.
   useEffect(() => {
@@ -75,17 +83,34 @@ export default function AuthScreen() {
     }
   };
 
-  const sendOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const sendOtp = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     if (!phone) return;
     setLoading(true);
     try {
       const { error } = await supabase.auth.signInWithOtp({ phone });
       if (error) throw error;
       setPhoneStep("verify");
+      setResendIn(30);
       toast.success("OTP sent. Check your SMS.");
     } catch (err: any) {
       toast.error(err?.message ?? "Could not send OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    if (resendIn > 0 || loading) return;
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOtp({ phone });
+      if (error) throw error;
+      setResendIn(30);
+      setOtp("");
+      toast.success("New OTP sent.");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Could not resend OTP");
     } finally {
       setLoading(false);
     }
@@ -258,6 +283,14 @@ export default function AuthScreen() {
               className="mt-2 rounded-full bg-primary px-5 py-3 text-base font-semibold text-primary-foreground shadow-md transition hover:opacity-90 disabled:opacity-50"
             >
               {loading ? "Verifying…" : "Verify & sign in"}
+            </button>
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={resendIn > 0 || loading}
+              className="text-center text-sm font-medium text-primary underline-offset-4 hover:underline disabled:cursor-not-allowed disabled:text-muted-foreground disabled:no-underline"
+            >
+              {resendIn > 0 ? `Resend code in ${resendIn}s` : "Resend code"}
             </button>
             <button
               type="button"
