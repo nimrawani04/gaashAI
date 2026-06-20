@@ -286,6 +286,14 @@ export default function AuthScreen() {
             </button>
             <button
               type="button"
+              onClick={handleResend}
+              disabled={resendIn > 0 || loading}
+              className="text-center text-sm font-medium text-primary underline-offset-4 hover:underline disabled:cursor-not-allowed disabled:text-muted-foreground disabled:no-underline"
+            >
+              {resendIn > 0 ? `Resend code in ${resendIn}s` : "Resend code"}
+            </button>
+            <button
+              type="button"
               onClick={() => {
                 setPhoneStep("enter");
                 setOtp("");
