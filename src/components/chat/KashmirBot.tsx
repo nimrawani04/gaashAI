@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import type { Session } from "@supabase/supabase-js";
 import { supabase, type ChatSession, type ChatMessageRow } from "@/lib/supabase";
 import SessionsPanel from "@/components/chat/SessionsPanel";
+import { findFallback } from "@/lib/fallbackQA";
 
 type Role = "user" | "assistant";
 type Lang = "ks" | "ur" | "en";
