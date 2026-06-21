@@ -455,6 +455,22 @@ export default function KashmirBot({ session }: { session: Session }) {
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+            <Link
+              to="/contribute"
+              aria-label="Contribute"
+              title="دیو مدد"
+              className="hidden h-10 items-center gap-1.5 rounded-full border border-border bg-secondary px-3 text-sm font-semibold text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring sm:inline-flex"
+            >
+              <HeartHandshake className="h-4 w-4" />
+              <span className="font-nastaliq text-base">دیو مدد</span>
+            </Link>
+            <Link
+              to="/contribute"
+              aria-label="Contribute"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring sm:hidden"
+            >
+              <HeartHandshake className="h-5 w-5" />
+            </Link>
             <button
               onClick={toggleMute}
               aria-label={muted ? "Unmute auto-read" : "Mute auto-read"}
