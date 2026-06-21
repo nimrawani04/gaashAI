@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { SEED_ENTRIES, type KbCategory } from "@/lib/seedKnowledge";
+import ContributionsReview from "@/components/admin/ContributionsReview";
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
@@ -219,6 +220,10 @@ function AdminPage() {
             </div>
           </form>
         </section>
+
+        <ContributionsReview />
+
+
 
         <section>
           <h2 className="mb-4 text-lg font-semibold">

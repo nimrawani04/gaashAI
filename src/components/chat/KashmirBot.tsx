@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Mic, Send, Volume2, VolumeX, LogOut, Menu } from "lucide-react";
+import { Mic, Send, Volume2, VolumeX, LogOut, Menu, HeartHandshake } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { Session } from "@supabase/supabase-js";
 import { supabase, type ChatSession, type ChatMessageRow } from "@/lib/supabase";
 import SessionsPanel from "@/components/chat/SessionsPanel";
+import FeedbackButtons from "@/components/chat/FeedbackButtons";
 import { findFallback } from "@/lib/fallbackQA";
 
 type Role = "user" | "assistant";
@@ -11,6 +13,7 @@ type Lang = "ks" | "ur" | "en";
 
 interface Message {
   id: string;
+  dbId?: string;
   role: Role;
   text: string;
   timestamp: number;
@@ -66,7 +69,15 @@ function speak(text: string) {
   window.speechSynthesis.speak(utter);
 }
 
-function MessageBubble({ msg, onSpeak }: { msg: Message; onSpeak: (text: string) => void }) {
+function MessageBubble({
+  msg,
+  onSpeak,
+  userId,
+}: {
+  msg: Message;
+  onSpeak: (text: string) => void;
+  userId: string;
+}) {
   const dir = msg.isRTL ? "rtl" : "ltr";
   const isUser = msg.role === "user";
   return (
@@ -85,14 +96,17 @@ function MessageBubble({ msg, onSpeak }: { msg: Message; onSpeak: (text: string)
           {msg.text}
         </div>
         {!isUser && (
-          <button
-            type="button"
-            onClick={() => onSpeak(msg.text)}
-            aria-label="Read aloud"
-            className="ms-1 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs text-muted-foreground transition hover:text-foreground hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring"
-          >
-            <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
-          </button>
+          <div className="flex items-start gap-2">
+            <button
+              type="button"
+              onClick={() => onSpeak(msg.text)}
+              aria-label="Read aloud"
+              className="ms-1 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs text-muted-foreground transition hover:text-foreground hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
+            </button>
+            <FeedbackButtons messageId={msg.dbId ?? null} userId={userId} />
+          </div>
         )}
       </div>
     </div>
@@ -114,6 +128,7 @@ function TypingIndicator() {
 function rowToMessage(r: ChatMessageRow): Message {
   return {
     id: r.id,
+    dbId: r.id,
     role: r.role,
     text: r.content,
     timestamp: new Date(r.created_at).getTime(),
@@ -276,14 +291,22 @@ export default function KashmirBot({ session }: { session: Session }) {
     return data.id;
   };
 
-  const persistMessage = async (sessionId: string, msg: Message) => {
-    const { error } = await supabase.from("chat_messages").insert({
-      session_id: sessionId,
-      role: msg.role,
-      content: msg.text,
-      is_rtl: msg.isRTL,
-    });
-    if (error) toast.error("Couldn't save message");
+  const persistMessage = async (sessionId: string, msg: Message): Promise<string | null> => {
+    const { data, error } = await supabase
+      .from("chat_messages")
+      .insert({
+        session_id: sessionId,
+        role: msg.role,
+        content: msg.text,
+        is_rtl: msg.isRTL,
+      })
+      .select("id")
+      .single();
+    if (error || !data) {
+      toast.error("Couldn't save message");
+      return null;
+    }
+    return data.id as string;
   };
 
   const callChatBackend = async (
@@ -334,7 +357,12 @@ export default function KashmirBot({ session }: { session: Session }) {
     setMessages((m) => [...m, botMsg]);
     setIsThinking(false);
     if (!mutedRef.current) speak(reply);
-    if (sessionId) await persistMessage(sessionId, botMsg);
+    if (sessionId) {
+      const dbId = await persistMessage(sessionId, botMsg);
+      if (dbId) {
+        setMessages((m) => m.map((x) => (x.id === botMsg.id ? { ...x, dbId } : x)));
+      }
+    }
 
     if (usedFallback) {
       toast.error("معاف کریں، کچھ غلطی ہوئی — دوبارہ کوشش کریں", {
@@ -427,6 +455,22 @@ export default function KashmirBot({ session }: { session: Session }) {
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+            <Link
+              to="/contribute"
+              aria-label="Contribute"
+              title="دیو مدد"
+              className="hidden h-10 items-center gap-1.5 rounded-full border border-border bg-secondary px-3 text-sm font-semibold text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring sm:inline-flex"
+            >
+              <HeartHandshake className="h-4 w-4" />
+              <span className="font-nastaliq text-base">دیو مدد</span>
+            </Link>
+            <Link
+              to="/contribute"
+              aria-label="Contribute"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring sm:hidden"
+            >
+              <HeartHandshake className="h-5 w-5" />
+            </Link>
             <button
               onClick={toggleMute}
               aria-label={muted ? "Unmute auto-read" : "Mute auto-read"}
@@ -472,7 +516,7 @@ export default function KashmirBot({ session }: { session: Session }) {
           ) : (
             <>
               {messages.map((m) => (
-                <MessageBubble key={m.id} msg={m} onSpeak={handleSpeak} />
+                <MessageBubble key={m.id} msg={m} onSpeak={handleSpeak} userId={userId} />
               ))}
               {isThinking && <TypingIndicator />}
             </>

@@ -44,6 +44,45 @@
 //   ORDER BY similarity DESC
 //   LIMIT match_count;
 // $$;
+//
+// ---------------------------------------------------------------------------
+// Community feedback + contributions tables (run in SQL editor):
+//
+// CREATE TABLE IF NOT EXISTS public.feedback (
+//   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+//   message_id uuid NOT NULL REFERENCES public.chat_messages(id) ON DELETE CASCADE,
+//   rating smallint NOT NULL CHECK (rating IN (1, -1)),
+//   correction_text text,
+//   user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+//   created_at timestamptz NOT NULL DEFAULT now()
+// );
+// CREATE INDEX IF NOT EXISTS feedback_message_id_idx ON public.feedback(message_id);
+// GRANT SELECT, INSERT ON public.feedback TO authenticated;
+// GRANT ALL ON public.feedback TO service_role;
+// ALTER TABLE public.feedback ENABLE ROW LEVEL SECURITY;
+// CREATE POLICY "feedback insert own" ON public.feedback FOR INSERT TO authenticated
+//   WITH CHECK (auth.uid() = user_id);
+// CREATE POLICY "feedback read own"   ON public.feedback FOR SELECT TO authenticated
+//   USING (auth.uid() = user_id);
+//
+// CREATE TABLE IF NOT EXISTS public.contributions (
+//   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+//   kashmiri_text text NOT NULL,
+//   english_meaning text NOT NULL,
+//   category text,
+//   submitted_by_name text,
+//   verified boolean NOT NULL DEFAULT false,
+//   created_at timestamptz NOT NULL DEFAULT now()
+// );
+// GRANT SELECT, INSERT ON public.contributions TO anon, authenticated;
+// GRANT UPDATE, DELETE ON public.contributions TO authenticated;
+// GRANT ALL            ON public.contributions TO service_role;
+// ALTER TABLE public.contributions ENABLE ROW LEVEL SECURITY;
+// CREATE POLICY "contrib insert any" ON public.contributions FOR INSERT TO anon, authenticated WITH CHECK (true);
+// CREATE POLICY "contrib read any"   ON public.contributions FOR SELECT TO anon, authenticated USING (true);
+// CREATE POLICY "contrib update auth" ON public.contributions FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
+// CREATE POLICY "contrib delete auth" ON public.contributions FOR DELETE TO authenticated USING (true);
+// ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
