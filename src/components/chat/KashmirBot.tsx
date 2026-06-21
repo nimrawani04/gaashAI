@@ -500,7 +500,7 @@ export default function KashmirBot({ session }: { session: Session }) {
           ) : (
             <>
               {messages.map((m) => (
-                <MessageBubble key={m.id} msg={m} onSpeak={handleSpeak} />
+                <MessageBubble key={m.id} msg={m} onSpeak={handleSpeak} userId={userId} />
               ))}
               {isThinking && <TypingIndicator />}
             </>
