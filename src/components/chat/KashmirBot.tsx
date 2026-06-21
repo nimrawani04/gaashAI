@@ -128,6 +128,7 @@ function TypingIndicator() {
 function rowToMessage(r: ChatMessageRow): Message {
   return {
     id: r.id,
+    dbId: r.id,
     role: r.role,
     text: r.content,
     timestamp: new Date(r.created_at).getTime(),
@@ -290,14 +291,22 @@ export default function KashmirBot({ session }: { session: Session }) {
     return data.id;
   };
 
-  const persistMessage = async (sessionId: string, msg: Message) => {
-    const { error } = await supabase.from("chat_messages").insert({
-      session_id: sessionId,
-      role: msg.role,
-      content: msg.text,
-      is_rtl: msg.isRTL,
-    });
-    if (error) toast.error("Couldn't save message");
+  const persistMessage = async (sessionId: string, msg: Message): Promise<string | null> => {
+    const { data, error } = await supabase
+      .from("chat_messages")
+      .insert({
+        session_id: sessionId,
+        role: msg.role,
+        content: msg.text,
+        is_rtl: msg.isRTL,
+      })
+      .select("id")
+      .single();
+    if (error || !data) {
+      toast.error("Couldn't save message");
+      return null;
+    }
+    return data.id as string;
   };
 
   const callChatBackend = async (
