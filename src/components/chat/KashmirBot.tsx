@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Mic, Send, Volume2, VolumeX, LogOut, Menu } from "lucide-react";
+import { Mic, Send, Volume2, VolumeX, LogOut, Menu, HeartHandshake } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { Session } from "@supabase/supabase-js";
 import { supabase, type ChatSession, type ChatMessageRow } from "@/lib/supabase";
 import SessionsPanel from "@/components/chat/SessionsPanel";
+import FeedbackButtons from "@/components/chat/FeedbackButtons";
 import { findFallback } from "@/lib/fallbackQA";
 
 type Role = "user" | "assistant";
@@ -11,6 +13,7 @@ type Lang = "ks" | "ur" | "en";
 
 interface Message {
   id: string;
+  dbId?: string;
   role: Role;
   text: string;
   timestamp: number;
@@ -66,7 +69,15 @@ function speak(text: string) {
   window.speechSynthesis.speak(utter);
 }
 
-function MessageBubble({ msg, onSpeak }: { msg: Message; onSpeak: (text: string) => void }) {
+function MessageBubble({
+  msg,
+  onSpeak,
+  userId,
+}: {
+  msg: Message;
+  onSpeak: (text: string) => void;
+  userId: string;
+}) {
   const dir = msg.isRTL ? "rtl" : "ltr";
   const isUser = msg.role === "user";
   return (
@@ -85,14 +96,17 @@ function MessageBubble({ msg, onSpeak }: { msg: Message; onSpeak: (text: string)
           {msg.text}
         </div>
         {!isUser && (
-          <button
-            type="button"
-            onClick={() => onSpeak(msg.text)}
-            aria-label="Read aloud"
-            className="ms-1 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs text-muted-foreground transition hover:text-foreground hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring"
-          >
-            <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
-          </button>
+          <div className="flex items-start gap-2">
+            <button
+              type="button"
+              onClick={() => onSpeak(msg.text)}
+              aria-label="Read aloud"
+              className="ms-1 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs text-muted-foreground transition hover:text-foreground hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
+            </button>
+            <FeedbackButtons messageId={msg.dbId ?? null} userId={userId} />
+          </div>
         )}
       </div>
     </div>
