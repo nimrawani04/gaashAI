@@ -221,6 +221,10 @@ function AdminPage() {
           </form>
         </section>
 
+        <ContributionsReview />
+
+
+
         <section>
           <h2 className="mb-4 text-lg font-semibold">
             Entries ({rows.length}) {loading && "…"}
