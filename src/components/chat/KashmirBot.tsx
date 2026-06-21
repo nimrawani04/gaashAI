@@ -357,7 +357,12 @@ export default function KashmirBot({ session }: { session: Session }) {
     setMessages((m) => [...m, botMsg]);
     setIsThinking(false);
     if (!mutedRef.current) speak(reply);
-    if (sessionId) await persistMessage(sessionId, botMsg);
+    if (sessionId) {
+      const dbId = await persistMessage(sessionId, botMsg);
+      if (dbId) {
+        setMessages((m) => m.map((x) => (x.id === botMsg.id ? { ...x, dbId } : x)));
+      }
+    }
 
     if (usedFallback) {
       toast.error("معاف کریں، کچھ غلطی ہوئی — دوبارہ کوشش کریں", {
