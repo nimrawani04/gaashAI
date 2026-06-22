@@ -42,6 +42,32 @@ function AdminPage() {
   const [category, setCategory] = useState<KbCategory>("general");
   const [source, setSource] = useState("");
 
+  const [authState, setAuthState] = useState<
+    "checking" | "anon" | "not-admin" | "admin"
+  >("checking");
+
+  useEffect(() => {
+    (async () => {
+      const { data: u } = await supabase.auth.getUser();
+      if (!u.user) {
+        setAuthState("anon");
+        return;
+      }
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", u.user.id);
+      if (error) {
+        setAuthState("not-admin");
+        return;
+      }
+      const isAdmin = (data ?? []).some(
+        (r: { role: string }) => r.role === "admin" || r.role === "moderator",
+      );
+      setAuthState(isAdmin ? "admin" : "not-admin");
+    })();
+  }, []);
+
   async function load() {
     setLoading(true);
     const { data, error } = await supabase
@@ -53,8 +79,33 @@ function AdminPage() {
   }
 
   useEffect(() => {
-    load();
-  }, []);
+    if (authState === "admin") load();
+  }, [authState]);
+
+  if (authState === "checking") {
+    return (
+      <div className="grid min-h-[100dvh] place-items-center text-sm text-muted-foreground">
+        Checking access…
+      </div>
+    );
+  }
+  if (authState !== "admin") {
+    return (
+      <div className="grid min-h-[100dvh] place-items-center px-4 text-center">
+        <div className="max-w-md space-y-2">
+          <h1 className="text-xl font-semibold">Admins only</h1>
+          <p className="text-sm text-muted-foreground">
+            {authState === "anon"
+              ? "Please sign in with an admin account to manage the knowledge base."
+              : "Your account does not have admin or moderator privileges."}
+          </p>
+          <a href="/" className="inline-block text-sm underline">
+            ← Back to chat
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
