@@ -413,6 +413,21 @@ export default function KashmirBot({ session }: { session: Session }) {
     setMessages([]);
   };
 
+  const handleRenameSession = async (id: string, title: string) => {
+    const { error } = await supabase
+      .from("chat_sessions")
+      .update({ title })
+      .eq("id", id)
+      .eq("user_id", userId);
+    if (error) {
+      toast.error("Couldn't rename chat");
+      return;
+    }
+    setSessions((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, title } : s)),
+    );
+  };
+
   const handleSignOut = async () => {
     if (typeof window !== "undefined" && window.speechSynthesis) {
       window.speechSynthesis.cancel();
