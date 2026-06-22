@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { X, Plus, Pencil, Check, Trash2 } from "lucide-react";
+import { X, Plus, Pencil, Check, Trash2, AlertTriangle } from "lucide-react";
 import type { ChatSession } from "@/lib/supabase";
 
 interface Props {
@@ -46,6 +46,8 @@ export default function SessionsPanel({
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const sessionToDelete = sessions.find((s) => s.id === confirmDeleteId) ?? null;
+
   useEffect(() => {
     if (!open) {
       setEditingId(null);
@@ -59,11 +61,20 @@ export default function SessionsPanel({
   }, [editingId]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || confirmDeleteId) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+  }, [open, onClose, confirmDeleteId]);
+
+  useEffect(() => {
+    if (!confirmDeleteId) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setConfirmDeleteId(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [confirmDeleteId]);
 
   const startEdit = (s: ChatSession) => {
     setEditingId(s.id);
@@ -82,6 +93,12 @@ export default function SessionsPanel({
     }
     setEditingId(null);
     setDraft("");
+  };
+
+  const confirmDelete = async () => {
+    if (!confirmDeleteId) return;
+    await onDelete(confirmDeleteId);
+    setConfirmDeleteId(null);
   };
 
   return (
@@ -162,31 +179,6 @@ export default function SessionsPanel({
                             <X className="h-4 w-4" />
                           </button>
                         </div>
-                      ) : confirmDeleteId === s.id ? (
-                        <div className="flex flex-col gap-2 rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2">
-                          <span className="text-sm text-foreground">
-                            Delete this chat?
-                          </span>
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={async () => {
-                                await onDelete(s.id);
-                                setConfirmDeleteId(null);
-                              }}
-                              aria-label="Confirm delete"
-                              className="rounded-lg bg-destructive px-3 py-1 text-xs font-semibold text-destructive-foreground hover:opacity-90"
-                            >
-                              Delete
-                            </button>
-                            <button
-                              onClick={() => setConfirmDeleteId(null)}
-                              aria-label="Cancel delete"
-                              className="rounded-lg bg-secondary px-3 py-1 text-xs font-semibold text-secondary-foreground hover:bg-secondary/80"
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        </div>
                       ) : (
                         <div
                           className={`group flex items-center gap-1 rounded-xl px-2 transition ${
@@ -228,6 +220,54 @@ export default function SessionsPanel({
           )}
         </div>
       </aside>
+
+      {sessionToDelete && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={() => setConfirmDeleteId(null)}
+            aria-hidden="true"
+          />
+          <div
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="delete-title"
+            aria-describedby="delete-desc"
+            className="relative z-10 w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-2xl"
+          >
+            <div className="flex items-start gap-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+                <AlertTriangle className="h-5 w-5" aria-hidden="true" />
+              </div>
+              <div className="flex-1">
+                <h3 id="delete-title" className="text-base font-semibold text-foreground">
+                  Delete chat?
+                </h3>
+                <p
+                  id="delete-desc"
+                  className="mt-1 text-sm text-muted-foreground"
+                >
+                  This will permanently remove "{sessionToDelete.title || "Untitled chat"}" and all its messages.
+                </p>
+              </div>
+            </div>
+            <div className="mt-6 flex justify-end gap-2">
+              <button
+                onClick={() => setConfirmDeleteId(null)}
+                className="rounded-lg bg-secondary px-4 py-2 text-sm font-semibold text-secondary-foreground transition hover:bg-secondary/80"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="rounded-lg bg-destructive px-4 py-2 text-sm font-semibold text-destructive-foreground transition hover:opacity-90"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
