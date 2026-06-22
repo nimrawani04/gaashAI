@@ -33,6 +33,8 @@ function ContributePage() {
   const [busy, setBusy] = useState(false);
   const [success, setSuccess] = useState(false);
   const [count, setCount] = useState<number | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [authLoaded, setAuthLoaded] = useState(false);
 
   async function loadCount() {
     const { count: c } = await supabase
@@ -42,12 +44,24 @@ function ContributePage() {
   }
 
   useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setUserId(data.user?.id ?? null);
+      setAuthLoaded(true);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      setUserId(session?.user?.id ?? null);
+    });
     loadCount();
+    return () => sub.subscription.unsubscribe();
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!kashmiri.trim() || !english.trim()) return;
+    if (!userId) {
+      alert("Please sign in to contribute.");
+      return;
+    }
     setBusy(true);
     setSuccess(false);
     const { error } = await supabase.from("contributions").insert({
@@ -55,6 +69,7 @@ function ContributePage() {
       english_meaning: english.trim(),
       category,
       submitted_by_name: name.trim() || null,
+      submitted_by: userId,
     });
     setBusy(false);
     if (error) {
