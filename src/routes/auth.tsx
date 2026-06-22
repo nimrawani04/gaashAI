@@ -10,6 +10,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -18,7 +20,7 @@ export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Sign in — KashmirBot" },
-      { name: "description", content: "Sign in to KashmirBot with your Google account." },
+      { name: "description", content: "Sign in to KashmirBot with your Google account or email." },
     ],
   }),
 });
@@ -46,51 +48,94 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
+function Spinner({ className }: { className?: string }) {
+  return (
+    <div
+      className={
+        "h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent " +
+        (className ?? "")
+      }
+    />
+  );
+}
+
+type Mode = "signin" | "signup";
+
 function AuthPage() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isEmailLoading, setIsEmailLoading] = useState(false);
   const [isCheckingSession, setIsCheckingSession] = useState(true);
+  const [mode, setMode] = useState<Mode>("signin");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     let cancelled = false;
-
-    async function checkSession() {
+    (async () => {
       const { data, error } = await supabase.auth.getUser();
-      if (!cancelled) {
-        if (data.user && !error) {
-          router.navigate({ to: "/", replace: true });
-        }
-        setIsCheckingSession(false);
+      if (cancelled) return;
+      if (data.user && !error) {
+        router.navigate({ to: "/", replace: true });
       }
-    }
-
-    checkSession();
+      setIsCheckingSession(false);
+    })();
     return () => {
       cancelled = true;
     };
   }, [router]);
 
   async function handleGoogleSignIn() {
-    setIsLoading(true);
-
+    setIsGoogleLoading(true);
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin,
     });
-
     if (result.error) {
       toast.error("Google sign-in failed. Please try again.");
-      setIsLoading(false);
+      setIsGoogleLoading(false);
       return;
     }
-
-    if (result.redirected) {
-      // Browser is navigating to Google's consent screen; spinner stays visible.
-      return;
-    }
-
-    // Tokens received in the preview iframe; session already set by the lovable helper.
+    if (result.redirected) return;
     toast.success("Signed in successfully");
     router.navigate({ to: "/", replace: true });
+  }
+
+  async function handleEmailSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email || !password) {
+      toast.error("Enter your email and password.");
+      return;
+    }
+    setIsEmailLoading(true);
+    try {
+      if (mode === "signin") {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          toast.error(error.message);
+          return;
+        }
+        toast.success("Signed in successfully");
+        router.navigate({ to: "/", replace: true });
+      } else {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: window.location.origin },
+        });
+        if (error) {
+          toast.error(error.message);
+          return;
+        }
+        if (data.session) {
+          toast.success("Account created");
+          router.navigate({ to: "/", replace: true });
+        } else {
+          toast.success("Check your email to confirm your account.");
+        }
+      }
+    } finally {
+      setIsEmailLoading(false);
+    }
   }
 
   if (isCheckingSession) {
@@ -104,18 +149,22 @@ function AuthPage() {
     );
   }
 
+  const busy = isGoogleLoading || isEmailLoading;
+
   return (
-    <main className="flex min-h-screen items-center justify-center bg-background px-4">
+    <main className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
       <Card className="w-full max-w-sm">
         <CardHeader className="space-y-1 text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-2xl text-primary-foreground shadow-sm">
             🤖
           </div>
           <CardTitle className="text-2xl font-semibold tracking-tight">
-            Welcome to KashmirBot
+            {mode === "signin" ? "Welcome back" : "Create your account"}
           </CardTitle>
           <CardDescription>
-            Sign in to save your chat sessions and pick up where you left off.
+            {mode === "signin"
+              ? "Sign in to pick up where you left off."
+              : "Sign up to save your chat sessions."}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -124,11 +173,11 @@ function AuthPage() {
             className="w-full"
             size="lg"
             onClick={handleGoogleSignIn}
-            disabled={isLoading}
+            disabled={busy}
           >
-            {isLoading ? (
+            {isGoogleLoading ? (
               <>
-                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                <Spinner className="mr-2" />
                 Signing in…
               </>
             ) : (
@@ -139,8 +188,69 @@ function AuthPage() {
             )}
           </Button>
 
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-border" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">or</span>
+            </div>
+          </div>
+
+          <form onSubmit={handleEmailSubmit} className="space-y-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={busy}
+                required
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={busy}
+                minLength={6}
+                required
+              />
+            </div>
+            <Button type="submit" className="w-full" size="lg" disabled={busy}>
+              {isEmailLoading ? (
+                <>
+                  <Spinner className="mr-2" />
+                  {mode === "signin" ? "Signing in…" : "Creating account…"}
+                </>
+              ) : mode === "signin" ? (
+                "Sign in with email"
+              ) : (
+                "Create account"
+              )}
+            </Button>
+          </form>
+
+          <p className="text-center text-sm text-muted-foreground">
+            {mode === "signin" ? "No account?" : "Already have an account?"}{" "}
+            <button
+              type="button"
+              className="font-medium text-foreground underline underline-offset-2 hover:text-primary"
+              onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+              disabled={busy}
+            >
+              {mode === "signin" ? "Sign up" : "Sign in"}
+            </button>
+          </p>
+
           <p className="text-center text-xs text-muted-foreground">
-            By signing in, you agree to our{" "}
+            By continuing, you agree to our{" "}
             <Link
               to="/"
               className="underline underline-offset-2 transition-colors hover:text-foreground"
