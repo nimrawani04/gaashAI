@@ -39,9 +39,11 @@ export default function SessionsPanel({
   onSelect,
   onNew,
   onRename,
+  onDelete,
 }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
