@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { X, Plus } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+import { X, Plus, Pencil, Check } from "lucide-react";
 import type { ChatSession } from "@/lib/supabase";
 
 interface Props {
@@ -9,6 +9,7 @@ interface Props {
   currentSessionId: string | null;
   onSelect: (id: string) => void;
   onNew: () => void;
+  onRename: (id: string, newTitle: string) => void | Promise<void>;
 }
 
 function formatDate(iso: string) {
@@ -36,13 +37,48 @@ export default function SessionsPanel({
   currentSessionId,
   onSelect,
   onNew,
+  onRename,
 }: Props) {
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [draft, setDraft] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!open) {
+      setEditingId(null);
+      setDraft("");
+    }
+  }, [open]);
+
+  useEffect(() => {
+    if (editingId) inputRef.current?.focus();
+  }, [editingId]);
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
+
+  const startEdit = (s: ChatSession) => {
+    setEditingId(s.id);
+    setDraft(s.title || "");
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setDraft("");
+  };
+
+  const submitEdit = async (id: string) => {
+    const trimmed = draft.trim();
+    if (trimmed) {
+      await onRename(id, trimmed);
+    }
+    setEditingId(null);
+    setDraft("");
+  };
 
   return (
     <>
@@ -94,19 +130,60 @@ export default function SessionsPanel({
                 <ul className="flex flex-col gap-1">
                   {items.map((s) => (
                     <li key={s.id}>
-                      <button
-                        onClick={() => {
-                          onSelect(s.id);
-                          onClose();
-                        }}
-                        className={`w-full truncate rounded-xl px-3 py-2 text-left text-sm transition ${
-                          s.id === currentSessionId
-                            ? "bg-secondary text-foreground"
-                            : "text-foreground/80 hover:bg-secondary"
-                        }`}
-                      >
-                        {s.title || "Untitled chat"}
-                      </button>
+                      {editingId === s.id ? (
+                        <div className="flex items-center gap-1 rounded-xl bg-secondary px-2 py-1.5">
+                          <input
+                            ref={inputRef}
+                            value={draft}
+                            onChange={(e) => setDraft(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") submitEdit(s.id);
+                              if (e.key === "Escape") cancelEdit();
+                            }}
+                            className="min-w-0 flex-1 rounded-lg border border-border bg-background px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                            aria-label="Rename chat"
+                          />
+                          <button
+                            onClick={() => submitEdit(s.id)}
+                            aria-label="Save name"
+                            className="shrink-0 rounded-full p-1.5 text-muted-foreground hover:bg-background hover:text-foreground"
+                          >
+                            <Check className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={cancelEdit}
+                            aria-label="Cancel rename"
+                            className="shrink-0 rounded-full p-1.5 text-muted-foreground hover:bg-background hover:text-foreground"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div
+                          className={`group flex items-center gap-1 rounded-xl px-2 transition ${
+                            s.id === currentSessionId
+                              ? "bg-secondary text-foreground"
+                              : "text-foreground/80 hover:bg-secondary"
+                          }`}
+                        >
+                          <button
+                            onClick={() => {
+                              onSelect(s.id);
+                              onClose();
+                            }}
+                            className="min-w-0 flex-1 truncate px-1 py-2 text-left text-sm"
+                          >
+                            {s.title || "Untitled chat"}
+                          </button>
+                          <button
+                            onClick={() => startEdit(s)}
+                            aria-label="Rename chat"
+                            className="shrink-0 rounded-full p-1.5 opacity-0 text-muted-foreground transition hover:bg-background hover:text-foreground group-hover:opacity-100 focus:opacity-100"
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      )}
                     </li>
                   ))}
                 </ul>
