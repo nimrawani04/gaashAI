@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { X, Plus, Pencil, Check } from "lucide-react";
+import { X, Plus, Pencil, Check, Trash2 } from "lucide-react";
 import type { ChatSession } from "@/lib/supabase";
 
 interface Props {
@@ -10,6 +10,7 @@ interface Props {
   onSelect: (id: string) => void;
   onNew: () => void;
   onRename: (id: string, newTitle: string) => void | Promise<void>;
+  onDelete: (id: string) => void | Promise<void>;
 }
 
 function formatDate(iso: string) {
