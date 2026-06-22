@@ -47,7 +47,34 @@
 //
 // ---------------------------------------------------------------------------
 // Community feedback + contributions tables (run in SQL editor):
+// ---------- Admin role system (run once) ----------
+// CREATE TYPE public.app_role AS ENUM ('admin', 'moderator', 'user');
 //
+// CREATE TABLE IF NOT EXISTS public.user_roles (
+//   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+//   user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+//   role public.app_role NOT NULL,
+//   created_at timestamptz NOT NULL DEFAULT now(),
+//   UNIQUE (user_id, role)
+// );
+// GRANT SELECT ON public.user_roles TO authenticated;
+// GRANT ALL    ON public.user_roles TO service_role;
+// ALTER TABLE public.user_roles ENABLE ROW LEVEL SECURITY;
+// CREATE POLICY "user_roles self read" ON public.user_roles FOR SELECT TO authenticated
+//   USING (auth.uid() = user_id);
+//
+// -- SECURITY DEFINER avoids recursive RLS lookups
+// CREATE OR REPLACE FUNCTION public.has_role(_user_id uuid, _role public.app_role)
+// RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+//   SELECT EXISTS (
+//     SELECT 1 FROM public.user_roles
+//     WHERE user_id = _user_id AND role = _role
+//   )
+// $$;
+// -- Bootstrap the first admin manually (run once with your user's uuid):
+// --   INSERT INTO public.user_roles (user_id, role) VALUES ('<uuid>', 'admin');
+//
+// ---------- Feedback (strict RLS) ----------
 // CREATE TABLE IF NOT EXISTS public.feedback (
 //   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
 //   message_id uuid NOT NULL REFERENCES public.chat_messages(id) ON DELETE CASCADE,
@@ -60,29 +87,95 @@
 // GRANT SELECT, INSERT ON public.feedback TO authenticated;
 // GRANT ALL ON public.feedback TO service_role;
 // ALTER TABLE public.feedback ENABLE ROW LEVEL SECURITY;
-// CREATE POLICY "feedback insert own" ON public.feedback FOR INSERT TO authenticated
-//   WITH CHECK (auth.uid() = user_id);
-// CREATE POLICY "feedback read own"   ON public.feedback FOR SELECT TO authenticated
-//   USING (auth.uid() = user_id);
 //
+// DROP POLICY IF EXISTS "feedback insert own"   ON public.feedback;
+// DROP POLICY IF EXISTS "feedback read own"     ON public.feedback;
+// DROP POLICY IF EXISTS "feedback insert auth"  ON public.feedback;
+// DROP POLICY IF EXISTS "feedback select scope" ON public.feedback;
+// DROP POLICY IF EXISTS "feedback admin update" ON public.feedback;
+// DROP POLICY IF EXISTS "feedback admin delete" ON public.feedback;
+//
+// -- Only signed-in users can submit, and only as themselves
+// CREATE POLICY "feedback insert auth" ON public.feedback
+//   FOR INSERT TO authenticated
+//   WITH CHECK (auth.uid() = user_id);
+// -- A user sees their own feedback; admins/moderators see all
+// CREATE POLICY "feedback select scope" ON public.feedback
+//   FOR SELECT TO authenticated
+//   USING (
+//     auth.uid() = user_id
+//     OR public.has_role(auth.uid(), 'admin')
+//     OR public.has_role(auth.uid(), 'moderator')
+//   );
+// -- Only admins can edit/remove feedback rows
+// CREATE POLICY "feedback admin update" ON public.feedback
+//   FOR UPDATE TO authenticated
+//   USING (public.has_role(auth.uid(), 'admin'))
+//   WITH CHECK (public.has_role(auth.uid(), 'admin'));
+// CREATE POLICY "feedback admin delete" ON public.feedback
+//   FOR DELETE TO authenticated
+//   USING (public.has_role(auth.uid(), 'admin'));
+//
+// ---------- Contributions (strict RLS) ----------
 // CREATE TABLE IF NOT EXISTS public.contributions (
 //   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
 //   kashmiri_text text NOT NULL,
 //   english_meaning text NOT NULL,
 //   category text,
 //   submitted_by_name text,
+//   submitted_by uuid REFERENCES auth.users(id) ON DELETE SET NULL,
 //   verified boolean NOT NULL DEFAULT false,
 //   created_at timestamptz NOT NULL DEFAULT now()
 // );
-// GRANT SELECT, INSERT ON public.contributions TO anon, authenticated;
+// -- If the table already existed, add the owner column:
+// ALTER TABLE public.contributions
+//   ADD COLUMN IF NOT EXISTS submitted_by uuid REFERENCES auth.users(id) ON DELETE SET NULL;
+//
+// -- Revoke prior anon access — contributions now require sign-in
+// REVOKE ALL ON public.contributions FROM anon;
+// GRANT SELECT, INSERT ON public.contributions TO authenticated;
 // GRANT UPDATE, DELETE ON public.contributions TO authenticated;
 // GRANT ALL            ON public.contributions TO service_role;
 // ALTER TABLE public.contributions ENABLE ROW LEVEL SECURITY;
-// CREATE POLICY "contrib insert any" ON public.contributions FOR INSERT TO anon, authenticated WITH CHECK (true);
-// CREATE POLICY "contrib read any"   ON public.contributions FOR SELECT TO anon, authenticated USING (true);
-// CREATE POLICY "contrib update auth" ON public.contributions FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
-// CREATE POLICY "contrib delete auth" ON public.contributions FOR DELETE TO authenticated USING (true);
-// ---------------------------------------------------------------------------
+//
+// DROP POLICY IF EXISTS "contrib insert any"   ON public.contributions;
+// DROP POLICY IF EXISTS "contrib read any"     ON public.contributions;
+// DROP POLICY IF EXISTS "contrib update auth"  ON public.contributions;
+// DROP POLICY IF EXISTS "contrib delete auth"  ON public.contributions;
+// DROP POLICY IF EXISTS "contrib insert auth"  ON public.contributions;
+// DROP POLICY IF EXISTS "contrib select scope" ON public.contributions;
+// DROP POLICY IF EXISTS "contrib admin update" ON public.contributions;
+// DROP POLICY IF EXISTS "contrib admin delete" ON public.contributions;
+//
+// -- Only signed-in users may submit, and only as themselves
+// CREATE POLICY "contrib insert auth" ON public.contributions
+//   FOR INSERT TO authenticated
+//   WITH CHECK (auth.uid() = submitted_by);
+// -- Contributors see their own rows; everyone signed in sees verified rows;
+// -- admins/moderators see all rows including unverified ones
+// CREATE POLICY "contrib select scope" ON public.contributions
+//   FOR SELECT TO authenticated
+//   USING (
+//     verified = true
+//     OR auth.uid() = submitted_by
+//     OR public.has_role(auth.uid(), 'admin')
+//     OR public.has_role(auth.uid(), 'moderator')
+//   );
+// -- Only admins/moderators can verify or edit contributions
+// CREATE POLICY "contrib admin update" ON public.contributions
+//   FOR UPDATE TO authenticated
+//   USING (
+//     public.has_role(auth.uid(), 'admin')
+//     OR public.has_role(auth.uid(), 'moderator')
+//   )
+//   WITH CHECK (
+//     public.has_role(auth.uid(), 'admin')
+//     OR public.has_role(auth.uid(), 'moderator')
+//   );
+// -- Only admins can delete
+// CREATE POLICY "contrib admin delete" ON public.contributions
+//   FOR DELETE TO authenticated
+//   USING (public.has_role(auth.uid(), 'admin'));
 // ---------------------------------------------------------------------------
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";

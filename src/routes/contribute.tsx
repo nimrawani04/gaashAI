@@ -33,6 +33,8 @@ function ContributePage() {
   const [busy, setBusy] = useState(false);
   const [success, setSuccess] = useState(false);
   const [count, setCount] = useState<number | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [authLoaded, setAuthLoaded] = useState(false);
 
   async function loadCount() {
     const { count: c } = await supabase
@@ -42,12 +44,24 @@ function ContributePage() {
   }
 
   useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setUserId(data.user?.id ?? null);
+      setAuthLoaded(true);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      setUserId(session?.user?.id ?? null);
+    });
     loadCount();
+    return () => sub.subscription.unsubscribe();
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!kashmiri.trim() || !english.trim()) return;
+    if (!userId) {
+      alert("Please sign in to contribute.");
+      return;
+    }
     setBusy(true);
     setSuccess(false);
     const { error } = await supabase.from("contributions").insert({
@@ -55,6 +69,7 @@ function ContributePage() {
       english_meaning: english.trim(),
       category,
       submitted_by_name: name.trim() || null,
+      submitted_by: userId,
     });
     setBusy(false);
     if (error) {
@@ -100,6 +115,12 @@ function ContributePage() {
             className="font-nastaliq mb-4 rounded-md border border-primary/30 bg-primary/10 px-4 py-3 text-primary"
           >
             شکریہ! آپ کا حصہ محفوظ ہوگیا
+          </div>
+        )}
+
+        {authLoaded && !userId && (
+          <div className="mb-4 rounded-md border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm">
+            Please <Link to="/" className="underline">sign in</Link> to submit a contribution.
           </div>
         )}
 
@@ -164,10 +185,10 @@ function ContributePage() {
 
           <button
             type="submit"
-            disabled={busy}
+            disabled={busy || !userId}
             className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
           >
-            {busy ? "Saving…" : "Submit contribution"}
+            {busy ? "Saving…" : !userId ? "Sign in to submit" : "Submit contribution"}
           </button>
         </form>
       </div>
