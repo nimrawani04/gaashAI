@@ -185,10 +185,10 @@ function ContributePage() {
 
           <button
             type="submit"
-            disabled={busy}
+            disabled={busy || !userId}
             className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
           >
-            {busy ? "Saving…" : "Submit contribution"}
+            {busy ? "Saving…" : !userId ? "Sign in to submit" : "Submit contribution"}
           </button>
         </form>
       </div>
