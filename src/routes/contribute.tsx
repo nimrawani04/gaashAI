@@ -118,6 +118,12 @@ function ContributePage() {
           </div>
         )}
 
+        {authLoaded && !userId && (
+          <div className="mb-4 rounded-md border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm">
+            Please <Link to="/" className="underline">sign in</Link> to submit a contribution.
+          </div>
+        )}
+
         <form
           onSubmit={handleSubmit}
           className="space-y-4 rounded-lg border bg-card p-6"
