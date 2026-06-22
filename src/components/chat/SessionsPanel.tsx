@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { X, Plus, Pencil, Check, Trash2, AlertTriangle } from "lucide-react";
 import type { ChatSession } from "@/lib/supabase";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,7 +12,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface Props {
