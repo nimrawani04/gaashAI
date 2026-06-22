@@ -443,6 +443,7 @@ export default function KashmirBot({ session }: { session: Session }) {
       setCurrentSessionId(null);
       setMessages([]);
     }
+    toast.success("Chat deleted");
   };
 
   const handleSignOut = async () => {
