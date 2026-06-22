@@ -464,6 +464,7 @@ export default function KashmirBot({ session }: { session: Session }) {
         onSelect={handleSelectSession}
         onNew={handleNewChat}
         onRename={handleRenameSession}
+        onDelete={handleDeleteSession}
       />
 
       {/* Header */}
