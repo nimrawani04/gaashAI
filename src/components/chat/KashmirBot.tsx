@@ -428,6 +428,23 @@ export default function KashmirBot({ session }: { session: Session }) {
     );
   };
 
+  const handleDeleteSession = async (id: string) => {
+    const { error } = await supabase
+      .from("chat_sessions")
+      .delete()
+      .eq("id", id)
+      .eq("user_id", userId);
+    if (error) {
+      toast.error("Couldn't delete chat");
+      return;
+    }
+    setSessions((prev) => prev.filter((s) => s.id !== id));
+    if (currentSessionId === id) {
+      setCurrentSessionId(null);
+      setMessages([]);
+    }
+  };
+
   const handleSignOut = async () => {
     if (typeof window !== "undefined" && window.speechSynthesis) {
       window.speechSynthesis.cancel();
