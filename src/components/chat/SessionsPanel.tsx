@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { X, Plus, Pencil, Check } from "lucide-react";
+import { X, Plus, Pencil, Check, Trash2 } from "lucide-react";
 import type { ChatSession } from "@/lib/supabase";
 
 interface Props {
@@ -10,6 +10,7 @@ interface Props {
   onSelect: (id: string) => void;
   onNew: () => void;
   onRename: (id: string, newTitle: string) => void | Promise<void>;
+  onDelete: (id: string) => void | Promise<void>;
 }
 
 function formatDate(iso: string) {
@@ -38,15 +39,18 @@ export default function SessionsPanel({
   onSelect,
   onNew,
   onRename,
+  onDelete,
 }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!open) {
       setEditingId(null);
       setDraft("");
+      setConfirmDeleteId(null);
     }
   }, [open]);
 
@@ -158,6 +162,31 @@ export default function SessionsPanel({
                             <X className="h-4 w-4" />
                           </button>
                         </div>
+                      ) : confirmDeleteId === s.id ? (
+                        <div className="flex flex-col gap-2 rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2">
+                          <span className="text-sm text-foreground">
+                            Delete this chat?
+                          </span>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={async () => {
+                                await onDelete(s.id);
+                                setConfirmDeleteId(null);
+                              }}
+                              aria-label="Confirm delete"
+                              className="rounded-lg bg-destructive px-3 py-1 text-xs font-semibold text-destructive-foreground hover:opacity-90"
+                            >
+                              Delete
+                            </button>
+                            <button
+                              onClick={() => setConfirmDeleteId(null)}
+                              aria-label="Cancel delete"
+                              className="rounded-lg bg-secondary px-3 py-1 text-xs font-semibold text-secondary-foreground hover:bg-secondary/80"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
                       ) : (
                         <div
                           className={`group flex items-center gap-1 rounded-xl px-2 transition ${
@@ -181,6 +210,13 @@ export default function SessionsPanel({
                             className="shrink-0 rounded-full p-1.5 opacity-0 text-muted-foreground transition hover:bg-background hover:text-foreground group-hover:opacity-100 focus:opacity-100"
                           >
                             <Pencil className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            onClick={() => setConfirmDeleteId(s.id)}
+                            aria-label="Delete chat"
+                            className="shrink-0 rounded-full p-1.5 opacity-0 text-muted-foreground transition hover:bg-destructive hover:text-destructive-foreground group-hover:opacity-100 focus:opacity-100"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
                           </button>
                         </div>
                       )}
