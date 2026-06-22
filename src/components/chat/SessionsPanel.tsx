@@ -50,6 +50,7 @@ export default function SessionsPanel({
     if (!open) {
       setEditingId(null);
       setDraft("");
+      setConfirmDeleteId(null);
     }
   }, [open]);
 
