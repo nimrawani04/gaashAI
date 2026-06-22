@@ -446,6 +446,7 @@ export default function KashmirBot({ session }: { session: Session }) {
         currentSessionId={currentSessionId}
         onSelect={handleSelectSession}
         onNew={handleNewChat}
+        onRename={handleRenameSession}
       />
 
       {/* Header */}
