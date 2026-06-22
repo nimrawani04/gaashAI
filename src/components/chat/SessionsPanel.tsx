@@ -37,8 +37,11 @@ export default function SessionsPanel({
   currentSessionId,
   onSelect,
   onNew,
+  onRename,
 }: Props) {
-  useEffect(() => {
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [draft, setDraft] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
