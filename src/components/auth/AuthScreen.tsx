@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
 
 type Mode = "signin" | "signup";
@@ -72,11 +73,12 @@ export default function AuthScreen() {
   const handleGoogle = async () => {
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: window.location.origin },
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
       });
-      if (error) throw error;
+      if (result.error) throw result.error;
+      if (result.redirected) return;
+      if (result.tokens) await supabase.auth.setSession(result.tokens);
     } catch (err: any) {
       toast.error(err?.message ?? "Google sign-in failed");
       setLoading(false);
@@ -167,7 +169,7 @@ export default function AuthScreen() {
           className="mb-4 flex w-full items-center justify-center gap-3 rounded-full border border-border bg-background px-5 py-3 text-base font-medium text-foreground shadow-sm transition hover:bg-muted disabled:opacity-50"
         >
           <GoogleIcon />
-          Continue with Google
+          {loading ? "Signing in…" : "Continue with Google"}
         </button>
 
         {/* Method tabs */}
