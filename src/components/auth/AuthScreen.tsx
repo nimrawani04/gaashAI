@@ -78,6 +78,7 @@ export default function AuthScreen() {
       });
       if (result.error) throw result.error;
       if (result.redirected) return;
+      if (result.tokens) await supabase.auth.setSession(result.tokens);
     } catch (err: any) {
       toast.error(err?.message ?? "Google sign-in failed");
       setLoading(false);
@@ -168,7 +169,7 @@ export default function AuthScreen() {
           className="mb-4 flex w-full items-center justify-center gap-3 rounded-full border border-border bg-background px-5 py-3 text-base font-medium text-foreground shadow-sm transition hover:bg-muted disabled:opacity-50"
         >
           <GoogleIcon />
-          Continue with Google
+          {loading ? "Signing in…" : "Continue with Google"}
         </button>
 
         {/* Method tabs */}
