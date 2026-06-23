@@ -72,8 +72,9 @@
  */
 
 import { supabase as managedSupabase } from "@/integrations/supabase/client";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
-export const supabase = managedSupabase as any;
+export const supabase = managedSupabase as SupabaseClient<any>;
 
 export type ChatSession = {
   id: string;
