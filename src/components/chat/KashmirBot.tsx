@@ -69,6 +69,45 @@ function speak(text: string) {
   window.speechSynthesis.speak(utter);
 }
 
+const ATTACH_RE = /^📎 \[(.+?)\]\((.+?)\)$/;
+const IMG_EXT_RE = /\.(png|jpe?g|gif|webp|avif|svg)(\?|$)/i;
+
+function renderMessageContent(text: string) {
+  const lines = text.split("\n");
+  return lines.map((line, i) => {
+    const m = line.match(ATTACH_RE);
+    if (m) {
+      const [, name, url] = m;
+      const isImage = IMG_EXT_RE.test(url) || IMG_EXT_RE.test(name);
+      if (isImage) {
+        return (
+          <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="mt-2 block">
+            <img src={url} alt={name} className="max-h-64 max-w-full rounded-lg border border-border/50" />
+          </a>
+        );
+      }
+      return (
+        <a
+          key={i}
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 inline-flex items-center gap-2 rounded-lg border border-border/50 bg-background/40 px-3 py-2 text-sm underline-offset-2 hover:underline"
+        >
+          <FileText className="h-4 w-4 shrink-0" />
+          <span className="truncate max-w-[200px]">{name}</span>
+        </a>
+      );
+    }
+    return (
+      <span key={i}>
+        {line}
+        {i < lines.length - 1 && <br />}
+      </span>
+    );
+  });
+}
+
 function MessageBubble({
   msg,
   onSpeak,
@@ -93,13 +132,13 @@ function MessageBubble({
               : "bg-bot-bubble text-bot-bubble-foreground rounded-bl-sm border border-border",
           ].join(" ")}
         >
-          {msg.text}
+          {renderMessageContent(msg.text)}
         </div>
         {!isUser && (
           <div className="flex items-start gap-2">
             <button
               type="button"
-              onClick={() => onSpeak(msg.text)}
+              onClick={() => onSpeak(msg.text.replace(/^📎 \[.+?\]\(.+?\)$/gm, "").trim())}
               aria-label="Read aloud"
               className="ms-1 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs text-muted-foreground transition hover:text-foreground hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring"
             >
