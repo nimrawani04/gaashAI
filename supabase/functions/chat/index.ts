@@ -55,9 +55,9 @@ Deno.serve(async (req) => {
       });
     }
 
-    const groqKey = Deno.env.get("GROQ_API_KEY");
-    if (!groqKey) {
-      return new Response(JSON.stringify({ error: "GROQ_API_KEY not configured" }), {
+    const lovableKey = Deno.env.get("LOVABLE_API_KEY");
+    if (!lovableKey) {
+      return new Response(JSON.stringify({ error: "LOVABLE_API_KEY not configured" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
