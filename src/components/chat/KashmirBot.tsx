@@ -488,6 +488,13 @@ export default function KashmirBot({ session }: { session: Session }) {
                 کٲشُر مددگار
               </h1>
               <p className="truncate text-xs text-muted-foreground sm:text-sm">{t.subtitle}</p>
+              <span
+                title="Active AI backend: Lovable AI (fallbacks disabled)"
+                className="mt-0.5 inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary"
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                Lovable AI
+              </span>
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
