@@ -658,7 +658,53 @@ export default function KashmirBot({ session }: { session: Session }) {
       {/* Composer */}
       <div className="border-t border-border bg-card">
         <div className="mx-auto w-full max-w-3xl px-4 py-3 sm:py-4">
+          {attachments.length > 0 && (
+            <div className="mb-2 flex flex-wrap gap-2">
+              {attachments.map((a, i) => {
+                const isImg = a.type.startsWith("image/") || IMG_EXT_RE.test(a.name);
+                return (
+                  <div
+                    key={i}
+                    className="group relative flex items-center gap-2 rounded-lg border border-border bg-secondary/60 px-2 py-1.5 text-sm"
+                  >
+                    {isImg ? (
+                      <img src={a.url} alt={a.name} className="h-8 w-8 rounded object-cover" />
+                    ) : (
+                      <FileText className="h-5 w-5 text-muted-foreground" />
+                    )}
+                    <span className="max-w-[140px] truncate">{a.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeAttachment(i)}
+                      aria-label={`Remove ${a.name}`}
+                      className="rounded-full p-0.5 text-muted-foreground hover:bg-background hover:text-foreground"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
           <div className="flex items-end gap-2 sm:gap-3">
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv"
+              className="hidden"
+              onChange={handleFilesPicked}
+            />
+            <button
+              type="button"
+              onClick={handleAttachClick}
+              disabled={uploading}
+              aria-label="Attach file"
+              title="Attach file"
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+            >
+              {uploading ? <Loader2 className="h-6 w-6 animate-spin" /> : <Paperclip className="h-6 w-6" />}
+            </button>
             <div className="relative shrink-0">
               {isListening && <span className="mic-listening-ring" aria-hidden="true" />}
               <button
@@ -689,7 +735,7 @@ export default function KashmirBot({ session }: { session: Session }) {
             <button
               type="button"
               onClick={handleSend}
-              disabled={!input.trim() || isThinking}
+              disabled={(!input.trim() && attachments.length === 0) || isThinking || uploading}
               aria-label={t.send}
               className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
             >
