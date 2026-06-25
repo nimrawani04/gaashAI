@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Mic, Send, Volume2, VolumeX, LogOut, Menu, HeartHandshake } from "lucide-react";
+import { Mic, Send, Volume2, VolumeX, LogOut, Menu, HeartHandshake, Paperclip, X, FileText, Loader2 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { Session } from "@supabase/supabase-js";
@@ -69,6 +69,45 @@ function speak(text: string) {
   window.speechSynthesis.speak(utter);
 }
 
+const ATTACH_RE = /^📎 \[(.+?)\]\((.+?)\)$/;
+const IMG_EXT_RE = /\.(png|jpe?g|gif|webp|avif|svg)(\?|$)/i;
+
+function renderMessageContent(text: string) {
+  const lines = text.split("\n");
+  return lines.map((line, i) => {
+    const m = line.match(ATTACH_RE);
+    if (m) {
+      const [, name, url] = m;
+      const isImage = IMG_EXT_RE.test(url) || IMG_EXT_RE.test(name);
+      if (isImage) {
+        return (
+          <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="mt-2 block">
+            <img src={url} alt={name} className="max-h-64 max-w-full rounded-lg border border-border/50" />
+          </a>
+        );
+      }
+      return (
+        <a
+          key={i}
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 inline-flex items-center gap-2 rounded-lg border border-border/50 bg-background/40 px-3 py-2 text-sm underline-offset-2 hover:underline"
+        >
+          <FileText className="h-4 w-4 shrink-0" />
+          <span className="truncate max-w-[200px]">{name}</span>
+        </a>
+      );
+    }
+    return (
+      <span key={i}>
+        {line}
+        {i < lines.length - 1 && <br />}
+      </span>
+    );
+  });
+}
+
 function MessageBubble({
   msg,
   onSpeak,
@@ -93,13 +132,13 @@ function MessageBubble({
               : "bg-bot-bubble text-bot-bubble-foreground rounded-bl-sm border border-border",
           ].join(" ")}
         >
-          {msg.text}
+          {renderMessageContent(msg.text)}
         </div>
         {!isUser && (
           <div className="flex items-start gap-2">
             <button
               type="button"
-              onClick={() => onSpeak(msg.text)}
+              onClick={() => onSpeak(msg.text.replace(/^📎 \[.+?\]\(.+?\)$/gm, "").trim())}
               aria-label="Read aloud"
               className="ms-1 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs text-muted-foreground transition hover:text-foreground hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring"
             >
@@ -147,8 +186,11 @@ export default function KashmirBot({ session }: { session: Session }) {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [panelOpen, setPanelOpen] = useState(false);
+  const [attachments, setAttachments] = useState<{ name: string; url: string; type: string }[]>([]);
+  const [uploading, setUploading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const mutedRef = useRef(muted);
   const t = UI_STRINGS[lang];
 
@@ -378,23 +420,69 @@ export default function KashmirBot({ session }: { session: Session }) {
   };
 
 
+  const handleAttachClick = () => fileInputRef.current?.click();
+
+  const handleFilesPicked = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    e.target.value = "";
+    if (!files.length) return;
+    const MAX = 20 * 1024 * 1024;
+    setUploading(true);
+    try {
+      for (const file of files) {
+        if (file.size > MAX) {
+          toast.error(`${file.name}: file too large (max 20MB)`);
+          continue;
+        }
+        const safeName = file.name.replace(/[^\w.\-]+/g, "_");
+        const path = `${userId}/${currentSessionId ?? "pending"}/${crypto.randomUUID()}-${safeName}`;
+        const { error: upErr } = await supabase.storage
+          .from("chat-attachments")
+          .upload(path, file, { contentType: file.type, upsert: false });
+        if (upErr) {
+          toast.error(`Upload failed: ${file.name}`);
+          continue;
+        }
+        const { data: signed, error: signErr } = await supabase.storage
+          .from("chat-attachments")
+          .createSignedUrl(path, 60 * 60 * 24 * 365);
+        if (signErr || !signed) {
+          toast.error(`Could not get link for ${file.name}`);
+          continue;
+        }
+        setAttachments((prev) => [...prev, { name: file.name, url: signed.signedUrl, type: file.type }]);
+      }
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeAttachment = (idx: number) => {
+    setAttachments((prev) => prev.filter((_, i) => i !== idx));
+  };
+
   const handleSend = async () => {
     const text = input.trim();
-    if (!text || isThinking) return;
+    if ((!text && attachments.length === 0) || isThinking) return;
+    const attachLines = attachments.map((a) => `📎 [${a.name}](${a.url})`).join("\n");
+    const fullText = [text, attachLines].filter(Boolean).join("\n\n");
     const userMsg: Message = {
       id: crypto.randomUUID(),
       role: "user",
-      text,
+      text: fullText,
       timestamp: Date.now(),
       isRTL: isRTL(text),
     };
     setMessages((m) => [...m, userMsg]);
     setInput("");
+    setAttachments([]);
 
-    const sessionId = await ensureSession(text);
+    const sessionId = await ensureSession(text || attachments[0]?.name || "Attachment");
     if (sessionId) await persistMessage(sessionId, userMsg);
 
-    await sendWithRetry(userMsg, sessionId);
+    // Send only the text portion to the AI (it can't see the files)
+    const aiMsg: Message = { ...userMsg, text: text || "(user sent an attachment)" };
+    await sendWithRetry(aiMsg, sessionId);
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -570,7 +658,53 @@ export default function KashmirBot({ session }: { session: Session }) {
       {/* Composer */}
       <div className="border-t border-border bg-card">
         <div className="mx-auto w-full max-w-3xl px-4 py-3 sm:py-4">
+          {attachments.length > 0 && (
+            <div className="mb-2 flex flex-wrap gap-2">
+              {attachments.map((a, i) => {
+                const isImg = a.type.startsWith("image/") || IMG_EXT_RE.test(a.name);
+                return (
+                  <div
+                    key={i}
+                    className="group relative flex items-center gap-2 rounded-lg border border-border bg-secondary/60 px-2 py-1.5 text-sm"
+                  >
+                    {isImg ? (
+                      <img src={a.url} alt={a.name} className="h-8 w-8 rounded object-cover" />
+                    ) : (
+                      <FileText className="h-5 w-5 text-muted-foreground" />
+                    )}
+                    <span className="max-w-[140px] truncate">{a.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeAttachment(i)}
+                      aria-label={`Remove ${a.name}`}
+                      className="rounded-full p-0.5 text-muted-foreground hover:bg-background hover:text-foreground"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
           <div className="flex items-end gap-2 sm:gap-3">
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv"
+              className="hidden"
+              onChange={handleFilesPicked}
+            />
+            <button
+              type="button"
+              onClick={handleAttachClick}
+              disabled={uploading}
+              aria-label="Attach file"
+              title="Attach file"
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+            >
+              {uploading ? <Loader2 className="h-6 w-6 animate-spin" /> : <Paperclip className="h-6 w-6" />}
+            </button>
             <div className="relative shrink-0">
               {isListening && <span className="mic-listening-ring" aria-hidden="true" />}
               <button
@@ -601,7 +735,7 @@ export default function KashmirBot({ session }: { session: Session }) {
             <button
               type="button"
               onClick={handleSend}
-              disabled={!input.trim() || isThinking}
+              disabled={(!input.trim() && attachments.length === 0) || isThinking || uploading}
               aria-label={t.send}
               className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
             >
