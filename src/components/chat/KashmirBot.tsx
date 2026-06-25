@@ -188,6 +188,8 @@ export default function KashmirBot({ session }: { session: Session }) {
   const [panelOpen, setPanelOpen] = useState(false);
   const [attachments, setAttachments] = useState<{ name: string; url: string; type: string }[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragCounter = useRef(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
