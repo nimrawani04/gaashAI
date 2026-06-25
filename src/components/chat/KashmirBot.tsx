@@ -422,9 +422,7 @@ export default function KashmirBot({ session }: { session: Session }) {
 
   const handleAttachClick = () => fileInputRef.current?.click();
 
-  const handleFilesPicked = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files ?? []);
-    e.target.value = "";
+  const uploadFiles = async (files: File[]) => {
     if (!files.length) return;
     const MAX = 20 * 1024 * 1024;
     setUploading(true);
@@ -455,6 +453,12 @@ export default function KashmirBot({ session }: { session: Session }) {
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleFilesPicked = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    e.target.value = "";
+    await uploadFiles(files);
   };
 
   const removeAttachment = (idx: number) => {
