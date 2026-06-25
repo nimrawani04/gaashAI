@@ -99,16 +99,14 @@ Deno.serve(async (req) => {
     const systemPrompt = ragContext + BASE_SYSTEM_PROMPT;
     const recent = history.slice(-6).map((m) => ({ role: m.role, content: m.content }));
 
-    const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${groqKey}`,
+        "Lovable-API-Key": lovableKey,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "llama-3.1-8b-instant",
-        temperature: 0.7,
-        max_tokens: 300,
+        model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },
           ...recent,
@@ -117,15 +115,16 @@ Deno.serve(async (req) => {
       }),
     });
 
-    if (!groqRes.ok) {
-      const errText = await groqRes.text();
-      return new Response(JSON.stringify({ error: "groq_failed", detail: errText }), {
+    if (!aiRes.ok) {
+      const errText = await aiRes.text();
+      console.error("AI gateway failed", aiRes.status, errText);
+      return new Response(JSON.stringify({ error: "ai_failed", status: aiRes.status, detail: errText }), {
         status: 502,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const data = await groqRes.json();
+    const data = await aiRes.json();
     const reply = data?.choices?.[0]?.message?.content?.trim() || "";
 
     return new Response(JSON.stringify({ reply, used_rag: ragContext.length > 0 }), {
