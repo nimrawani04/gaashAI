@@ -348,6 +348,17 @@ export default function KashmirBot({ session }: { session: Session }) {
     const { reply, usedFallback } = await callChatBackend(userMsg.text, history);
     toast.dismiss(thinkingToast);
 
+    if (usedFallback) {
+      setIsThinking(false);
+      toast.error("معاف کریں، کچھ غلطی ہوئی — دوبارہ کوشش کریں", {
+        action: {
+          label: "Retry",
+          onClick: () => sendWithRetry(userMsg, sessionId),
+        },
+      });
+      return;
+    }
+
     const botMsg: Message = {
       id: crypto.randomUUID(),
       role: "assistant",
@@ -364,19 +375,8 @@ export default function KashmirBot({ session }: { session: Session }) {
         setMessages((m) => m.map((x) => (x.id === botMsg.id ? { ...x, dbId } : x)));
       }
     }
-
-    if (usedFallback) {
-      toast.error("معاف کریں، کچھ غلطی ہوئی — دوبارہ کوشش کریں", {
-        action: {
-          label: "Retry",
-          onClick: () => {
-            setMessages((m) => m.filter((x) => x.id !== botMsg.id));
-            sendWithRetry(userMsg, sessionId);
-          },
-        },
-      });
-    }
   };
+
 
   const handleSend = async () => {
     const text = input.trim();
