@@ -551,7 +551,44 @@ export default function KashmirBot({ session }: { session: Session }) {
   const inputIsRTL = isRTL(input) || lang !== "en";
 
   return (
-    <div className="flex h-[100dvh] flex-col bg-background">
+    <div
+      className="relative flex h-[100dvh] flex-col bg-background"
+      onDragEnter={(e) => {
+        if (!e.dataTransfer?.types?.includes("Files")) return;
+        e.preventDefault();
+        dragCounter.current += 1;
+        setIsDragging(true);
+      }}
+      onDragOver={(e) => {
+        if (!e.dataTransfer?.types?.includes("Files")) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "copy";
+      }}
+      onDragLeave={(e) => {
+        if (!e.dataTransfer?.types?.includes("Files")) return;
+        dragCounter.current = Math.max(0, dragCounter.current - 1);
+        if (dragCounter.current === 0) setIsDragging(false);
+      }}
+      onDrop={(e) => {
+        if (!e.dataTransfer?.types?.includes("Files")) return;
+        e.preventDefault();
+        dragCounter.current = 0;
+        setIsDragging(false);
+        const files = Array.from(e.dataTransfer.files ?? []);
+        if (files.length) void uploadFiles(files);
+      }}
+    >
+      {isDragging && (
+        <div className="pointer-events-none absolute inset-0 z-50 flex items-center justify-center bg-primary/10 backdrop-blur-sm">
+          <div className="m-4 flex flex-col items-center gap-3 rounded-3xl border-4 border-dashed border-primary bg-card/95 px-10 py-12 shadow-2xl">
+            <Paperclip className="h-12 w-12 text-primary" />
+            <p className="text-xl font-semibold text-foreground">Drop files to attach</p>
+            <p className="font-nastaliq text-lg text-muted-foreground" dir="rtl">
+              فائل یہاں چھوڑیں
+            </p>
+          </div>
+        </div>
+      )}
       <SessionsPanel
         open={panelOpen}
         onClose={() => setPanelOpen(false)}
