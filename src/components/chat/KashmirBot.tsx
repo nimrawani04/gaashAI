@@ -6,7 +6,7 @@ import type { Session } from "@supabase/supabase-js";
 import { supabase, type ChatSession, type ChatMessageRow } from "@/lib/supabase";
 import SessionsPanel from "@/components/chat/SessionsPanel";
 import FeedbackButtons from "@/components/chat/FeedbackButtons";
-import { findFallback } from "@/lib/fallbackQA";
+// Lovable AI is the only backend — no local fallback Q&A.
 
 type Role = "user" | "assistant";
 type Lang = "ks" | "ur" | "en";
@@ -319,7 +319,7 @@ export default function KashmirBot({ session }: { session: Session }) {
       en: "english",
     };
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
     try {
       const { data, error } = await supabase.functions.invoke("chat", {
         body: { message: text, language: langMap[lang], history },
@@ -334,9 +334,10 @@ export default function KashmirBot({ session }: { session: Session }) {
       if (err?.name === "AbortError") {
         toast.error("جواب آنے میں دیر ہو رہی ہے — دوبارہ کوشش کریں");
       }
-      return { reply: findFallback(text), usedFallback: true };
+      return { reply: "", usedFallback: true };
     }
   };
+
 
   const sendWithRetry = async (userMsg: Message, sessionId: string | null) => {
     setIsThinking(true);
@@ -346,6 +347,17 @@ export default function KashmirBot({ session }: { session: Session }) {
 
     const { reply, usedFallback } = await callChatBackend(userMsg.text, history);
     toast.dismiss(thinkingToast);
+
+    if (usedFallback) {
+      setIsThinking(false);
+      toast.error("معاف کریں، کچھ غلطی ہوئی — دوبارہ کوشش کریں", {
+        action: {
+          label: "Retry",
+          onClick: () => sendWithRetry(userMsg, sessionId),
+        },
+      });
+      return;
+    }
 
     const botMsg: Message = {
       id: crypto.randomUUID(),
@@ -363,19 +375,8 @@ export default function KashmirBot({ session }: { session: Session }) {
         setMessages((m) => m.map((x) => (x.id === botMsg.id ? { ...x, dbId } : x)));
       }
     }
-
-    if (usedFallback) {
-      toast.error("معاف کریں، کچھ غلطی ہوئی — دوبارہ کوشش کریں", {
-        action: {
-          label: "Retry",
-          onClick: () => {
-            setMessages((m) => m.filter((x) => x.id !== botMsg.id));
-            sendWithRetry(userMsg, sessionId);
-          },
-        },
-      });
-    }
   };
+
 
   const handleSend = async () => {
     const text = input.trim();
@@ -487,6 +488,13 @@ export default function KashmirBot({ session }: { session: Session }) {
                 کٲشُر مددگار
               </h1>
               <p className="truncate text-xs text-muted-foreground sm:text-sm">{t.subtitle}</p>
+              <span
+                title="Active AI backend: Lovable AI (fallbacks disabled)"
+                className="mt-0.5 inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary"
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                Lovable AI
+              </span>
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
