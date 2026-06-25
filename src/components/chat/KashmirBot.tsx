@@ -319,7 +319,7 @@ export default function KashmirBot({ session }: { session: Session }) {
       en: "english",
     };
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
     try {
       const { data, error } = await supabase.functions.invoke("chat", {
         body: { message: text, language: langMap[lang], history },
@@ -334,9 +334,10 @@ export default function KashmirBot({ session }: { session: Session }) {
       if (err?.name === "AbortError") {
         toast.error("جواب آنے میں دیر ہو رہی ہے — دوبارہ کوشش کریں");
       }
-      return { reply: findFallback(text), usedFallback: true };
+      return { reply: "", usedFallback: true };
     }
   };
+
 
   const sendWithRetry = async (userMsg: Message, sessionId: string | null) => {
     setIsThinking(true);
