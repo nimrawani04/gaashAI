@@ -420,23 +420,69 @@ export default function KashmirBot({ session }: { session: Session }) {
   };
 
 
+  const handleAttachClick = () => fileInputRef.current?.click();
+
+  const handleFilesPicked = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    e.target.value = "";
+    if (!files.length) return;
+    const MAX = 20 * 1024 * 1024;
+    setUploading(true);
+    try {
+      for (const file of files) {
+        if (file.size > MAX) {
+          toast.error(`${file.name}: file too large (max 20MB)`);
+          continue;
+        }
+        const safeName = file.name.replace(/[^\w.\-]+/g, "_");
+        const path = `${userId}/${currentSessionId ?? "pending"}/${crypto.randomUUID()}-${safeName}`;
+        const { error: upErr } = await supabase.storage
+          .from("chat-attachments")
+          .upload(path, file, { contentType: file.type, upsert: false });
+        if (upErr) {
+          toast.error(`Upload failed: ${file.name}`);
+          continue;
+        }
+        const { data: signed, error: signErr } = await supabase.storage
+          .from("chat-attachments")
+          .createSignedUrl(path, 60 * 60 * 24 * 365);
+        if (signErr || !signed) {
+          toast.error(`Could not get link for ${file.name}`);
+          continue;
+        }
+        setAttachments((prev) => [...prev, { name: file.name, url: signed.signedUrl, type: file.type }]);
+      }
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeAttachment = (idx: number) => {
+    setAttachments((prev) => prev.filter((_, i) => i !== idx));
+  };
+
   const handleSend = async () => {
     const text = input.trim();
-    if (!text || isThinking) return;
+    if ((!text && attachments.length === 0) || isThinking) return;
+    const attachLines = attachments.map((a) => `📎 [${a.name}](${a.url})`).join("\n");
+    const fullText = [text, attachLines].filter(Boolean).join("\n\n");
     const userMsg: Message = {
       id: crypto.randomUUID(),
       role: "user",
-      text,
+      text: fullText,
       timestamp: Date.now(),
       isRTL: isRTL(text),
     };
     setMessages((m) => [...m, userMsg]);
     setInput("");
+    setAttachments([]);
 
-    const sessionId = await ensureSession(text);
+    const sessionId = await ensureSession(text || attachments[0]?.name || "Attachment");
     if (sessionId) await persistMessage(sessionId, userMsg);
 
-    await sendWithRetry(userMsg, sessionId);
+    // Send only the text portion to the AI (it can't see the files)
+    const aiMsg: Message = { ...userMsg, text: text || "(user sent an attachment)" };
+    await sendWithRetry(aiMsg, sessionId);
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
