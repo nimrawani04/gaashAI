@@ -88,8 +88,8 @@ Deno.serve(async (req) => {
       );
       const { data: matches } = await supabase.rpc("match_knowledge", {
         query_embedding: queryEmbedding,
-        match_threshold: 0.6,
-        match_count: 3,
+        match_threshold: 0.3,
+        match_count: 5,
       });
 
       if (matches && matches.length > 0) {
