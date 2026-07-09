@@ -266,7 +266,7 @@ function AdminPage() {
                 disabled={busy === "seed"}
                 className="rounded-md border px-4 py-2 text-sm disabled:opacity-50"
               >
-                {busy === "seed" ? "Seeding…" : "Seed 5 defaults"}
+                {busy === "seed" ? "Seeding…" : `Seed ${SEED_ENTRIES.length} defaults`}
               </button>
             </div>
           </form>
