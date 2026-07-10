@@ -336,7 +336,7 @@ function AdminPage() {
             ))}
             {!loading && rows.length === 0 && (
               <li className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
-                No entries yet. Click "Seed 5 defaults" to bootstrap the knowledge base.
+                No entries yet. Click "Seed {SEED_ENTRIES.length} defaults" to bootstrap the knowledge base.
               </li>
             )}
           </ul>
