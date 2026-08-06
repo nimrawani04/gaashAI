@@ -181,11 +181,15 @@ export default function KashmirBot({ session }: { session: Session }) {
 
   useEffect(() => { mutedRef.current = muted; }, [muted]);
 
-  // Warm up the voice list (loads asynchronously in Chrome/Safari)
+  // Warm up the voice list + unlock audio on the first user interaction
   useEffect(() => {
     if (!ttsSupported()) return;
     void getVoices();
-    return () => stopSpeaking();
+    const removeUnlock = installTtsUnlock();
+    return () => {
+      removeUnlock();
+      stopSpeaking();
+    };
   }, []);
 
   // Load sessions list + most recent session's messages
