@@ -411,7 +411,7 @@ export default function KashmirBot({ session }: { session: Session }) {
     };
     setMessages((m) => [...m, botMsg]);
     setIsThinking(false);
-    if (!mutedRef.current) speak(reply);
+    if (!mutedRef.current) void handleSpeak(reply, botMsg.id);
     if (sessionId) {
       const dbId = await persistMessage(sessionId, botMsg);
       if (dbId) {
