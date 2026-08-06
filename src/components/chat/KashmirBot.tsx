@@ -88,10 +88,12 @@ function MessageBubble({
   msg,
   onSpeak,
   userId,
+  speaking,
 }: {
   msg: Message;
-  onSpeak: (text: string) => void;
+  onSpeak: (text: string, id: string) => void;
   userId: string;
+  speaking: boolean;
 }) {
   const dir = msg.isRTL ? "rtl" : "ltr";
   const isUser = msg.role === "user";
@@ -114,9 +116,13 @@ function MessageBubble({
           <div className="flex items-start gap-2">
             <button
               type="button"
-              onClick={() => onSpeak(msg.text.replace(/^📎 \[.+?\]\(.+?\)$/gm, "").trim())}
-              aria-label="Read aloud"
-              className="ms-1 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs text-muted-foreground transition hover:text-foreground hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring"
+              onClick={() => onSpeak(msg.text, msg.id)}
+              aria-label={speaking ? "Stop reading" : "Read aloud"}
+              aria-pressed={speaking}
+              className={[
+                "ms-1 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs transition hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring",
+                speaking ? "text-primary bg-secondary animate-pulse" : "text-muted-foreground hover:text-foreground",
+              ].join(" ")}
             >
               <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
             </button>
