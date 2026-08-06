@@ -174,16 +174,11 @@ export default function KashmirBot({ session }: { session: Session }) {
 
   useEffect(() => { mutedRef.current = muted; }, [muted]);
 
-  // Load voices
+  // Warm up the voice list (loads asynchronously in Chrome/Safari)
   useEffect(() => {
-    if (typeof window === "undefined" || !window.speechSynthesis) return;
-    const load = () => window.speechSynthesis.getVoices();
-    load();
-    window.speechSynthesis.onvoiceschanged = load;
-    return () => {
-      window.speechSynthesis.onvoiceschanged = null;
-      window.speechSynthesis.cancel();
-    };
+    if (!ttsSupported()) return;
+    void getVoices();
+    return () => stopSpeaking();
   }, []);
 
   // Load sessions list + most recent session's messages
