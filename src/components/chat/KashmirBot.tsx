@@ -6,7 +6,7 @@ import type { Session } from "@supabase/supabase-js";
 import { supabase, type ChatSession, type ChatMessageRow } from "@/lib/supabase";
 import SessionsPanel from "@/components/chat/SessionsPanel";
 import FeedbackButtons from "@/components/chat/FeedbackButtons";
-import { speak, stopSpeaking, ttsSupported, getVoices } from "@/lib/tts";
+import { speak, stopSpeaking, ttsSupported, getVoices, unlockTts, installTtsUnlock } from "@/lib/tts";
 // Lovable AI is the only backend — no local fallback Q&A.
 
 type Role = "user" | "assistant";
