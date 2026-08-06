@@ -689,7 +689,14 @@ export default function KashmirBot({ session }: { session: Session }) {
           ) : (
             <>
               {messages.map((m) => (
-                <MessageBubble key={m.id} msg={m} onSpeak={handleSpeak} userId={userId} />
+                <MessageBubble
+                  key={m.id}
+                  msg={m}
+                  onSpeak={handleSpeak}
+                  userId={userId}
+                  speaking={speakingId === m.id}
+                />
+
               ))}
               {isThinking && <TypingIndicator />}
             </>
