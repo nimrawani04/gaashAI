@@ -1,4 +1,4 @@
-# کٲشُر مددگار — Kashur Connect
+GaashAI-گاش اے آئی
 
 > **Your Kashmiri AI Assistant** — a multilingual chatbot that helps users communicate in Kashmiri (کٲشُر), Urdu, and English.
 
