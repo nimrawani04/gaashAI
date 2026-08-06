@@ -230,19 +230,40 @@ export default function KashmirBot({ session }: { session: Session }) {
     setLang(LANG_ORDER[(idx + 1) % LANG_ORDER.length]);
   };
 
-  const handleSpeak = (text: string) => {
-    if (typeof window === "undefined" || !window.speechSynthesis) {
+  const handleSpeak = async (text: string, id?: string) => {
+    if (!ttsSupported()) {
       toast.error("آپ کا براؤزر آواز کی سہولت نہیں دیتا");
       return;
     }
-    speak(text);
+    // Clicking the speaker of the message already being read stops it.
+    if (id && speakingId === id) {
+      stopSpeaking();
+      setSpeakingId(null);
+      return;
+    }
+    setSpeakingId(id ?? "auto");
+    const result = await speak(text, {
+      onEnd: () => setSpeakingId(null),
+      onError: (reason) => {
+        setSpeakingId(null);
+        if (reason === "unsupported" || reason === "no-audio") {
+          toast.error("آپ کا براؤزر آواز کی سہولت نہیں دیتا");
+        } else if (reason === "not-allowed") {
+          toast.error("آواز کی اجازت نہیں — اسکرین پر ٹیپ کر کے دوبارہ کوشش کریں");
+        } else if (reason !== "empty") {
+          toast.error("آواز چلانے میں مسئلہ ہوا — دوبارہ کوشش کریں");
+        }
+      },
+    });
+    if (result !== "ok") setSpeakingId(null);
   };
 
   const toggleMute = () => {
     setMuted((m) => {
       const next = !m;
-      if (next && typeof window !== "undefined" && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
+      if (next) {
+        stopSpeaking();
+        setSpeakingId(null);
       }
       return next;
     });
