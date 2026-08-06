@@ -220,5 +220,75 @@ export async function speak(rawText: string, opts: SpeakOptions = {}): Promise<S
     return "error";
   }
 
+  // Watchdog: inside sandboxed iframes / before a user gesture the utterance
+  // can sit queued forever without ever firing `start`. Detect and report it.
+  setTimeout(() => {
+    if (started || errored) return;
+    const cur = synth();
+    if (!cur) return;
+    if (cur.speaking || cur.pending) {
+      // Try one nudge before giving up.
+      cur.pause();
+      cur.resume();
+    }
+    setTimeout(() => {
+      if (started || errored) return;
+      errored = true;
+      stopSpeaking();
+      opts.onEnd?.();
+      opts.onError?.(ttsUnlocked ? "no-audio" : "blocked");
+    }, 1200);
+  }, 1800);
+
   return errored ? "error" : "ok";
 }
+
+// ---------------------------------------------------------------------------
+// Autoplay unlock
+// ---------------------------------------------------------------------------
+// Browsers (and sandboxed preview iframes especially) refuse to produce audio
+// until the page has seen a real user gesture. Speaking a silent utterance on
+// the first interaction "unlocks" the engine so later auto-reads work.
+
+let ttsUnlocked = false;
+let unlockBound = false;
+
+export function isTtsUnlocked() {
+  return ttsUnlocked;
+}
+
+/** Call once from a user gesture (or let installTtsUnlock do it for you). */
+export function unlockTts() {
+  const s = synth();
+  if (!s || ttsUnlocked) return;
+  try {
+    const u = new SpeechSynthesisUtterance(" ");
+    u.volume = 0;
+    u.rate = 10;
+    u.onend = () => {
+      ttsUnlocked = true;
+    };
+    u.onerror = () => {
+      ttsUnlocked = true;
+    };
+    s.resume();
+    s.speak(u);
+    ttsUnlocked = true;
+  } catch {
+    /* noop */
+  }
+}
+
+/** Binds one-shot listeners that unlock TTS on the first user interaction. */
+export function installTtsUnlock(): () => void {
+  if (typeof window === "undefined" || unlockBound) return () => {};
+  unlockBound = true;
+  const handler = () => unlockTts();
+  const events: (keyof WindowEventMap)[] = ["pointerdown", "keydown", "touchstart"];
+  events.forEach((e) => window.addEventListener(e, handler, { once: true, passive: true }));
+  return () => {
+    events.forEach((e) => window.removeEventListener(e, handler));
+    unlockBound = false;
+  };
+}
+

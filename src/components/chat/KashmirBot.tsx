@@ -6,7 +6,7 @@ import type { Session } from "@supabase/supabase-js";
 import { supabase, type ChatSession, type ChatMessageRow } from "@/lib/supabase";
 import SessionsPanel from "@/components/chat/SessionsPanel";
 import FeedbackButtons from "@/components/chat/FeedbackButtons";
-import { speak, stopSpeaking, ttsSupported, getVoices } from "@/lib/tts";
+import { speak, stopSpeaking, ttsSupported, getVoices, unlockTts, installTtsUnlock } from "@/lib/tts";
 // Lovable AI is the only backend — no local fallback Q&A.
 
 type Role = "user" | "assistant";
@@ -181,11 +181,15 @@ export default function KashmirBot({ session }: { session: Session }) {
 
   useEffect(() => { mutedRef.current = muted; }, [muted]);
 
-  // Warm up the voice list (loads asynchronously in Chrome/Safari)
+  // Warm up the voice list + unlock audio on the first user interaction
   useEffect(() => {
     if (!ttsSupported()) return;
     void getVoices();
-    return () => stopSpeaking();
+    const removeUnlock = installTtsUnlock();
+    return () => {
+      removeUnlock();
+      stopSpeaking();
+    };
   }, []);
 
   // Load sessions list + most recent session's messages
@@ -248,15 +252,18 @@ export default function KashmirBot({ session }: { session: Session }) {
       setSpeakingId(null);
       return;
     }
+    unlockTts();
     setSpeakingId(id ?? "auto");
     const result = await speak(text, {
       onEnd: () => setSpeakingId(null),
       onError: (reason) => {
         setSpeakingId(null);
-        if (reason === "unsupported" || reason === "no-audio") {
+        if (reason === "unsupported") {
           toast.error("آپ کا براؤزر آواز کی سہولت نہیں دیتا");
-        } else if (reason === "not-allowed") {
-          toast.error("آواز کی اجازت نہیں — اسکرین پر ٹیپ کر کے دوبارہ کوشش کریں");
+        } else if (reason === "blocked" || reason === "not-allowed") {
+          toast.error("آواز شروع کرنے کے لیے اسکرین پر ایک بار ٹیپ کریں، پھر اسپیکر دبائیں");
+        } else if (reason === "no-audio") {
+          toast.error("آواز نہیں چلی — سسٹم کی آواز آن ہے یہ چیک کریں");
         } else if (reason !== "empty") {
           toast.error("آواز چلانے میں مسئلہ ہوا — دوبارہ کوشش کریں");
         }
