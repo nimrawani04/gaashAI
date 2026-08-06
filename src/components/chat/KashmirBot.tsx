@@ -159,6 +159,7 @@ export default function KashmirBot({ session }: { session: Session }) {
   const [isThinking, setIsThinking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [muted, setMuted] = useState(false);
+  const [speakingId, setSpeakingId] = useState<string | null>(null);
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [panelOpen, setPanelOpen] = useState(false);
