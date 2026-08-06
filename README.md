@@ -1,48 +1,145 @@
-# Kashur Connect
+# کٲشُر مددگار — Kashur Connect
 
-Build a React PWA called "KashmirBot" using Vite + TypeScript + Tailwind CSS.
+> **Your Kashmiri AI Assistant** — a multilingual chatbot that helps users communicate in Kashmiri (کٲشُر), Urdu, and English.
 
-Create a full-screen chat interface with these requirements:
+---
 
-- RTL support for Kashmiri/Urdu text (Noto Nastaliq Urdu font from Google Fonts)
+## ✨ Features
 
-- A message bubble component that auto-detects if text is RTL or LTR and applies direction accordingly
+| Feature | Details |
+|---|---|
+| **Trilingual Chat** | Kashmiri (Nastaliq script), Urdu, and English — switch with one tap |
+| **AI-Powered Responses** | Powered by Lovable AI via Supabase Edge Functions |
+| **Read Aloud (TTS)** | Browser text-to-speech with automatic voice selection for Urdu/Kashmiri |
+| **Voice Input** | Speak your message using the built-in microphone button |
+| **RTL Support** | Automatic right-to-left layout for Kashmiri and Urdu text |
+| **Chat Sessions** | Persistent conversation history stored in Supabase |
+| **File Attachments** | Drag & drop or click to attach images, PDFs, and documents |
+| **Community Contributions** | Users can submit Kashmiri phrases to grow the knowledge base |
+| **Feedback System** | Thumbs up/down on bot responses to improve quality |
+| **Accessibility** | Large fonts, high contrast, and elder-friendly design |
 
-- A text input at the bottom with a send button and a microphone button (mic button is UI only for now, we'll wire it later)
+---
 
-- A language toggle in the header: "کٲشُر | Urdu | English" — clicking switches the UI language label
+## 🛠️ Tech Stack
 
-- Large accessible font sizes (minimum 18px for chat bubbles) and high-contrast colors — this app is for elderly users
+- **Framework:** [TanStack Start](https://tanstack.com/start) + [React 19](https://react.dev)
+- **Bundler:** [Vite 8](https://vite.dev)
+- **Styling:** [Tailwind CSS 4](https://tailwindcss.com)
+- **Backend:** [Supabase](https://supabase.com) (Auth, Database, Edge Functions, Storage)
+- **Language:** TypeScript
+- **UI Components:** [Radix UI](https://www.radix-ui.com) + [shadcn/ui](https://ui.shadcn.com)
+- **Deployment:** Cloudflare (via Nitro)
 
-- A top header with the app name in Kashmiri script: "کٲشُر مددگار" and a subtitle "Your Kashmiri Assistant"
+---
 
-- Empty state with the message: "سلام! میٚ کیا مدد کٔری آپ کٕس?" displayed in the center when no messages exist
+## 📁 Project Structure
 
-- Mobile-first responsive layout
+```
+kashmiriBot/
+├── src/
+│   ├── components/
+│   │   ├── chat/           # KashmirBot, SessionsPanel, FeedbackButtons
+│   │   ├── auth/           # Authentication components
+│   │   ├── admin/          # Admin dashboard
+│   │   └── ui/             # Reusable shadcn/ui components
+│   ├── lib/
+│   │   ├── tts.ts          # Text-to-speech engine (voice selection, chunking)
+│   │   └── supabase.ts     # Supabase client
+│   ├── routes/
+│   │   ├── index.tsx        # Main chat page
+│   │   ├── auth.tsx         # Login / signup
+│   │   ├── contribute.tsx   # Community contribution form
+│   │   └── admin.tsx        # Admin dashboard
+│   └── styles.css           # Global styles & design tokens
+├── supabase/
+│   ├── functions/           # Edge Functions (chat, embed)
+│   └── migrations/          # Database migrations
+├── .env.example             # Environment variable template
+└── package.json
+```
 
-- A typing indicator (three animated dots) that shows when bot is "thinking"
+---
 
-- Store chat messages in React state: { id, role: 'user'|'assistant', text, timestamp, isRTL }
+## 🚀 Getting Started
 
-Do not connect any API yet. Use a mock function that returns a hardcoded Kashmiri reply after 1.5 seconds to simulate the bot responding.
+### Prerequisites
 
-This project was built with [Lovable](https://lovable.dev).
+- [Node.js](https://nodejs.org) v18+ (or [Bun](https://bun.sh))
+- A [Supabase](https://supabase.com) project
 
-## Build with Lovable
+### 1. Clone the repository
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/f10d8ce1-204b-4d41-9dbb-3725d39495e3).
+```bash
+git clone https://github.com/nimrawani04/kashmiriBot.git
+cd kashmiriBot
+```
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+### 2. Install dependencies
 
-## Development
+```bash
+npm install
+```
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+### 3. Set up environment variables
 
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+Copy the example file and fill in your Supabase credentials:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your values:
+
+```env
+VITE_SUPABASE_URL=https://your-project-ref.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-public-key
+```
+
+> ⚠️ **Never commit your `.env` file.** It is excluded via `.gitignore`.
+
+### 4. Run the dev server
+
+```bash
 npm run dev
 ```
+
+The app will be available at `http://localhost:5173`.
+
+---
+
+## 📦 Scripts
+
+| Command | Description |
+|---|---|
+| `npm run dev` | Start the development server |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview the production build |
+| `npm run lint` | Run ESLint |
+| `npm run format` | Format code with Prettier |
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! You can help by:
+
+1. **Adding Kashmiri phrases** — Use the in-app "دیو مدد" (Contribute) page
+2. **Reporting bugs** — Open a GitHub issue
+3. **Submitting PRs** — Fork, branch, and submit a pull request
+
+---
+
+## 🔗 Lovable Integration
+
+This project is connected to [Lovable](https://lovable.dev). Changes pushed to `main` sync back into the Lovable editor.
+
+- **Lovable Editor:** [Open in Lovable](https://lovable.dev/projects/f10d8ce1-204b-4d41-9dbb-3725d39495e3)
+- Every change made in Lovable is committed to this repository
+- Avoid force-pushing or rewriting published git history
+
+---
+
+## 📄 License
+
+This project is private. All rights reserved.

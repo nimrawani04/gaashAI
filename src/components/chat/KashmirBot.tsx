@@ -252,6 +252,8 @@ export default function KashmirBot({ session }: { session: Session }) {
       setSpeakingId(null);
       return;
     }
+    // Unlock TTS if this is the first user-triggered speak. The unlock is
+    // awaited inside speak() so we don't race the silent utterance.
     unlockTts();
     setSpeakingId(id ?? "auto");
     const result = await speak(text, {

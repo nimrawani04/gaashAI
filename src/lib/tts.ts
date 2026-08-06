@@ -137,9 +137,21 @@ export async function speak(rawText: string, opts: SpeakOptions = {}): Promise<S
     return "error";
   }
 
+  // Make sure any previous unlock utterance has settled before we cancel.
+  await waitForUnlock();
+
   stopSpeaking();
   // cancel() is async in Chrome; give the queue a tick before re-queuing.
-  await new Promise((r) => setTimeout(r, 60));
+  await new Promise((r) => setTimeout(r, 80));
+
+  // On some devices Chrome leaves the queue in a "paused" state after cancel().
+  // One extra resume() + a tiny yield clears it.
+  try {
+    s.resume();
+  } catch {
+    /* noop */
+  }
+  await new Promise((r) => setTimeout(r, 20));
 
   const voices = await getVoices();
   const voice = pickVoice(voices);
@@ -212,8 +224,9 @@ export async function speak(rawText: string, opts: SpeakOptions = {}): Promise<S
     cur.resume();
   }, 10_000);
 
-  // Give the engine a moment; if nothing is queued at all, report failure.
-  await new Promise((r) => setTimeout(r, 250));
+  // Give the engine time to start; on slower devices voice loading can take
+  // longer than 250ms. Use 800ms so we don't falsely abort.
+  await new Promise((r) => setTimeout(r, 800));
   if (!s.speaking && !s.pending && !started) {
     stopKeepAlive();
     opts.onError?.("no-audio");
@@ -237,8 +250,8 @@ export async function speak(rawText: string, opts: SpeakOptions = {}): Promise<S
       stopSpeaking();
       opts.onEnd?.();
       opts.onError?.(ttsUnlocked ? "no-audio" : "blocked");
-    }, 1200);
-  }, 1800);
+    }, 2000);
+  }, 2500);
 
   return errored ? "error" : "ok";
 }
@@ -252,31 +265,48 @@ export async function speak(rawText: string, opts: SpeakOptions = {}): Promise<S
 
 let ttsUnlocked = false;
 let unlockBound = false;
+let unlockPromise: Promise<void> | null = null;
 
 export function isTtsUnlocked() {
   return ttsUnlocked;
+}
+
+/**
+ * Wait for any in-flight unlock attempt to settle.
+ * This prevents the race where speak() cancels the unlock utterance.
+ */
+function waitForUnlock(): Promise<void> {
+  return unlockPromise ?? Promise.resolve();
 }
 
 /** Call once from a user gesture (or let installTtsUnlock do it for you). */
 export function unlockTts() {
   const s = synth();
   if (!s || ttsUnlocked) return;
-  try {
-    const u = new SpeechSynthesisUtterance(" ");
-    u.volume = 0;
-    u.rate = 10;
-    u.onend = () => {
+  if (unlockPromise) return; // already in progress
+
+  unlockPromise = new Promise<void>((resolve) => {
+    try {
+      const u = new SpeechSynthesisUtterance(" ");
+      u.volume = 0;
+      u.rate = 10;
+      const done = () => {
+        ttsUnlocked = true;
+        unlockPromise = null;
+        resolve();
+      };
+      u.onend = done;
+      u.onerror = done;
+      // Safety timeout — some browsers never fire events for silent utterances
+      setTimeout(done, 500);
+      s.resume();
+      s.speak(u);
+    } catch {
       ttsUnlocked = true;
-    };
-    u.onerror = () => {
-      ttsUnlocked = true;
-    };
-    s.resume();
-    s.speak(u);
-    ttsUnlocked = true;
-  } catch {
-    /* noop */
-  }
+      unlockPromise = null;
+      resolve();
+    }
+  });
 }
 
 /** Binds one-shot listeners that unlock TTS on the first user interaction. */
@@ -291,4 +321,3 @@ export function installTtsUnlock(): () => void {
     unlockBound = false;
   };
 }
-
