@@ -41,33 +41,8 @@ const UI_STRINGS: Record<Lang, {
 
 const LANG_ORDER: Lang[] = ["ks", "ur", "en"];
 
-function pickVoice(): SpeechSynthesisVoice | null {
-  if (typeof window === "undefined" || !window.speechSynthesis) return null;
-  const voices = window.speechSynthesis.getVoices();
-  if (!voices.length) return null;
-  return (
-    voices.find((v) => v.lang === "ur-PK") ||
-    voices.find((v) => v.lang.startsWith("ur")) ||
-    voices.find((v) => v.lang === "hi-IN") ||
-    voices.find((v) => v.lang.startsWith("hi")) ||
-    null
-  );
-}
+// TTS helpers live in @/lib/tts (voice loading, chunking, Chrome quirks).
 
-function speak(text: string) {
-  if (typeof window === "undefined" || !window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance(text);
-  const voice = pickVoice();
-  if (voice) {
-    utter.voice = voice;
-    utter.lang = voice.lang;
-  } else {
-    utter.lang = "ur-PK";
-  }
-  utter.rate = 0.95;
-  window.speechSynthesis.speak(utter);
-}
 
 const ATTACH_RE = /^📎 \[(.+?)\]\((.+?)\)$/;
 const IMG_EXT_RE = /\.(png|jpe?g|gif|webp|avif|svg)(\?|$)/i;
