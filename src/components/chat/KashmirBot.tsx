@@ -248,15 +248,18 @@ export default function KashmirBot({ session }: { session: Session }) {
       setSpeakingId(null);
       return;
     }
+    unlockTts();
     setSpeakingId(id ?? "auto");
     const result = await speak(text, {
       onEnd: () => setSpeakingId(null),
       onError: (reason) => {
         setSpeakingId(null);
-        if (reason === "unsupported" || reason === "no-audio") {
+        if (reason === "unsupported") {
           toast.error("آپ کا براؤزر آواز کی سہولت نہیں دیتا");
-        } else if (reason === "not-allowed") {
-          toast.error("آواز کی اجازت نہیں — اسکرین پر ٹیپ کر کے دوبارہ کوشش کریں");
+        } else if (reason === "blocked" || reason === "not-allowed") {
+          toast.error("آواز شروع کرنے کے لیے اسکرین پر ایک بار ٹیپ کریں، پھر اسپیکر دبائیں");
+        } else if (reason === "no-audio") {
+          toast.error("آواز نہیں چلی — سسٹم کی آواز آن ہے یہ چیک کریں");
         } else if (reason !== "empty") {
           toast.error("آواز چلانے میں مسئلہ ہوا — دوبارہ کوشش کریں");
         }
