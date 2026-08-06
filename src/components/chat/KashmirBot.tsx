@@ -6,6 +6,7 @@ import type { Session } from "@supabase/supabase-js";
 import { supabase, type ChatSession, type ChatMessageRow } from "@/lib/supabase";
 import SessionsPanel from "@/components/chat/SessionsPanel";
 import FeedbackButtons from "@/components/chat/FeedbackButtons";
+import { speak, stopSpeaking, ttsSupported, getVoices } from "@/lib/tts";
 // Lovable AI is the only backend — no local fallback Q&A.
 
 type Role = "user" | "assistant";
@@ -41,33 +42,8 @@ const UI_STRINGS: Record<Lang, {
 
 const LANG_ORDER: Lang[] = ["ks", "ur", "en"];
 
-function pickVoice(): SpeechSynthesisVoice | null {
-  if (typeof window === "undefined" || !window.speechSynthesis) return null;
-  const voices = window.speechSynthesis.getVoices();
-  if (!voices.length) return null;
-  return (
-    voices.find((v) => v.lang === "ur-PK") ||
-    voices.find((v) => v.lang.startsWith("ur")) ||
-    voices.find((v) => v.lang === "hi-IN") ||
-    voices.find((v) => v.lang.startsWith("hi")) ||
-    null
-  );
-}
+// TTS helpers live in @/lib/tts (voice loading, chunking, Chrome quirks).
 
-function speak(text: string) {
-  if (typeof window === "undefined" || !window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance(text);
-  const voice = pickVoice();
-  if (voice) {
-    utter.voice = voice;
-    utter.lang = voice.lang;
-  } else {
-    utter.lang = "ur-PK";
-  }
-  utter.rate = 0.95;
-  window.speechSynthesis.speak(utter);
-}
 
 const ATTACH_RE = /^📎 \[(.+?)\]\((.+?)\)$/;
 const IMG_EXT_RE = /\.(png|jpe?g|gif|webp|avif|svg)(\?|$)/i;
@@ -112,10 +88,12 @@ function MessageBubble({
   msg,
   onSpeak,
   userId,
+  speaking,
 }: {
   msg: Message;
-  onSpeak: (text: string) => void;
+  onSpeak: (text: string, id: string) => void;
   userId: string;
+  speaking: boolean;
 }) {
   const dir = msg.isRTL ? "rtl" : "ltr";
   const isUser = msg.role === "user";
@@ -138,9 +116,13 @@ function MessageBubble({
           <div className="flex items-start gap-2">
             <button
               type="button"
-              onClick={() => onSpeak(msg.text.replace(/^📎 \[.+?\]\(.+?\)$/gm, "").trim())}
-              aria-label="Read aloud"
-              className="ms-1 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs text-muted-foreground transition hover:text-foreground hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring"
+              onClick={() => onSpeak(msg.text, msg.id)}
+              aria-label={speaking ? "Stop reading" : "Read aloud"}
+              aria-pressed={speaking}
+              className={[
+                "ms-1 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs transition hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring",
+                speaking ? "text-primary bg-secondary animate-pulse" : "text-muted-foreground hover:text-foreground",
+              ].join(" ")}
             >
               <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
             </button>
@@ -183,6 +165,7 @@ export default function KashmirBot({ session }: { session: Session }) {
   const [isThinking, setIsThinking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [muted, setMuted] = useState(false);
+  const [speakingId, setSpeakingId] = useState<string | null>(null);
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [panelOpen, setPanelOpen] = useState(false);
@@ -198,16 +181,11 @@ export default function KashmirBot({ session }: { session: Session }) {
 
   useEffect(() => { mutedRef.current = muted; }, [muted]);
 
-  // Load voices
+  // Warm up the voice list (loads asynchronously in Chrome/Safari)
   useEffect(() => {
-    if (typeof window === "undefined" || !window.speechSynthesis) return;
-    const load = () => window.speechSynthesis.getVoices();
-    load();
-    window.speechSynthesis.onvoiceschanged = load;
-    return () => {
-      window.speechSynthesis.onvoiceschanged = null;
-      window.speechSynthesis.cancel();
-    };
+    if (!ttsSupported()) return;
+    void getVoices();
+    return () => stopSpeaking();
   }, []);
 
   // Load sessions list + most recent session's messages
@@ -259,19 +237,40 @@ export default function KashmirBot({ session }: { session: Session }) {
     setLang(LANG_ORDER[(idx + 1) % LANG_ORDER.length]);
   };
 
-  const handleSpeak = (text: string) => {
-    if (typeof window === "undefined" || !window.speechSynthesis) {
+  const handleSpeak = async (text: string, id?: string) => {
+    if (!ttsSupported()) {
       toast.error("آپ کا براؤزر آواز کی سہولت نہیں دیتا");
       return;
     }
-    speak(text);
+    // Clicking the speaker of the message already being read stops it.
+    if (id && speakingId === id) {
+      stopSpeaking();
+      setSpeakingId(null);
+      return;
+    }
+    setSpeakingId(id ?? "auto");
+    const result = await speak(text, {
+      onEnd: () => setSpeakingId(null),
+      onError: (reason) => {
+        setSpeakingId(null);
+        if (reason === "unsupported" || reason === "no-audio") {
+          toast.error("آپ کا براؤزر آواز کی سہولت نہیں دیتا");
+        } else if (reason === "not-allowed") {
+          toast.error("آواز کی اجازت نہیں — اسکرین پر ٹیپ کر کے دوبارہ کوشش کریں");
+        } else if (reason !== "empty") {
+          toast.error("آواز چلانے میں مسئلہ ہوا — دوبارہ کوشش کریں");
+        }
+      },
+    });
+    if (result !== "ok") setSpeakingId(null);
   };
 
   const toggleMute = () => {
     setMuted((m) => {
       const next = !m;
-      if (next && typeof window !== "undefined" && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
+      if (next) {
+        stopSpeaking();
+        setSpeakingId(null);
       }
       return next;
     });
@@ -412,7 +411,7 @@ export default function KashmirBot({ session }: { session: Session }) {
     };
     setMessages((m) => [...m, botMsg]);
     setIsThinking(false);
-    if (!mutedRef.current) speak(reply);
+    if (!mutedRef.current) void handleSpeak(reply, botMsg.id);
     if (sessionId) {
       const dbId = await persistMessage(sessionId, botMsg);
       if (dbId) {
@@ -690,7 +689,14 @@ export default function KashmirBot({ session }: { session: Session }) {
           ) : (
             <>
               {messages.map((m) => (
-                <MessageBubble key={m.id} msg={m} onSpeak={handleSpeak} userId={userId} />
+                <MessageBubble
+                  key={m.id}
+                  msg={m}
+                  onSpeak={handleSpeak}
+                  userId={userId}
+                  speaking={speakingId === m.id}
+                />
+
               ))}
               {isThinking && <TypingIndicator />}
             </>
