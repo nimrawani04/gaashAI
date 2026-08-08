@@ -45,22 +45,69 @@ const PHRASES: { en: string; ks: string; roman: string }[] = [
   { en: "Good night", ks: "خُدا حافظ، شُبہ خیر", roman: "Khuda hafiz, shubh khair" },
 ];
 
+type HistoryItem = {
+  id: string;
+  direction: "en2ks" | "ks2en";
+  source: string;
+  translation: string;
+  roman: string;
+  at: number;
+};
+
+const HISTORY_KEY = "kashmiri-translate-history";
+const HISTORY_LIMIT = 20;
+
 function TranslatePage() {
   const run = useServerFn(translateText);
   const [direction, setDirection] = useState<"en2ks" | "ks2en">("en2ks");
   const [text, setText] = useState("");
   const [result, setResult] = useState<TranslateResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
 
   const toKashmiri = direction === "en2ks";
 
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(HISTORY_KEY);
+      if (raw) setHistory(JSON.parse(raw) as HistoryItem[]);
+    } catch {
+      /* ignore corrupt history */
+    }
+  }, []);
+
+  const persist = (items: HistoryItem[]) => {
+    setHistory(items);
+    try {
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(items));
+    } catch {
+      /* storage may be unavailable */
+    }
+  };
+
   const handleTranslate = async () => {
     if (!text.trim() || loading) return;
+    const source = text.trim();
     setLoading(true);
     setResult(null);
     try {
-      const res = await run({ data: { text: text.trim(), direction } });
+      const res = await run({ data: { text: source, direction } });
       setResult(res);
+      if (res.translation) {
+        persist(
+          [
+            {
+              id: `${Date.now()}`,
+              direction,
+              source,
+              translation: res.translation,
+              roman: res.roman,
+              at: Date.now(),
+            },
+            ...history.filter((h) => !(h.source === source && h.direction === direction)),
+          ].slice(0, HISTORY_LIMIT),
+        );
+      }
     } catch (err) {
       const msg = String((err as Error)?.message ?? "");
       if (msg.includes("rate_limited")) toast.error("Too many requests — please try again in a moment.");
@@ -70,6 +117,7 @@ function TranslatePage() {
       setLoading(false);
     }
   };
+
 
   const handleSpeak = async (value: string) => {
     if (!value) return;
