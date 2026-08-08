@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, ArrowRightLeft, Copy, Loader2, Volume2 } from "lucide-react";
+import { ArrowLeft, ArrowRightLeft, Copy, History, Loader2, Trash2, Volume2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { translateText, type TranslateResult } from "@/lib/translate.functions";
 import { speak } from "@/lib/tts";
+
 
 export const Route = createFileRoute("/translate")({
   ssr: false,
@@ -44,22 +45,69 @@ const PHRASES: { en: string; ks: string; roman: string }[] = [
   { en: "Good night", ks: "خُدا حافظ، شُبہ خیر", roman: "Khuda hafiz, shubh khair" },
 ];
 
+type HistoryItem = {
+  id: string;
+  direction: "en2ks" | "ks2en";
+  source: string;
+  translation: string;
+  roman: string;
+  at: number;
+};
+
+const HISTORY_KEY = "kashmiri-translate-history";
+const HISTORY_LIMIT = 20;
+
 function TranslatePage() {
   const run = useServerFn(translateText);
   const [direction, setDirection] = useState<"en2ks" | "ks2en">("en2ks");
   const [text, setText] = useState("");
   const [result, setResult] = useState<TranslateResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
 
   const toKashmiri = direction === "en2ks";
 
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(HISTORY_KEY);
+      if (raw) setHistory(JSON.parse(raw) as HistoryItem[]);
+    } catch {
+      /* ignore corrupt history */
+    }
+  }, []);
+
+  const persist = (items: HistoryItem[]) => {
+    setHistory(items);
+    try {
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(items));
+    } catch {
+      /* storage may be unavailable */
+    }
+  };
+
   const handleTranslate = async () => {
     if (!text.trim() || loading) return;
+    const source = text.trim();
     setLoading(true);
     setResult(null);
     try {
-      const res = await run({ data: { text: text.trim(), direction } });
+      const res = await run({ data: { text: source, direction } });
       setResult(res);
+      if (res.translation) {
+        persist(
+          [
+            {
+              id: `${Date.now()}`,
+              direction,
+              source,
+              translation: res.translation,
+              roman: res.roman,
+              at: Date.now(),
+            },
+            ...history.filter((h) => !(h.source === source && h.direction === direction)),
+          ].slice(0, HISTORY_LIMIT),
+        );
+      }
     } catch (err) {
       const msg = String((err as Error)?.message ?? "");
       if (msg.includes("rate_limited")) toast.error("Too many requests — please try again in a moment.");
@@ -69,6 +117,7 @@ function TranslatePage() {
       setLoading(false);
     }
   };
+
 
   const handleSpeak = async (value: string) => {
     if (!value) return;
@@ -189,6 +238,82 @@ function TranslatePage() {
               <p className="mt-3 rounded-xl bg-card p-3 text-sm text-muted-foreground">💡 {result.notes}</p>
             ) : null}
           </div>
+        ) : null}
+
+        {/* History */}
+        {history.length ? (
+          <section className="mt-8">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="flex items-center gap-2 text-base font-semibold text-foreground">
+                <History className="h-4 w-4" /> Recent translations
+              </h2>
+              <button
+                onClick={() => {
+                  persist([]);
+                  toast.success("History cleared");
+                }}
+                className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                <Trash2 className="h-3.5 w-3.5" /> Clear
+              </button>
+            </div>
+            <ul className="mt-3 space-y-2">
+              {history.map((h) => (
+                <li
+                  key={h.id}
+                  className="flex items-start justify-between gap-2 rounded-xl border border-border bg-card p-3"
+                >
+                  <button
+                    onClick={() => {
+                      setDirection(h.direction);
+                      setText(h.source);
+                      setResult({ translation: h.translation, roman: h.roman, notes: "" });
+                    }}
+                    className="min-w-0 flex-1 rounded text-left focus:outline-none focus:ring-2 focus:ring-ring"
+                  >
+                    <span className="block text-[11px] uppercase tracking-wide text-muted-foreground">
+                      {h.direction === "en2ks" ? "English → کٲشُر" : "کٲشُر → English"}
+                    </span>
+                    <span
+                      dir={h.direction === "en2ks" ? "ltr" : "rtl"}
+                      className={`mt-1 block truncate text-sm text-muted-foreground ${
+                        h.direction === "en2ks" ? "" : "font-nastaliq text-base"
+                      }`}
+                    >
+                      {h.source}
+                    </span>
+                    <span
+                      dir={h.direction === "en2ks" ? "rtl" : "ltr"}
+                      className={`mt-1 block text-foreground ${
+                        h.direction === "en2ks" ? "font-nastaliq text-xl" : "text-sm"
+                      }`}
+                    >
+                      {h.translation}
+                    </span>
+                    {h.roman ? (
+                      <span className="mt-0.5 block text-xs italic text-muted-foreground">{h.roman}</span>
+                    ) : null}
+                  </button>
+                  <div className="flex shrink-0 flex-col gap-1">
+                    <button
+                      onClick={() => handleSpeak(h.translation)}
+                      aria-label="Read this translation aloud"
+                      className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+                    >
+                      <Volume2 className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => persist(history.filter((x) => x.id !== h.id))}
+                      aria-label="Remove from history"
+                      className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
         ) : null}
 
         {/* Phrasebook */}
