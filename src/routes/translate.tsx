@@ -219,13 +219,15 @@ function TranslatePage() {
               <p className="mt-2 text-sm italic text-muted-foreground">{result.roman}</p>
             ) : null}
             <div className="mt-3 flex items-center gap-2">
-              <button
-                onClick={() => handleSpeak(result.translation)}
-                aria-label="Read translation aloud"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
-              >
-                <Volume2 className="h-4 w-4" />
-              </button>
+              {!toKashmiri && (
+                <button
+                  onClick={() => handleSpeak(result.translation)}
+                  aria-label="Read translation aloud"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <Volume2 className="h-4 w-4" />
+                </button>
+              )}
               <button
                 onClick={() => handleCopy(result.translation)}
                 aria-label="Copy translation"
@@ -295,13 +297,15 @@ function TranslatePage() {
                     ) : null}
                   </button>
                   <div className="flex shrink-0 flex-col gap-1">
-                    <button
-                      onClick={() => handleSpeak(h.translation)}
-                      aria-label="Read this translation aloud"
-                      className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
-                    >
-                      <Volume2 className="h-4 w-4" />
-                    </button>
+                    {h.direction !== "en2ks" && (
+                      <button
+                        onClick={() => handleSpeak(h.translation)}
+                        aria-label="Read this translation aloud"
+                        className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+                      >
+                        <Volume2 className="h-4 w-4" />
+                      </button>
+                    )}
                     <button
                       onClick={() => persist(history.filter((x) => x.id !== h.id))}
                       aria-label="Remove from history"
@@ -339,13 +343,6 @@ function TranslatePage() {
                     {p.ks}
                   </span>
                   <span className="mt-0.5 block text-xs italic text-muted-foreground">{p.roman}</span>
-                </button>
-                <button
-                  onClick={() => handleSpeak(p.ks)}
-                  aria-label={`Speak: ${p.en}`}
-                  className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
-                >
-                  <Volume2 className="h-4 w-4" />
                 </button>
               </li>
             ))}

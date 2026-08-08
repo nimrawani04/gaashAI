@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, memo, lazy, Suspense } from "react";
 import { Mic, Send, Volume2, VolumeX, LogOut, Menu, HeartHandshake, Paperclip, X, FileText, Loader2, Languages } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { Session } from "@supabase/supabase-js";
 import { supabase, type ChatSession, type ChatMessageRow } from "@/lib/supabase";
-import SessionsPanel from "@/components/chat/SessionsPanel";
+const SessionsPanel = lazy(() => import("@/components/chat/SessionsPanel"));
 import FeedbackButtons from "@/components/chat/FeedbackButtons";
 import { speak, stopSpeaking, ttsSupported, getVoices, unlockTts, installTtsUnlock } from "@/lib/tts";
 // Lovable AI is the only backend — no local fallback Q&A.
@@ -84,7 +84,7 @@ function renderMessageContent(text: string) {
   });
 }
 
-function MessageBubble({
+const MessageBubble = memo(function MessageBubble({
   msg,
   onSpeak,
   userId,
@@ -94,6 +94,7 @@ function MessageBubble({
   onSpeak: (text: string, id: string) => void;
   userId: string;
   speaking: boolean;
+  lang: Lang;
 }) {
   const dir = msg.isRTL ? "rtl" : "ltr";
   const isUser = msg.role === "user";
@@ -114,25 +115,27 @@ function MessageBubble({
         </div>
         {!isUser && (
           <div className="flex items-start gap-2">
-            <button
-              type="button"
-              onClick={() => onSpeak(msg.text, msg.id)}
-              aria-label={speaking ? "Stop reading" : "Read aloud"}
-              aria-pressed={speaking}
-              className={[
-                "ms-1 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs transition hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring",
-                speaking ? "text-primary bg-secondary animate-pulse" : "text-muted-foreground hover:text-foreground",
-              ].join(" ")}
-            >
-              <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
-            </button>
+            {lang !== "ks" && (
+              <button
+                type="button"
+                onClick={() => onSpeak(msg.text, msg.id)}
+                aria-label={speaking ? "Stop reading" : "Read aloud"}
+                aria-pressed={speaking}
+                className={[
+                  "ms-1 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs transition hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring",
+                  speaking ? "text-primary bg-secondary animate-pulse" : "text-muted-foreground hover:text-foreground",
+                ].join(" ")}
+              >
+                <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+            )}
             <FeedbackButtons messageId={msg.dbId ?? null} userId={userId} />
           </div>
         )}
       </div>
     </div>
   );
-}
+});
 
 function TypingIndicator() {
   return (
@@ -178,8 +181,10 @@ export default function KashmirBot({ session }: { session: Session }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mutedRef = useRef(muted);
   const t = UI_STRINGS[lang];
+  const speakingIdRef = useRef<string | null>(null);
 
   useEffect(() => { mutedRef.current = muted; }, [muted]);
+  useEffect(() => { speakingIdRef.current = speakingId; }, [speakingId]);
 
   // Warm up the voice list + unlock audio on the first user interaction
   useEffect(() => {
@@ -241,13 +246,13 @@ export default function KashmirBot({ session }: { session: Session }) {
     setLang(LANG_ORDER[(idx + 1) % LANG_ORDER.length]);
   };
 
-  const handleSpeak = async (text: string, id?: string) => {
+  const handleSpeak = useCallback(async (text: string, id?: string) => {
     if (!ttsSupported()) {
       toast.error("آپ کا براؤزر آواز کی سہولت نہیں دیتا");
       return;
     }
     // Clicking the speaker of the message already being read stops it.
-    if (id && speakingId === id) {
+    if (id && speakingIdRef.current === id) {
       stopSpeaking();
       setSpeakingId(null);
       return;
@@ -272,7 +277,7 @@ export default function KashmirBot({ session }: { session: Session }) {
       },
     });
     if (result !== "ok") setSpeakingId(null);
-  };
+  }, []);
 
   const toggleMute = () => {
     setMuted((m) => {
@@ -597,16 +602,18 @@ export default function KashmirBot({ session }: { session: Session }) {
           </div>
         </div>
       )}
-      <SessionsPanel
-        open={panelOpen}
-        onClose={() => setPanelOpen(false)}
-        sessions={sessions}
-        currentSessionId={currentSessionId}
-        onSelect={handleSelectSession}
-        onNew={handleNewChat}
-        onRename={handleRenameSession}
-        onDelete={handleDeleteSession}
-      />
+      <Suspense fallback={null}>
+        <SessionsPanel
+          open={panelOpen}
+          onClose={() => setPanelOpen(false)}
+          sessions={sessions}
+          currentSessionId={currentSessionId}
+          onSelect={handleSelectSession}
+          onNew={handleNewChat}
+          onRename={handleRenameSession}
+          onDelete={handleDeleteSession}
+        />
+      </Suspense>
 
       {/* Header */}
       <header className="border-b border-border bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/60">
@@ -619,8 +626,8 @@ export default function KashmirBot({ session }: { session: Session }) {
             >
               <Menu className="h-5 w-5" />
             </button>
-            <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md sm:flex">
-              <span className="font-nastaliq text-2xl leading-none">ک</span>
+            <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 shadow-md sm:flex overflow-hidden">
+              <img src="/favicon.png" alt="KashmirBot Logo" className="h-full w-full object-cover" />
             </div>
             <div className="min-w-0">
               <h1 className="font-nastaliq truncate text-2xl text-foreground sm:text-3xl" dir="rtl">
@@ -693,8 +700,8 @@ export default function KashmirBot({ session }: { session: Session }) {
         <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 px-4 py-6">
           {messages.length === 0 && !isThinking ? (
             <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-              <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-lg">
-                <span className="font-nastaliq text-4xl leading-none">سلام</span>
+              <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-full shadow-lg overflow-hidden border border-border/50 bg-background p-2">
+                <img src="/favicon.png" alt="KashmirBot Logo" className="h-full w-full object-contain" />
               </div>
               <p
                 dir={t.emptyDir}
@@ -712,6 +719,7 @@ export default function KashmirBot({ session }: { session: Session }) {
                   onSpeak={handleSpeak}
                   userId={userId}
                   speaking={speakingId === m.id}
+                  lang={lang}
                 />
 
               ))}
