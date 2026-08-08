@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, ArrowRightLeft, Copy, Loader2, Volume2 } from "lucide-react";
+import { ArrowLeft, ArrowRightLeft, Copy, History, Loader2, Trash2, Volume2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { translateText, type TranslateResult } from "@/lib/translate.functions";
 import { speak } from "@/lib/tts";
+
 
 export const Route = createFileRoute("/translate")({
   ssr: false,
