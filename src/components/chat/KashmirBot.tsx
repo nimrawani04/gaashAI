@@ -638,6 +638,14 @@ export default function KashmirBot({ session }: { session: Session }) {
           </div>
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             <Link
+              to="/translate"
+              aria-label="Learn Kashmiri translator"
+              title="Learn Kashmiri"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <Languages className="h-5 w-5" />
+            </Link>
+            <Link
               to="/contribute"
               aria-label="Contribute"
               title="دیو مدد"
