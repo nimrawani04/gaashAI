@@ -141,13 +141,13 @@ export default function SessionsPanel({
         aria-hidden="true"
       />
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-80 max-w-[85vw] flex-col border-r border-border bg-card shadow-2xl transition-transform ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-72 xs:w-80 sm:w-96 max-w-[90vw] xs:max-w-[85vw] sm:max-w-[80vw] flex-col border-r border-border bg-card shadow-2xl transition-transform ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
         aria-label="Previous chats"
       >
-        <header className="flex items-center justify-between border-b border-border px-4 py-3">
-          <h2 className="text-lg font-semibold text-foreground">
+        <header className="flex items-center justify-between border-b border-border px-3 xs:px-4 py-2.5 xs:py-3">
+          <h2 className="text-base xs:text-lg sm:text-xl font-semibold text-foreground">
             Previous chats
           </h2>
           <Button
@@ -155,9 +155,9 @@ export default function SessionsPanel({
             size="icon"
             onClick={onClose}
             aria-label="Close previous chats"
-            className="rounded-full"
+            className="rounded-full h-8 w-8 xs:h-9 xs:w-9"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4 xs:h-5 xs:w-5" />
           </Button>
         </header>
 
@@ -166,27 +166,27 @@ export default function SessionsPanel({
             onNew();
             onClose();
           }}
-          className="mx-4 mt-4 gap-2 rounded-full"
+          className="mx-3 xs:mx-4 mt-3 xs:mt-4 gap-1.5 xs:gap-2 rounded-full text-sm xs:text-base"
         >
-          <Plus className="h-4 w-4" /> New chat
+          <Plus className="h-3.5 w-3.5 xs:h-4 xs:w-4" /> New chat
         </Button>
 
-        <div className="mt-4 flex-1 overflow-y-auto px-2 pb-4">
+        <div className="mt-3 xs:mt-4 flex-1 overflow-y-auto px-1.5 xs:px-2 pb-3 xs:pb-4">
           {sessions.length === 0 ? (
-            <p className="px-4 py-6 text-center text-sm text-muted-foreground">
+            <p className="px-3 xs:px-4 py-4 xs:py-6 text-center text-xs xs:text-sm text-muted-foreground">
               No previous chats yet.
             </p>
           ) : (
             groupByDate(sessions).map(([date, items]) => (
-              <div key={date} className="mb-4">
-                <div className="px-3 pb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              <div key={date} className="mb-3 xs:mb-4">
+                <div className="px-2 xs:px-3 pb-1 text-[10px] xs:text-xs font-medium uppercase tracking-wide text-muted-foreground">
                   {date}
                 </div>
-                <ul className="flex flex-col gap-1">
+                <ul className="flex flex-col gap-0.5 xs:gap-1">
                   {items.map((s) => (
                     <li key={s.id}>
                       {editingId === s.id ? (
-                        <div className="flex items-center gap-1 rounded-xl bg-secondary px-2 py-1.5">
+                        <div className="flex items-center gap-1 rounded-xl bg-secondary px-1.5 xs:px-2 py-1.5">
                           <input
                             ref={inputRef}
                             value={draft}
@@ -195,7 +195,7 @@ export default function SessionsPanel({
                               if (e.key === "Enter") submitEdit(s.id);
                               if (e.key === "Escape") cancelEdit();
                             }}
-                            className="min-w-0 flex-1 rounded-lg border border-border bg-background px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                            className="min-w-0 flex-1 rounded-lg border border-border bg-background px-2 py-1 text-xs xs:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                             aria-label="Rename chat"
                           />
                           <Button
@@ -203,23 +203,23 @@ export default function SessionsPanel({
                             size="icon"
                             onClick={() => submitEdit(s.id)}
                             aria-label="Save chat name"
-                            className="h-7 w-7 rounded-full shrink-0"
+                            className="h-6 w-6 xs:h-7 xs:w-7 rounded-full shrink-0"
                           >
-                            <Check className="h-4 w-4" />
+                            <Check className="h-3 w-3 xs:h-4 xs:w-4" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
                             onClick={cancelEdit}
                             aria-label="Cancel rename"
-                            className="h-7 w-7 rounded-full shrink-0"
+                            className="h-6 w-6 xs:h-7 xs:w-7 rounded-full shrink-0"
                           >
-                            <X className="h-4 w-4" />
+                            <X className="h-3 w-3 xs:h-4 xs:w-4" />
                           </Button>
                         </div>
                       ) : (
                         <div
-                          className={`group flex items-center gap-1 rounded-xl px-2 transition ${
+                          className={`group flex items-center gap-0.5 xs:gap-1 rounded-xl px-1.5 xs:px-2 transition ${
                             s.id === currentSessionId
                               ? "bg-secondary text-foreground"
                               : "text-foreground/80 hover:bg-secondary"
@@ -233,7 +233,7 @@ export default function SessionsPanel({
                             aria-current={
                               s.id === currentSessionId ? "true" : undefined
                             }
-                            className="min-w-0 flex-1 truncate rounded-lg px-1 py-2 text-left text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            className="min-w-0 flex-1 truncate rounded-lg px-1 py-1.5 xs:py-2 text-left text-xs xs:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                           >
                             {s.title || "Untitled chat"}
                           </button>
@@ -245,9 +245,9 @@ export default function SessionsPanel({
                             aria-label={`Rename chat: ${
                               s.title || "Untitled chat"
                             }`}
-                            className="h-7 w-7 shrink-0 rounded-full opacity-0 transition group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100"
+                            className="h-6 w-6 xs:h-7 xs:w-7 shrink-0 rounded-full opacity-0 transition group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100"
                           >
-                            <Pencil className="h-3.5 w-3.5" />
+                            <Pencil className="h-3 w-3 xs:h-3.5 xs:w-3.5" />
                           </Button>
                           <Button
                             id={`delete-btn-${s.id}`}
@@ -257,9 +257,9 @@ export default function SessionsPanel({
                             aria-label={`Delete chat: ${
                               s.title || "Untitled chat"
                             }`}
-                            className="h-7 w-7 shrink-0 rounded-full opacity-0 transition hover:bg-destructive hover:text-destructive-foreground group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100"
+                            className="h-6 w-6 xs:h-7 xs:w-7 shrink-0 rounded-full opacity-0 transition hover:bg-destructive hover:text-destructive-foreground group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100"
                           >
-                            <Trash2 className="h-3.5 w-3.5" />
+                            <Trash2 className="h-3 w-3 xs:h-3.5 xs:w-3.5" />
                           </Button>
                         </div>
                       )}
@@ -276,15 +276,15 @@ export default function SessionsPanel({
         open={!!confirmDeleteId}
         onOpenChange={(isOpen) => !isOpen && setConfirmDeleteId(null)}
       >
-        <AlertDialogContent className="max-w-sm">
+        <AlertDialogContent className="max-w-[90vw] xs:max-w-sm">
           <AlertDialogHeader>
-            <div className="flex items-start gap-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-                <AlertTriangle className="h-5 w-5" aria-hidden="true" />
+            <div className="flex items-start gap-3 xs:gap-4">
+              <div className="flex h-8 w-8 xs:h-10 xs:w-10 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+                <AlertTriangle className="h-4 w-4 xs:h-5 xs:w-5" aria-hidden="true" />
               </div>
               <div className="flex-1">
-                <AlertDialogTitle>Delete chat?</AlertDialogTitle>
-                <AlertDialogDescription>
+                <AlertDialogTitle className="text-sm xs:text-base">Delete chat?</AlertDialogTitle>
+                <AlertDialogDescription className="text-xs xs:text-sm">
                   This will permanently remove "
                   {sessionToDelete?.title || "Untitled chat"}" and all its
                   messages.
@@ -292,13 +292,13 @@ export default function SessionsPanel({
               </div>
             </div>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setConfirmDeleteId(null)}>
+          <AlertDialogFooter className="gap-2">
+            <AlertDialogCancel onClick={() => setConfirmDeleteId(null)} className="text-xs xs:text-sm">
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
-              className={cn(buttonVariants({ variant: "destructive" }))}
+              className={cn(buttonVariants({ variant: "destructive" }), "text-xs xs:text-sm")}
             >
               Delete
             </AlertDialogAction>

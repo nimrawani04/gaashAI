@@ -152,25 +152,25 @@ function AuthPage() {
   const busy = isGoogleLoading || isEmailLoading;
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
-      <Card className="w-full max-w-sm">
-        <CardHeader className="space-y-1 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-2xl text-primary-foreground shadow-sm">
+    <main className="flex min-h-screen items-center justify-center bg-background px-3 xs:px-4 sm:px-6 py-6 xs:py-8 sm:py-10">
+      <Card className="w-full max-w-[340px] xs:max-w-sm sm:max-w-md">
+        <CardHeader className="space-y-1 text-center px-4 xs:px-6 pt-4 xs:pt-6">
+          <div className="mx-auto mb-3 xs:mb-4 flex h-10 w-10 xs:h-12 xs:w-12 sm:h-14 sm:w-14 items-center justify-center rounded-2xl bg-primary text-xl xs:text-2xl sm:text-3xl text-primary-foreground shadow-sm">
             🤖
           </div>
-          <CardTitle className="text-2xl font-semibold tracking-tight">
+          <CardTitle className="text-xl xs:text-2xl sm:text-3xl font-semibold tracking-tight">
             {mode === "signin" ? "Welcome back" : "Create your account"}
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-xs xs:text-sm">
             {mode === "signin"
               ? "Sign in to pick up where you left off."
               : "Sign up to save your chat sessions."}
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3 xs:space-y-4 px-4 xs:px-6 pb-4 xs:pb-6">
           <Button
             variant="outline"
-            className="w-full"
+            className="w-full text-sm xs:text-base"
             size="lg"
             onClick={handleGoogleSignIn}
             disabled={busy}
@@ -182,7 +182,7 @@ function AuthPage() {
               </>
             ) : (
               <>
-                <GoogleIcon className="mr-2 h-5 w-5" />
+                <GoogleIcon className="mr-2 h-4 w-4 xs:h-5 xs:w-5" />
                 Continue with Google
               </>
             )}
@@ -192,14 +192,14 @@ function AuthPage() {
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t border-border" />
             </div>
-            <div className="relative flex justify-center text-xs uppercase">
+            <div className="relative flex justify-center text-[10px] xs:text-xs uppercase">
               <span className="bg-card px-2 text-muted-foreground">or</span>
             </div>
           </div>
 
-          <form onSubmit={handleEmailSubmit} className="space-y-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="email">Email</Label>
+          <form onSubmit={handleEmailSubmit} className="space-y-2.5 xs:space-y-3">
+            <div className="space-y-1 xs:space-y-1.5">
+              <Label htmlFor="email" className="text-xs xs:text-sm">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -208,10 +208,11 @@ function AuthPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={busy}
                 required
+                className="text-sm xs:text-base h-9 xs:h-10"
               />
             </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="password">Password</Label>
+            <div className="space-y-1 xs:space-y-1.5">
+              <Label htmlFor="password" className="text-xs xs:text-sm">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -221,9 +222,10 @@ function AuthPage() {
                 disabled={busy}
                 minLength={6}
                 required
+                className="text-sm xs:text-base h-9 xs:h-10"
               />
             </div>
-            <Button type="submit" className="w-full" size="lg" disabled={busy}>
+            <Button type="submit" className="w-full text-sm xs:text-base" size="lg" disabled={busy}>
               {isEmailLoading ? (
                 <>
                   <Spinner className="mr-2" />
@@ -237,7 +239,7 @@ function AuthPage() {
             </Button>
           </form>
 
-          <p className="text-center text-sm text-muted-foreground">
+          <p className="text-center text-xs xs:text-sm text-muted-foreground">
             {mode === "signin" ? "No account?" : "Already have an account?"}{" "}
             <button
               type="button"
@@ -249,7 +251,7 @@ function AuthPage() {
             </button>
           </p>
 
-          <p className="text-center text-xs text-muted-foreground">
+          <p className="text-center text-[10px] xs:text-xs text-muted-foreground">
             By continuing, you agree to our{" "}
             <Link
               to="/"

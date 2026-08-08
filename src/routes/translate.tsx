@@ -138,27 +138,27 @@ function TranslatePage() {
   return (
     <div className="min-h-[100dvh] bg-background">
       <header className="border-b border-border bg-card/80 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-3xl items-center gap-3 px-4 py-4">
+        <div className="mx-auto flex w-full max-w-3xl lg:max-w-4xl xl:max-w-5xl items-center gap-2 xs:gap-3 px-3 xs:px-4 sm:px-6 py-3 xs:py-4">
           <Link
             to="/"
             aria-label="Back to chat"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            className="flex h-9 w-9 xs:h-10 xs:w-10 md:h-11 md:w-11 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4 xs:h-5 xs:w-5" />
           </Link>
           <div className="min-w-0">
-            <h1 className="truncate text-lg font-semibold text-foreground sm:text-xl">Learn Kashmiri</h1>
-            <p className="truncate text-xs text-muted-foreground sm:text-sm">
+            <h1 className="truncate text-base xs:text-lg sm:text-xl md:text-2xl font-semibold text-foreground">Learn Kashmiri</h1>
+            <p className="truncate text-[10px] xs:text-xs sm:text-sm text-muted-foreground">
               English ⇄ کٲشُر — translate, listen, practise
             </p>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-3xl px-4 py-6">
+      <main className="mx-auto w-full max-w-3xl lg:max-w-4xl xl:max-w-5xl px-3 xs:px-4 sm:px-6 md:px-8 py-4 xs:py-5 sm:py-6">
         {/* Direction switch */}
-        <div className="flex items-center justify-center gap-3 rounded-2xl border border-border bg-card p-3">
-          <span className="flex-1 text-center text-sm font-semibold text-foreground">
+        <div className="flex items-center justify-center gap-2 xs:gap-3 rounded-2xl border border-border bg-card p-2.5 xs:p-3">
+          <span className="flex-1 text-center text-xs xs:text-sm sm:text-base font-semibold text-foreground">
             {toKashmiri ? "English" : "کٲشُر (Kashmiri)"}
           </span>
           <button
@@ -168,17 +168,17 @@ function TranslatePage() {
               setResult(null);
             }}
             aria-label="Swap translation direction"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring"
+            className="flex h-9 w-9 xs:h-10 xs:w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-primary text-primary-foreground transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring"
           >
-            <ArrowRightLeft className="h-4 w-4" />
+            <ArrowRightLeft className="h-3.5 w-3.5 xs:h-4 xs:w-4 sm:h-5 sm:w-5" />
           </button>
-          <span className="flex-1 text-center text-sm font-semibold text-foreground">
+          <span className="flex-1 text-center text-xs xs:text-sm sm:text-base font-semibold text-foreground">
             {toKashmiri ? "کٲشُر (Kashmiri)" : "English"}
           </span>
         </div>
 
         {/* Input */}
-        <div className="mt-4 rounded-2xl border border-border bg-card p-4">
+        <div className="mt-3 xs:mt-4 rounded-2xl border border-border bg-card p-3 xs:p-4 sm:p-5">
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -189,18 +189,18 @@ function TranslatePage() {
             rows={4}
             maxLength={2000}
             placeholder={toKashmiri ? "Type English text…" : "کٲشُر یا رومن کٲشُر لیٚکھِو…"}
-            className={`w-full resize-none bg-transparent text-base text-foreground outline-none placeholder:text-muted-foreground ${
-              toKashmiri ? "" : "font-nastaliq text-xl leading-loose"
+            className={`w-full resize-none bg-transparent text-sm xs:text-base sm:text-lg text-foreground outline-none placeholder:text-muted-foreground ${
+              toKashmiri ? "" : "font-nastaliq text-lg xs:text-xl sm:text-2xl leading-loose"
             }`}
           />
-          <div className="mt-3 flex items-center justify-between gap-3">
-            <span className="text-xs text-muted-foreground">{text.length}/2000</span>
+          <div className="mt-2 xs:mt-3 flex items-center justify-between gap-2 xs:gap-3">
+            <span className="text-[10px] xs:text-xs text-muted-foreground">{text.length}/2000</span>
             <button
               onClick={handleTranslate}
               disabled={!text.trim() || loading}
-              className="inline-flex h-10 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-ring"
+              className="inline-flex h-9 xs:h-10 sm:h-11 items-center gap-1.5 xs:gap-2 rounded-full bg-primary px-4 xs:px-5 text-xs xs:text-sm sm:text-base font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-ring"
             >
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+              {loading ? <Loader2 className="h-3.5 w-3.5 xs:h-4 xs:w-4 animate-spin" /> : null}
               Translate
             </button>
           </div>
@@ -208,62 +208,62 @@ function TranslatePage() {
 
         {/* Result */}
         {result ? (
-          <div className="mt-4 rounded-2xl border border-primary/30 bg-primary/5 p-4">
+          <div className="mt-3 xs:mt-4 rounded-2xl border border-primary/30 bg-primary/5 p-3 xs:p-4 sm:p-5">
             <p
               dir={toKashmiri ? "rtl" : "ltr"}
-              className={`text-foreground ${toKashmiri ? "font-nastaliq text-2xl leading-loose" : "text-lg"}`}
+              className={`text-foreground ${toKashmiri ? "font-nastaliq text-xl xs:text-2xl sm:text-3xl leading-loose" : "text-base xs:text-lg sm:text-xl"}`}
             >
               {result.translation}
             </p>
             {result.roman ? (
-              <p className="mt-2 text-sm italic text-muted-foreground">{result.roman}</p>
+              <p className="mt-2 text-xs xs:text-sm italic text-muted-foreground">{result.roman}</p>
             ) : null}
-            <div className="mt-3 flex items-center gap-2">
+            <div className="mt-2 xs:mt-3 flex items-center gap-1.5 xs:gap-2">
               {!toKashmiri && (
                 <button
                   onClick={() => handleSpeak(result.translation)}
                   aria-label="Read translation aloud"
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="flex h-8 w-8 xs:h-9 xs:w-9 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
                 >
-                  <Volume2 className="h-4 w-4" />
+                  <Volume2 className="h-3.5 w-3.5 xs:h-4 xs:w-4" />
                 </button>
               )}
               <button
                 onClick={() => handleCopy(result.translation)}
                 aria-label="Copy translation"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+                className="flex h-8 w-8 xs:h-9 xs:w-9 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
               >
-                <Copy className="h-4 w-4" />
+                <Copy className="h-3.5 w-3.5 xs:h-4 xs:w-4" />
               </button>
             </div>
             {result.notes ? (
-              <p className="mt-3 rounded-xl bg-card p-3 text-sm text-muted-foreground">💡 {result.notes}</p>
+              <p className="mt-2 xs:mt-3 rounded-xl bg-card p-2.5 xs:p-3 text-xs xs:text-sm text-muted-foreground">💡 {result.notes}</p>
             ) : null}
           </div>
         ) : null}
 
         {/* History */}
         {history.length ? (
-          <section className="mt-8">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="flex items-center gap-2 text-base font-semibold text-foreground">
-                <History className="h-4 w-4" /> Recent translations
+          <section className="mt-6 xs:mt-8">
+            <div className="flex items-center justify-between gap-2 xs:gap-3">
+              <h2 className="flex items-center gap-1.5 xs:gap-2 text-sm xs:text-base sm:text-lg font-semibold text-foreground">
+                <History className="h-3.5 w-3.5 xs:h-4 xs:w-4" /> Recent translations
               </h2>
               <button
                 onClick={() => {
                   persist([]);
                   toast.success("History cleared");
                 }}
-                className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                className="inline-flex items-center gap-1 rounded-full border border-border px-2 xs:px-3 py-1 xs:py-1.5 text-[10px] xs:text-xs text-muted-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               >
-                <Trash2 className="h-3.5 w-3.5" /> Clear
+                <Trash2 className="h-3 w-3 xs:h-3.5 xs:w-3.5" /> Clear
               </button>
             </div>
-            <ul className="mt-3 space-y-2">
+            <ul className="mt-2 xs:mt-3 space-y-2">
               {history.map((h) => (
                 <li
                   key={h.id}
-                  className="flex items-start justify-between gap-2 rounded-xl border border-border bg-card p-3"
+                  className="flex items-start justify-between gap-2 rounded-xl border border-border bg-card p-2.5 xs:p-3"
                 >
                   <button
                     onClick={() => {
@@ -273,27 +273,27 @@ function TranslatePage() {
                     }}
                     className="min-w-0 flex-1 rounded text-left focus:outline-none focus:ring-2 focus:ring-ring"
                   >
-                    <span className="block text-[11px] uppercase tracking-wide text-muted-foreground">
+                    <span className="block text-[9px] xs:text-[11px] uppercase tracking-wide text-muted-foreground">
                       {h.direction === "en2ks" ? "English → کٲشُر" : "کٲشُر → English"}
                     </span>
                     <span
                       dir={h.direction === "en2ks" ? "ltr" : "rtl"}
-                      className={`mt-1 block truncate text-sm text-muted-foreground ${
-                        h.direction === "en2ks" ? "" : "font-nastaliq text-base"
+                      className={`mt-0.5 xs:mt-1 block truncate text-xs xs:text-sm text-muted-foreground ${
+                        h.direction === "en2ks" ? "" : "font-nastaliq text-sm xs:text-base"
                       }`}
                     >
                       {h.source}
                     </span>
                     <span
                       dir={h.direction === "en2ks" ? "rtl" : "ltr"}
-                      className={`mt-1 block text-foreground ${
-                        h.direction === "en2ks" ? "font-nastaliq text-xl" : "text-sm"
+                      className={`mt-0.5 xs:mt-1 block text-foreground ${
+                        h.direction === "en2ks" ? "font-nastaliq text-lg xs:text-xl" : "text-xs xs:text-sm"
                       }`}
                     >
                       {h.translation}
                     </span>
                     {h.roman ? (
-                      <span className="mt-0.5 block text-xs italic text-muted-foreground">{h.roman}</span>
+                      <span className="mt-0.5 block text-[10px] xs:text-xs italic text-muted-foreground">{h.roman}</span>
                     ) : null}
                   </button>
                   <div className="flex shrink-0 flex-col gap-1">
@@ -301,17 +301,17 @@ function TranslatePage() {
                       <button
                         onClick={() => handleSpeak(h.translation)}
                         aria-label="Read this translation aloud"
-                        className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+                        className="flex h-7 w-7 xs:h-8 xs:w-8 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
                       >
-                        <Volume2 className="h-4 w-4" />
+                        <Volume2 className="h-3.5 w-3.5 xs:h-4 xs:w-4" />
                       </button>
                     )}
                     <button
                       onClick={() => persist(history.filter((x) => x.id !== h.id))}
                       aria-label="Remove from history"
-                      className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+                      className="flex h-7 w-7 xs:h-8 xs:w-8 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3.5 w-3.5 xs:h-4 xs:w-4" />
                     </button>
                   </div>
                 </li>
@@ -321,14 +321,14 @@ function TranslatePage() {
         ) : null}
 
         {/* Phrasebook */}
-        <section className="mt-8">
-          <h2 className="text-base font-semibold text-foreground">Everyday phrases</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Tap a phrase to load it, or press play to hear it.</p>
-          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+        <section className="mt-6 xs:mt-8">
+          <h2 className="text-sm xs:text-base sm:text-lg font-semibold text-foreground">Everyday phrases</h2>
+          <p className="mt-1 text-xs xs:text-sm text-muted-foreground">Tap a phrase to load it, or press play to hear it.</p>
+          <ul className="mt-2 xs:mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {PHRASES.map((p) => (
               <li
                 key={p.en}
-                className="flex items-start justify-between gap-2 rounded-xl border border-border bg-card p-3"
+                className="flex items-start justify-between gap-2 rounded-xl border border-border bg-card p-2.5 xs:p-3"
               >
                 <button
                   onClick={() => {
@@ -338,11 +338,11 @@ function TranslatePage() {
                   }}
                   className="min-w-0 flex-1 text-left focus:outline-none focus:ring-2 focus:ring-ring rounded"
                 >
-                  <span className="block text-sm text-foreground">{p.en}</span>
-                  <span dir="rtl" className="mt-1 block font-nastaliq text-xl text-foreground">
+                  <span className="block text-xs xs:text-sm text-foreground">{p.en}</span>
+                  <span dir="rtl" className="mt-1 block font-nastaliq text-lg xs:text-xl sm:text-2xl text-foreground">
                     {p.ks}
                   </span>
-                  <span className="mt-0.5 block text-xs italic text-muted-foreground">{p.roman}</span>
+                  <span className="mt-0.5 block text-[10px] xs:text-xs italic text-muted-foreground">{p.roman}</span>
                 </button>
               </li>
             ))}

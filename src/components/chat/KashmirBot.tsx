@@ -100,11 +100,11 @@ const MessageBubble = memo(function MessageBubble({
   const isUser = msg.role === "user";
   return (
     <div className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
-      <div className={`flex max-w-[85%] flex-col gap-1 ${isUser ? "items-end" : "items-start"}`}>
+      <div className={`flex max-w-[90%] xs:max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] flex-col gap-1 ${isUser ? "items-end" : "items-start"}`}>
         <div
           dir={dir}
           className={[
-            "rounded-2xl px-5 py-3 text-[1.15rem] leading-relaxed shadow-sm",
+            "rounded-2xl px-3 xs:px-4 sm:px-5 py-2 xs:py-2.5 sm:py-3 text-base xs:text-[1.05rem] sm:text-[1.15rem] md:text-[1.2rem] leading-relaxed shadow-sm",
             msg.isRTL ? "font-nastaliq" : "",
             isUser
               ? "bg-primary text-primary-foreground rounded-br-sm"
@@ -114,7 +114,7 @@ const MessageBubble = memo(function MessageBubble({
           {renderMessageContent(msg.text)}
         </div>
         {!isUser && (
-          <div className="flex items-start gap-2">
+          <div className="flex items-start gap-1.5 xs:gap-2">
             {lang !== "ks" && (
               <button
                 type="button"
@@ -122,11 +122,11 @@ const MessageBubble = memo(function MessageBubble({
                 aria-label={speaking ? "Stop reading" : "Read aloud"}
                 aria-pressed={speaking}
                 className={[
-                  "ms-1 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs transition hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring",
+                  "ms-1 inline-flex items-center gap-1 rounded-full px-1.5 xs:px-2 py-0.5 xs:py-1 text-[10px] xs:text-xs transition hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring",
                   speaking ? "text-primary bg-secondary animate-pulse" : "text-muted-foreground hover:text-foreground",
                 ].join(" ")}
               >
-                <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
+                <Volume2 className="h-3 w-3 xs:h-3.5 xs:w-3.5" aria-hidden="true" />
               </button>
             )}
             <FeedbackButtons messageId={msg.dbId ?? null} userId={userId} />
@@ -617,79 +617,79 @@ export default function KashmirBot({ session }: { session: Session }) {
 
       {/* Header */}
       <header className="border-b border-border bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/60">
-        <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-2 px-3 py-3 sm:gap-3 sm:px-4 sm:py-4">
-          <div className="flex items-center gap-2 min-w-0 sm:gap-3">
+        <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-1.5 px-2 py-2 xs:gap-2 xs:px-3 xs:py-3 sm:gap-3 sm:px-4 sm:py-4 lg:max-w-4xl xl:max-w-5xl">
+          <div className="flex items-center gap-1.5 min-w-0 xs:gap-2 sm:gap-3">
             <button
               onClick={() => setPanelOpen(true)}
               aria-label="Previous chats"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              className="flex h-9 w-9 xs:h-10 xs:w-10 md:h-11 md:w-11 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
-              <Menu className="h-5 w-5" />
+              <Menu className="h-4 w-4 xs:h-5 xs:w-5" />
             </button>
-            <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 shadow-md sm:flex overflow-hidden">
+            <div className="hidden h-10 w-10 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 shadow-md sm:flex overflow-hidden">
               <img src="/favicon.png" alt="KashmirBot Logo" className="h-full w-full object-cover" />
             </div>
             <div className="min-w-0">
-              <h1 className="font-nastaliq truncate text-2xl text-foreground sm:text-3xl" dir="rtl">
+              <h1 className="font-nastaliq truncate text-xl xs:text-2xl sm:text-3xl md:text-3xl lg:text-4xl text-foreground" dir="rtl">
                 کٲشُر مددگار
               </h1>
-              <p className="truncate text-xs text-muted-foreground sm:text-sm">{t.subtitle}</p>
+              <p className="truncate text-[10px] xs:text-xs sm:text-sm md:text-base text-muted-foreground">{t.subtitle}</p>
               <span
                 title="Active AI backend: Lovable AI (fallbacks disabled)"
-                className="mt-0.5 inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary"
+                className="mt-0.5 hidden xs:inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[9px] xs:text-[10px] font-semibold uppercase tracking-wide text-primary"
               >
                 <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                 Lovable AI
               </span>
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+          <div className="flex shrink-0 items-center gap-1 xs:gap-1.5 sm:gap-2">
             <Link
               to="/translate"
               aria-label="Learn Kashmiri translator"
               title="Learn Kashmiri"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              className="hidden xs:flex h-9 w-9 xs:h-10 xs:w-10 md:h-11 md:w-11 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
-              <Languages className="h-5 w-5" />
+              <Languages className="h-4 w-4 xs:h-5 xs:w-5" />
             </Link>
             <Link
               to="/contribute"
               aria-label="Contribute"
               title="دیو مدد"
-              className="hidden h-10 items-center gap-1.5 rounded-full border border-border bg-secondary px-3 text-sm font-semibold text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring sm:inline-flex"
+              className="hidden md:inline-flex h-10 md:h-11 items-center gap-1.5 rounded-full border border-border bg-secondary px-3 md:px-4 text-sm md:text-base font-semibold text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
               <HeartHandshake className="h-4 w-4" />
-              <span className="font-nastaliq text-base">دیو مدد</span>
+              <span className="font-nastaliq text-base md:text-lg">دیو مدد</span>
             </Link>
             <Link
               to="/contribute"
               aria-label="Contribute"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring sm:hidden"
+              className="flex md:hidden h-9 w-9 xs:h-10 xs:w-10 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
-              <HeartHandshake className="h-5 w-5" />
+              <HeartHandshake className="h-4 w-4 xs:h-5 xs:w-5" />
             </Link>
             <button
               onClick={toggleMute}
               aria-label={muted ? "Unmute auto-read" : "Mute auto-read"}
               aria-pressed={muted}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              className="flex h-9 w-9 xs:h-10 xs:w-10 md:h-11 md:w-11 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
-              {muted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+              {muted ? <VolumeX className="h-4 w-4 xs:h-5 xs:w-5" /> : <Volume2 className="h-4 w-4 xs:h-5 xs:w-5" />}
             </button>
             <button
               onClick={cycleLang}
               aria-label="Switch language"
-              className="rounded-full border border-border bg-secondary px-3 py-2 text-sm font-semibold text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              className="rounded-full border border-border bg-secondary px-2 xs:px-3 py-1.5 xs:py-2 md:py-2.5 text-xs xs:text-sm md:text-base font-semibold text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
-              <span className={lang === "ks" ? "font-nastaliq text-lg" : ""}>{t.langLabel}</span>
+              <span className={lang === "ks" ? "font-nastaliq text-base xs:text-lg md:text-xl" : ""}>{t.langLabel}</span>
             </button>
             <button
               onClick={handleSignOut}
               aria-label="Sign out"
               title="Sign out"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              className="hidden xs:flex h-9 w-9 xs:h-10 xs:w-10 md:h-11 md:w-11 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
-              <LogOut className="h-5 w-5" />
+              <LogOut className="h-4 w-4 xs:h-5 xs:w-5" />
             </button>
           </div>
         </div>
@@ -697,15 +697,15 @@ export default function KashmirBot({ session }: { session: Session }) {
 
       {/* Messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto">
-        <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 px-4 py-6">
+        <div className="mx-auto flex w-full max-w-3xl lg:max-w-4xl xl:max-w-5xl flex-col gap-3 xs:gap-4 md:gap-5 px-2 xs:px-3 sm:px-4 md:px-6 py-3 xs:py-4 sm:py-6">
           {messages.length === 0 && !isThinking ? (
-            <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-              <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-full shadow-lg overflow-hidden border border-border/50 bg-background p-2">
+            <div className="flex min-h-[50vh] xs:min-h-[60vh] flex-col items-center justify-center text-center px-4">
+              <div className="mb-4 xs:mb-6 flex h-16 w-16 xs:h-20 xs:w-20 sm:h-24 sm:w-24 md:h-28 md:w-28 items-center justify-center rounded-full shadow-lg overflow-hidden border border-border/50 bg-background p-2">
                 <img src="/favicon.png" alt="KashmirBot Logo" className="h-full w-full object-contain" />
               </div>
               <p
                 dir={t.emptyDir}
-                className={`max-w-md text-2xl sm:text-3xl text-foreground ${t.emptyClass}`}
+                className={`max-w-md text-xl xs:text-2xl sm:text-3xl md:text-4xl text-foreground ${t.emptyClass}`}
               >
                 {t.empty}
               </p>
@@ -731,36 +731,36 @@ export default function KashmirBot({ session }: { session: Session }) {
 
       {/* Composer */}
       <div className="border-t border-border bg-card">
-        <div className="mx-auto w-full max-w-3xl px-4 py-3 sm:py-4">
+        <div className="mx-auto w-full max-w-3xl lg:max-w-4xl xl:max-w-5xl px-2 xs:px-3 sm:px-4 md:px-6 py-2 xs:py-3 sm:py-4">
           {attachments.length > 0 && (
-            <div className="mb-2 flex flex-wrap gap-2">
+            <div className="mb-2 flex flex-wrap gap-1.5 xs:gap-2">
               {attachments.map((a, i) => {
                 const isImg = a.type.startsWith("image/") || IMG_EXT_RE.test(a.name);
                 return (
                   <div
                     key={i}
-                    className="group relative flex items-center gap-2 rounded-lg border border-border bg-secondary/60 px-2 py-1.5 text-sm"
+                    className="group relative flex items-center gap-1.5 xs:gap-2 rounded-lg border border-border bg-secondary/60 px-1.5 xs:px-2 py-1 xs:py-1.5 text-xs xs:text-sm"
                   >
                     {isImg ? (
-                      <img src={a.url} alt={a.name} className="h-8 w-8 rounded object-cover" />
+                      <img src={a.url} alt={a.name} className="h-6 w-6 xs:h-8 xs:w-8 rounded object-cover" />
                     ) : (
-                      <FileText className="h-5 w-5 text-muted-foreground" />
+                      <FileText className="h-4 w-4 xs:h-5 xs:w-5 text-muted-foreground" />
                     )}
-                    <span className="max-w-[140px] truncate">{a.name}</span>
+                    <span className="max-w-[100px] xs:max-w-[140px] truncate">{a.name}</span>
                     <button
                       type="button"
                       onClick={() => removeAttachment(i)}
                       aria-label={`Remove ${a.name}`}
                       className="rounded-full p-0.5 text-muted-foreground hover:bg-background hover:text-foreground"
                     >
-                      <X className="h-4 w-4" />
+                      <X className="h-3 w-3 xs:h-4 xs:w-4" />
                     </button>
                   </div>
                 );
               })}
             </div>
           )}
-          <div className="flex items-end gap-2 sm:gap-3">
+          <div className="flex items-end gap-1.5 xs:gap-2 sm:gap-3">
             <input
               ref={fileInputRef}
               type="file"
@@ -775,9 +775,9 @@ export default function KashmirBot({ session }: { session: Session }) {
               disabled={uploading}
               aria-label="Attach file"
               title="Attach file"
-              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+              className="flex h-11 w-11 xs:h-12 xs:w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
             >
-              {uploading ? <Loader2 className="h-6 w-6 animate-spin" /> : <Paperclip className="h-6 w-6" />}
+              {uploading ? <Loader2 className="h-5 w-5 xs:h-6 xs:w-6 animate-spin" /> : <Paperclip className="h-5 w-5 xs:h-6 xs:w-6" />}
             </button>
             <div className="relative shrink-0">
               {isListening && <span className="mic-listening-ring" aria-hidden="true" />}
@@ -787,11 +787,11 @@ export default function KashmirBot({ session }: { session: Session }) {
                 aria-label={t.mic}
                 aria-pressed={isListening}
                 className={[
-                  "flex h-14 w-14 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring",
+                  "flex h-11 w-11 xs:h-12 xs:w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring",
                   isListening ? "mic-listening" : "",
                 ].join(" ")}
               >
-                <Mic className="h-6 w-6" aria-hidden="true" />
+                <Mic className="h-5 w-5 xs:h-6 xs:w-6" aria-hidden="true" />
               </button>
             </div>
             <textarea
@@ -802,7 +802,7 @@ export default function KashmirBot({ session }: { session: Session }) {
               dir={inputIsRTL ? "rtl" : "ltr"}
               rows={1}
               className={[
-                "min-h-14 max-h-40 flex-1 resize-none rounded-2xl border border-border bg-background px-4 py-3 text-lg text-foreground shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring",
+                "min-h-11 xs:min-h-12 sm:min-h-14 md:min-h-16 max-h-32 xs:max-h-36 sm:max-h-40 flex-1 resize-none rounded-2xl border border-border bg-background px-3 xs:px-4 py-2 xs:py-2.5 sm:py-3 md:py-4 text-base xs:text-lg md:text-xl text-foreground shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring",
                 inputIsRTL ? "font-nastaliq" : "",
               ].join(" ")}
             />
@@ -811,9 +811,9 @@ export default function KashmirBot({ session }: { session: Session }) {
               onClick={handleSend}
               disabled={(!input.trim() && attachments.length === 0) || isThinking || uploading}
               aria-label={t.send}
-              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex h-11 w-11 xs:h-12 xs:w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <Send className="h-6 w-6" aria-hidden="true" />
+              <Send className="h-5 w-5 xs:h-6 xs:w-6" aria-hidden="true" />
             </button>
           </div>
         </div>

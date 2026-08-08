@@ -86,25 +86,25 @@ function ContributePage() {
 
   return (
     <div className="min-h-[100dvh] bg-background text-foreground">
-      <div className="mx-auto max-w-2xl px-4 py-8">
-        <header className="mb-6 flex items-center justify-between">
-          <div>
+      <div className="mx-auto max-w-2xl lg:max-w-3xl px-3 xs:px-4 sm:px-6 md:px-8 py-4 xs:py-6 sm:py-8">
+        <header className="mb-4 xs:mb-6 flex flex-col xs:flex-row items-start xs:items-center justify-between gap-3">
+          <div className="min-w-0">
             <h1
               dir="rtl"
-              className="font-nastaliq text-3xl text-foreground"
+              className="font-nastaliq text-2xl xs:text-3xl sm:text-4xl text-foreground"
             >
               اپنا کاشمیری جملہ لکھو
             </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-1 text-xs xs:text-sm sm:text-base text-muted-foreground">
               Help build the Kashmiri language dataset.
             </p>
           </div>
-          <Link to="/" className="text-sm underline">
+          <Link to="/" className="text-xs xs:text-sm underline whitespace-nowrap">
             ← Back
           </Link>
         </header>
 
-        <div className="mb-6 rounded-lg border bg-card p-4 text-sm">
+        <div className="mb-4 xs:mb-6 rounded-lg border bg-card p-3 xs:p-4 text-xs xs:text-sm">
           <span className="font-medium">{count ?? "…"}</span>
           <span className="ms-2 text-muted-foreground">contributions so far</span>
         </div>
@@ -112,26 +112,26 @@ function ContributePage() {
         {success && (
           <div
             dir="rtl"
-            className="font-nastaliq mb-4 rounded-md border border-primary/30 bg-primary/10 px-4 py-3 text-primary"
+            className="font-nastaliq mb-3 xs:mb-4 rounded-md border border-primary/30 bg-primary/10 px-3 xs:px-4 py-2 xs:py-3 text-sm xs:text-base text-primary"
           >
             شکریہ! آپ کا حصہ محفوظ ہوگیا
           </div>
         )}
 
         {authLoaded && !userId && (
-          <div className="mb-4 rounded-md border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm">
+          <div className="mb-3 xs:mb-4 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 xs:px-4 py-2 xs:py-3 text-xs xs:text-sm">
             Please <Link to="/" className="underline">sign in</Link> to submit a contribution.
           </div>
         )}
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-4 rounded-lg border bg-card p-6"
+          className="space-y-3 xs:space-y-4 rounded-lg border bg-card p-4 xs:p-5 sm:p-6"
         >
           <div>
             <label
               dir="rtl"
-              className="font-nastaliq mb-1 block text-sm"
+              className="font-nastaliq mb-1 xs:mb-1.5 block text-sm xs:text-base"
             >
               کاشمیری جملہ
             </label>
@@ -141,29 +141,29 @@ function ContributePage() {
               value={kashmiri}
               onChange={(e) => setKashmiri(e.target.value)}
               required
-              className="font-nastaliq w-full rounded-md border bg-background px-3 py-2 text-lg focus:outline-none focus:ring-2 focus:ring-ring"
+              className="font-nastaliq w-full rounded-md border bg-background px-3 py-2 text-base xs:text-lg sm:text-xl focus:outline-none focus:ring-2 focus:ring-ring"
               placeholder="..."
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-sm">English meaning</label>
+            <label className="mb-1 xs:mb-1.5 block text-xs xs:text-sm">English meaning</label>
             <input
               type="text"
               value={english}
               onChange={(e) => setEnglish(e.target.value)}
               required
-              className="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full rounded-md border bg-background px-3 py-2 text-sm xs:text-base focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-3 xs:gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm">Category</label>
+              <label className="mb-1 xs:mb-1.5 block text-xs xs:text-sm">Category</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full rounded-md border bg-background px-3 py-2 text-sm xs:text-base focus:outline-none focus:ring-2 focus:ring-ring"
               >
                 {CATEGORIES.map((c) => (
                   <option key={c.value} value={c.value}>
@@ -173,12 +173,12 @@ function ContributePage() {
               </select>
             </div>
             <div>
-              <label className="mb-1 block text-sm">Your name (optional)</label>
+              <label className="mb-1 xs:mb-1.5 block text-xs xs:text-sm">Your name (optional)</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full rounded-md border bg-background px-3 py-2 text-sm xs:text-base focus:outline-none focus:ring-2 focus:ring-ring"
               />
             </div>
           </div>
@@ -186,7 +186,7 @@ function ContributePage() {
           <button
             type="submit"
             disabled={busy || !userId}
-            className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
+            className="w-full rounded-md bg-primary px-4 py-2.5 xs:py-3 text-sm xs:text-base font-medium text-primary-foreground disabled:opacity-50"
           >
             {busy ? "Saving…" : !userId ? "Sign in to submit" : "Submit contribution"}
           </button>
