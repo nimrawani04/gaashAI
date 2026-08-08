@@ -240,6 +240,82 @@ function TranslatePage() {
           </div>
         ) : null}
 
+        {/* History */}
+        {history.length ? (
+          <section className="mt-8">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="flex items-center gap-2 text-base font-semibold text-foreground">
+                <History className="h-4 w-4" /> Recent translations
+              </h2>
+              <button
+                onClick={() => {
+                  persist([]);
+                  toast.success("History cleared");
+                }}
+                className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                <Trash2 className="h-3.5 w-3.5" /> Clear
+              </button>
+            </div>
+            <ul className="mt-3 space-y-2">
+              {history.map((h) => (
+                <li
+                  key={h.id}
+                  className="flex items-start justify-between gap-2 rounded-xl border border-border bg-card p-3"
+                >
+                  <button
+                    onClick={() => {
+                      setDirection(h.direction);
+                      setText(h.source);
+                      setResult({ translation: h.translation, roman: h.roman, notes: "" });
+                    }}
+                    className="min-w-0 flex-1 rounded text-left focus:outline-none focus:ring-2 focus:ring-ring"
+                  >
+                    <span className="block text-[11px] uppercase tracking-wide text-muted-foreground">
+                      {h.direction === "en2ks" ? "English → کٲشُر" : "کٲشُر → English"}
+                    </span>
+                    <span
+                      dir={h.direction === "en2ks" ? "ltr" : "rtl"}
+                      className={`mt-1 block truncate text-sm text-muted-foreground ${
+                        h.direction === "en2ks" ? "" : "font-nastaliq text-base"
+                      }`}
+                    >
+                      {h.source}
+                    </span>
+                    <span
+                      dir={h.direction === "en2ks" ? "rtl" : "ltr"}
+                      className={`mt-1 block text-foreground ${
+                        h.direction === "en2ks" ? "font-nastaliq text-xl" : "text-sm"
+                      }`}
+                    >
+                      {h.translation}
+                    </span>
+                    {h.roman ? (
+                      <span className="mt-0.5 block text-xs italic text-muted-foreground">{h.roman}</span>
+                    ) : null}
+                  </button>
+                  <div className="flex shrink-0 flex-col gap-1">
+                    <button
+                      onClick={() => handleSpeak(h.translation)}
+                      aria-label="Read this translation aloud"
+                      className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+                    >
+                      <Volume2 className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => persist(history.filter((x) => x.id !== h.id))}
+                      aria-label="Remove from history"
+                      className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+
         {/* Phrasebook */}
         <section className="mt-8">
           <h2 className="text-base font-semibold text-foreground">Everyday phrases</h2>
