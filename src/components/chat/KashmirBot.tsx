@@ -559,17 +559,17 @@ export default function KashmirBot({ session }: { session: Session }) {
     }
   };
 
-  const handleSelectSession = async (id: string) => {
+  const handleSelectSession = useCallback(async (id: string) => {
     setCurrentSessionId(id);
     await loadMessagesFor(id);
-  };
+  }, [loadMessagesFor]);
 
-  const handleNewChat = () => {
+  const handleNewChat = useCallback(() => {
     setCurrentSessionId(null);
     setMessages([]);
-  };
+  }, []);
 
-  const handleRenameSession = async (id: string, title: string) => {
+  const handleRenameSession = useCallback(async (id: string, title: string) => {
     const { error } = await supabase
       .from("chat_sessions")
       .update({ title })
@@ -582,9 +582,9 @@ export default function KashmirBot({ session }: { session: Session }) {
     setSessions((prev) =>
       prev.map((s) => (s.id === id ? { ...s, title } : s)),
     );
-  };
+  }, [userId]);
 
-  const handleDeleteSession = async (id: string) => {
+  const handleDeleteSession = useCallback(async (id: string) => {
     const { error } = await supabase
       .from("chat_sessions")
       .delete()
@@ -595,12 +595,15 @@ export default function KashmirBot({ session }: { session: Session }) {
       return;
     }
     setSessions((prev) => prev.filter((s) => s.id !== id));
-    if (currentSessionId === id) {
-      setCurrentSessionId(null);
-      setMessages([]);
-    }
+    setCurrentSessionId((cur) => {
+      if (cur === id) {
+        setMessages([]);
+        return null;
+      }
+      return cur;
+    });
     toast.success("Chat deleted");
-  };
+  }, [userId]);
 
   const handleSignOut = async () => {
     if (typeof window !== "undefined" && window.speechSynthesis) {
