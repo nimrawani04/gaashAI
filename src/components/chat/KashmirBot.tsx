@@ -89,6 +89,7 @@ const MessageBubble = memo(function MessageBubble({
   onSpeak,
   userId,
   speaking,
+  lang,
 }: {
   msg: Message;
   onSpeak: (text: string, id: string) => void;
