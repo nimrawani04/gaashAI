@@ -327,7 +327,7 @@ export default function KashmirBot({ session }: { session: Session }) {
     if (result !== "ok") setSpeakingId(null);
   }, []);
 
-  const toggleMute = () => {
+  const toggleMute = useCallback(() => {
     setMuted((m) => {
       const next = !m;
       if (next) {
@@ -336,7 +336,7 @@ export default function KashmirBot({ session }: { session: Session }) {
       }
       return next;
     });
-  };
+  }, []);
 
   const handleMicClick = () => {
     const SR: any =
