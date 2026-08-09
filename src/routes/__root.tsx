@@ -77,10 +77,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      {
+        name: "viewport",
+        content:
+          "width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover",
+      },
       { title: "KashmirBot — Your Kashmiri Assistant" },
       { name: "description", content: "KashmirBot, a friendly Kashmiri-language chat assistant for everyday questions." },
       { name: "theme-color", content: "#0f5132" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-title", content: "KashmirBot" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "format-detection", content: "telephone=no" },
       { property: "og:title", content: "KashmirBot — Your Kashmiri Assistant" },
       { property: "og:description", content: "Chat in Kashmiri, Urdu, or English with KashmirBot." },
       { property: "og:type", content: "website" },
@@ -88,6 +97,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "icon", type: "image/png", href: "/favicon.png" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
