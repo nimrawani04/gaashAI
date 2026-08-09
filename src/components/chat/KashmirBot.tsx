@@ -750,7 +750,10 @@ export default function KashmirBot({ session }: { session: Session }) {
       </header>
 
       {/* Messages */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto">
+      <div
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch] [contain:layout_paint] [transform:translateZ(0)]"
+      >
         <div className="mx-auto flex w-full max-w-3xl lg:max-w-4xl xl:max-w-5xl flex-col gap-3 xs:gap-4 md:gap-5 px-2 xs:px-3 sm:px-4 md:px-6 py-3 xs:py-4 sm:py-6">
           {messages.length === 0 && !isThinking ? (
             <div className="flex min-h-[50vh] xs:min-h-[60vh] flex-col items-center justify-center text-center px-4">
