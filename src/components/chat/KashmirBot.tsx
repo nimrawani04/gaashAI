@@ -220,6 +220,8 @@ export default function KashmirBot({ session }: { session: Session }) {
 
   useEffect(() => { mutedRef.current = muted; }, [muted]);
   useEffect(() => { speakingIdRef.current = speakingId; }, [speakingId]);
+  const messagesRef = useRef<Message[]>(messages);
+  messagesRef.current = messages;
 
   // Warm up the voice list + unlock audio on the first user interaction
   useEffect(() => {
