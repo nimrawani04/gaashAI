@@ -150,6 +150,40 @@ function TypingIndicator() {
   );
 }
 
+// Memoized so typing in the composer never re-reconciles the whole thread.
+const MessageList = memo(function MessageList({
+  messages,
+  isThinking,
+  onSpeak,
+  userId,
+  speakingId,
+  lang,
+}: {
+  messages: Message[];
+  isThinking: boolean;
+  onSpeak: (text: string, id: string) => void;
+  userId: string;
+  speakingId: string | null;
+  lang: Lang;
+}) {
+  return (
+    <>
+      {messages.map((m) => (
+        <MessageBubble
+          key={m.id}
+          msg={m}
+          onSpeak={onSpeak}
+          userId={userId}
+          speaking={speakingId === m.id}
+          lang={lang}
+        />
+      ))}
+      {isThinking && <TypingIndicator />}
+    </>
+  );
+});
+
+
 function rowToMessage(r: ChatMessageRow): Message {
   return {
     id: r.id,
