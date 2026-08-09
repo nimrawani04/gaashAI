@@ -100,7 +100,10 @@ const MessageBubble = memo(function MessageBubble({
   const dir = msg.isRTL ? "rtl" : "ltr";
   const isUser = msg.role === "user";
   return (
-    <div className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
+    <div
+      className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}
+      style={{ contentVisibility: "auto", containIntrinsicSize: "auto 72px" } as React.CSSProperties}
+    >
       <div className={`flex max-w-[90%] xs:max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] flex-col gap-1 ${isUser ? "items-end" : "items-start"}`}>
         <div
           dir={dir}
