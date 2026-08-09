@@ -447,7 +447,7 @@ export default function KashmirBot({ session }: { session: Session }) {
   const sendWithRetry = async (userMsg: Message, sessionId: string | null) => {
     setIsThinking(true);
     const thinkingToast = toast.loading("سوچ رہا ہوں...");
-    const history = messages.map((m) => ({ role: m.role, content: m.text }));
+    const history = messagesRef.current.map((m) => ({ role: m.role, content: m.text }));
     history.push({ role: userMsg.role, content: userMsg.text });
 
     const { reply, usedFallback } = await callChatBackend(userMsg.text, history);
