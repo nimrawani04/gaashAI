@@ -781,7 +781,7 @@ export default function KashmirBot({ session }: { session: Session }) {
       </div>
 
       {/* Composer */}
-      <div className="border-t border-border bg-card">
+      <div className="border-t border-border bg-card pb-[env(safe-area-inset-bottom)]">
         <div className="mx-auto w-full max-w-3xl lg:max-w-4xl xl:max-w-5xl px-2 xs:px-3 sm:px-4 md:px-6 py-2 xs:py-3 sm:py-4">
           {attachments.length > 0 && (
             <div className="mb-2 flex flex-wrap gap-1.5 xs:gap-2">
