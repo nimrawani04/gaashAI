@@ -852,6 +852,10 @@ export default function KashmirBot({ session }: { session: Session }) {
               placeholder={t.placeholder}
               dir={inputIsRTL ? "rtl" : "ltr"}
               rows={1}
+              enterKeyHint="send"
+              autoCapitalize="sentences"
+              autoCorrect="on"
+              spellCheck={false}
               className={[
                 "min-h-11 xs:min-h-12 sm:min-h-14 md:min-h-16 max-h-32 xs:max-h-36 sm:max-h-40 flex-1 resize-none rounded-2xl border border-border bg-background px-3 xs:px-4 py-2 xs:py-2.5 sm:py-3 md:py-4 text-base xs:text-lg md:text-xl text-foreground shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring",
                 inputIsRTL ? "font-nastaliq" : "",
