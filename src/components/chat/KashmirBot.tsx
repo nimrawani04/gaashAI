@@ -272,14 +272,25 @@ export default function KashmirBot({ session }: { session: Session }) {
     })();
   }, [refreshSessions, loadMessagesFor]);
 
+  // Scroll on message-count change only, in a single rAF, and skip smooth
+  // scrolling on low-end / reduced-motion devices where it janks.
+  const messageCount = messages.length;
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, isThinking]);
+    const el = scrollRef.current;
+    if (!el) return;
+    const id = requestAnimationFrame(() => {
+      const smooth =
+        typeof window !== "undefined" &&
+        !window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
+        el.scrollHeight - el.scrollTop - el.clientHeight < 1200;
+      el.scrollTo({ top: el.scrollHeight, behavior: smooth ? "smooth" : "auto" });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [messageCount, isThinking]);
 
-  const cycleLang = () => {
-    const idx = LANG_ORDER.indexOf(lang);
-    setLang(LANG_ORDER[(idx + 1) % LANG_ORDER.length]);
-  };
+  const cycleLang = useCallback(() => {
+    setLang((l) => LANG_ORDER[(LANG_ORDER.indexOf(l) + 1) % LANG_ORDER.length]);
+  }, []);
 
   const handleSpeak = useCallback(async (text: string, id?: string) => {
     if (!ttsSupported()) {
