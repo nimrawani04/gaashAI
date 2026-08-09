@@ -100,7 +100,10 @@ const MessageBubble = memo(function MessageBubble({
   const dir = msg.isRTL ? "rtl" : "ltr";
   const isUser = msg.role === "user";
   return (
-    <div className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
+    <div
+      className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}
+      style={{ contentVisibility: "auto", containIntrinsicSize: "auto 72px" } as React.CSSProperties}
+    >
       <div className={`flex max-w-[90%] xs:max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] flex-col gap-1 ${isUser ? "items-end" : "items-start"}`}>
         <div
           dir={dir}
@@ -150,6 +153,40 @@ function TypingIndicator() {
   );
 }
 
+// Memoized so typing in the composer never re-reconciles the whole thread.
+const MessageList = memo(function MessageList({
+  messages,
+  isThinking,
+  onSpeak,
+  userId,
+  speakingId,
+  lang,
+}: {
+  messages: Message[];
+  isThinking: boolean;
+  onSpeak: (text: string, id: string) => void;
+  userId: string;
+  speakingId: string | null;
+  lang: Lang;
+}) {
+  return (
+    <>
+      {messages.map((m) => (
+        <MessageBubble
+          key={m.id}
+          msg={m}
+          onSpeak={onSpeak}
+          userId={userId}
+          speaking={speakingId === m.id}
+          lang={lang}
+        />
+      ))}
+      {isThinking && <TypingIndicator />}
+    </>
+  );
+});
+
+
 function rowToMessage(r: ChatMessageRow): Message {
   return {
     id: r.id,
@@ -186,6 +223,8 @@ export default function KashmirBot({ session }: { session: Session }) {
 
   useEffect(() => { mutedRef.current = muted; }, [muted]);
   useEffect(() => { speakingIdRef.current = speakingId; }, [speakingId]);
+  const messagesRef = useRef<Message[]>(messages);
+  messagesRef.current = messages;
 
   // Warm up the voice list + unlock audio on the first user interaction
   useEffect(() => {
@@ -238,14 +277,25 @@ export default function KashmirBot({ session }: { session: Session }) {
     })();
   }, [refreshSessions, loadMessagesFor]);
 
+  // Scroll on message-count change only, in a single rAF, and skip smooth
+  // scrolling on low-end / reduced-motion devices where it janks.
+  const messageCount = messages.length;
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, isThinking]);
+    const el = scrollRef.current;
+    if (!el) return;
+    const id = requestAnimationFrame(() => {
+      const smooth =
+        typeof window !== "undefined" &&
+        !window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
+        el.scrollHeight - el.scrollTop - el.clientHeight < 1200;
+      el.scrollTo({ top: el.scrollHeight, behavior: smooth ? "smooth" : "auto" });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [messageCount, isThinking]);
 
-  const cycleLang = () => {
-    const idx = LANG_ORDER.indexOf(lang);
-    setLang(LANG_ORDER[(idx + 1) % LANG_ORDER.length]);
-  };
+  const cycleLang = useCallback(() => {
+    setLang((l) => LANG_ORDER[(LANG_ORDER.indexOf(l) + 1) % LANG_ORDER.length]);
+  }, []);
 
   const handleSpeak = useCallback(async (text: string, id?: string) => {
     if (!ttsSupported()) {
@@ -280,7 +330,7 @@ export default function KashmirBot({ session }: { session: Session }) {
     if (result !== "ok") setSpeakingId(null);
   }, []);
 
-  const toggleMute = () => {
+  const toggleMute = useCallback(() => {
     setMuted((m) => {
       const next = !m;
       if (next) {
@@ -289,7 +339,7 @@ export default function KashmirBot({ session }: { session: Session }) {
       }
       return next;
     });
-  };
+  }, []);
 
   const handleMicClick = () => {
     const SR: any =
@@ -400,7 +450,7 @@ export default function KashmirBot({ session }: { session: Session }) {
   const sendWithRetry = async (userMsg: Message, sessionId: string | null) => {
     setIsThinking(true);
     const thinkingToast = toast.loading("سوچ رہا ہوں...");
-    const history = messages.map((m) => ({ role: m.role, content: m.text }));
+    const history = messagesRef.current.map((m) => ({ role: m.role, content: m.text }));
     history.push({ role: userMsg.role, content: userMsg.text });
 
     const { reply, usedFallback } = await callChatBackend(userMsg.text, history);
@@ -512,17 +562,17 @@ export default function KashmirBot({ session }: { session: Session }) {
     }
   };
 
-  const handleSelectSession = async (id: string) => {
+  const handleSelectSession = useCallback(async (id: string) => {
     setCurrentSessionId(id);
     await loadMessagesFor(id);
-  };
+  }, [loadMessagesFor]);
 
-  const handleNewChat = () => {
+  const handleNewChat = useCallback(() => {
     setCurrentSessionId(null);
     setMessages([]);
-  };
+  }, []);
 
-  const handleRenameSession = async (id: string, title: string) => {
+  const handleRenameSession = useCallback(async (id: string, title: string) => {
     const { error } = await supabase
       .from("chat_sessions")
       .update({ title })
@@ -535,9 +585,9 @@ export default function KashmirBot({ session }: { session: Session }) {
     setSessions((prev) =>
       prev.map((s) => (s.id === id ? { ...s, title } : s)),
     );
-  };
+  }, [userId]);
 
-  const handleDeleteSession = async (id: string) => {
+  const handleDeleteSession = useCallback(async (id: string) => {
     const { error } = await supabase
       .from("chat_sessions")
       .delete()
@@ -548,12 +598,15 @@ export default function KashmirBot({ session }: { session: Session }) {
       return;
     }
     setSessions((prev) => prev.filter((s) => s.id !== id));
-    if (currentSessionId === id) {
-      setCurrentSessionId(null);
-      setMessages([]);
-    }
+    setCurrentSessionId((cur) => {
+      if (cur === id) {
+        setMessages([]);
+        return null;
+      }
+      return cur;
+    });
     toast.success("Chat deleted");
-  };
+  }, [userId]);
 
   const handleSignOut = async () => {
     if (typeof window !== "undefined" && window.speechSynthesis) {
@@ -697,7 +750,10 @@ export default function KashmirBot({ session }: { session: Session }) {
       </header>
 
       {/* Messages */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto">
+      <div
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch] [contain:layout_paint] [transform:translateZ(0)]"
+      >
         <div className="mx-auto flex w-full max-w-3xl lg:max-w-4xl xl:max-w-5xl flex-col gap-3 xs:gap-4 md:gap-5 px-2 xs:px-3 sm:px-4 md:px-6 py-3 xs:py-4 sm:py-6">
           {messages.length === 0 && !isThinking ? (
             <div className="flex min-h-[50vh] xs:min-h-[60vh] flex-col items-center justify-center text-center px-4">
@@ -712,26 +768,20 @@ export default function KashmirBot({ session }: { session: Session }) {
               </p>
             </div>
           ) : (
-            <>
-              {messages.map((m) => (
-                <MessageBubble
-                  key={m.id}
-                  msg={m}
-                  onSpeak={handleSpeak}
-                  userId={userId}
-                  speaking={speakingId === m.id}
-                  lang={lang}
-                />
-
-              ))}
-              {isThinking && <TypingIndicator />}
-            </>
+            <MessageList
+              messages={messages}
+              isThinking={isThinking}
+              onSpeak={handleSpeak}
+              userId={userId}
+              speakingId={speakingId}
+              lang={lang}
+            />
           )}
         </div>
       </div>
 
       {/* Composer */}
-      <div className="border-t border-border bg-card">
+      <div className="border-t border-border bg-card pb-[env(safe-area-inset-bottom)]">
         <div className="mx-auto w-full max-w-3xl lg:max-w-4xl xl:max-w-5xl px-2 xs:px-3 sm:px-4 md:px-6 py-2 xs:py-3 sm:py-4">
           {attachments.length > 0 && (
             <div className="mb-2 flex flex-wrap gap-1.5 xs:gap-2">
@@ -802,6 +852,10 @@ export default function KashmirBot({ session }: { session: Session }) {
               placeholder={t.placeholder}
               dir={inputIsRTL ? "rtl" : "ltr"}
               rows={1}
+              enterKeyHint="send"
+              autoCapitalize="sentences"
+              autoCorrect="on"
+              spellCheck={false}
               className={[
                 "min-h-11 xs:min-h-12 sm:min-h-14 md:min-h-16 max-h-32 xs:max-h-36 sm:max-h-40 flex-1 resize-none rounded-2xl border border-border bg-background px-3 xs:px-4 py-2 xs:py-2.5 sm:py-3 md:py-4 text-base xs:text-lg md:text-xl text-foreground shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring",
                 inputIsRTL ? "font-nastaliq" : "",
