@@ -21,7 +21,18 @@ interface KbRow {
   embedding: unknown;
 }
 
-const CATEGORIES: KbCategory[] = ["health", "government", "agriculture", "general"];
+const CATEGORIES: KbCategory[] = [
+  "health",
+  "government",
+  "schemes",
+  "agriculture",
+  "weather",
+  "transport",
+  "tourism",
+  "culture",
+  "general",
+];
+
 
 async function callEmbed(id: string, text: string) {
   const { error } = await supabase.functions.invoke("embed", {

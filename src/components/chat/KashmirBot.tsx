@@ -7,6 +7,8 @@ import { supabase, type ChatSession, type ChatMessageRow } from "@/lib/supabase"
 const SessionsPanel = lazy(() => import("@/components/chat/SessionsPanel"));
 import FeedbackButtons from "@/components/chat/FeedbackButtons";
 import { speak, stopSpeaking, ttsSupported, getVoices, unlockTts, installTtsUnlock } from "@/lib/tts";
+import ChinarLoader from "@/components/ChinarLoader";
+
 // Lovable AI is the only backend — no local fallback Q&A.
 
 type Role = "user" | "assistant";
@@ -144,14 +146,18 @@ const MessageBubble = memo(function MessageBubble({
 function TypingIndicator() {
   return (
     <div className="flex justify-start">
-      <div className="flex items-center gap-1.5 rounded-2xl rounded-bl-sm border border-border bg-bot-bubble px-5 py-4 shadow-sm">
-        <span className="typing-dot" style={{ animationDelay: "0ms" }} />
-        <span className="typing-dot" style={{ animationDelay: "150ms" }} />
-        <span className="typing-dot" style={{ animationDelay: "300ms" }} />
+      <div className="flex items-center gap-3 rounded-2xl rounded-bl-sm border border-border bg-bot-bubble px-4 py-3 shadow-sm">
+        <ChinarLoader size={30} />
+        <span className="flex items-center gap-1.5">
+          <span className="typing-dot" style={{ animationDelay: "0ms" }} />
+          <span className="typing-dot" style={{ animationDelay: "150ms" }} />
+          <span className="typing-dot" style={{ animationDelay: "300ms" }} />
+        </span>
       </div>
     </div>
   );
 }
+
 
 // Memoized so typing in the composer never re-reconciles the whole thread.
 const MessageList = memo(function MessageList({

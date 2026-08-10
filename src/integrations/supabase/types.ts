@@ -70,15 +70,159 @@ export type Database = {
         }
         Relationships: []
       }
+      contributions: {
+        Row: {
+          category: string
+          created_at: string
+          english_meaning: string
+          id: string
+          kashmiri_text: string
+          submitted_by: string | null
+          submitted_by_name: string | null
+          verified: boolean
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          english_meaning: string
+          id?: string
+          kashmiri_text: string
+          submitted_by?: string | null
+          submitted_by_name?: string | null
+          verified?: boolean
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          english_meaning?: string
+          id?: string
+          kashmiri_text?: string
+          submitted_by?: string | null
+          submitted_by_name?: string | null
+          verified?: boolean
+        }
+        Relationships: []
+      }
+      feedback: {
+        Row: {
+          correction_text: string | null
+          created_at: string
+          id: string
+          message_id: string | null
+          rating: number
+          user_id: string | null
+        }
+        Insert: {
+          correction_text?: string | null
+          created_at?: string
+          id?: string
+          message_id?: string | null
+          rating: number
+          user_id?: string | null
+        }
+        Update: {
+          correction_text?: string | null
+          created_at?: string
+          id?: string
+          message_id?: string | null
+          rating?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "chat_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      knowledge_base: {
+        Row: {
+          category: string
+          content_english: string
+          content_kashmiri: string
+          created_at: string
+          embedding: string | null
+          id: string
+          source: string | null
+          title: string
+        }
+        Insert: {
+          category?: string
+          content_english?: string
+          content_kashmiri?: string
+          created_at?: string
+          embedding?: string | null
+          id?: string
+          source?: string | null
+          title: string
+        }
+        Update: {
+          category?: string
+          content_english?: string
+          content_kashmiri?: string
+          created_at?: string
+          embedding?: string | null
+          id?: string
+          source?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_staff: { Args: { _user_id: string }; Returns: boolean }
+      match_knowledge: {
+        Args: {
+          match_count?: number
+          match_threshold?: number
+          query_embedding: string
+        }
+        Returns: {
+          category: string
+          content_english: string
+          content_kashmiri: string
+          id: string
+          similarity: number
+          title: string
+        }[]
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -205,6 +349,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+    },
   },
 } as const
