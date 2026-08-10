@@ -1,4 +1,14 @@
-export type KbCategory = "health" | "government" | "agriculture" | "general";
+export type KbCategory =
+  | "health"
+  | "government"
+  | "agriculture"
+  | "general"
+  | "schemes"
+  | "weather"
+  | "transport"
+  | "tourism"
+  | "culture";
+
 
 export interface KbSeed {
   title: string;
@@ -1177,5 +1187,373 @@ export const SEED_ENTRIES: KbSeed[] = [
     category: "general",
     source: "indiapost.gov.in",
   },
+  {
+    title: "Aadhaar card services in Kashmir",
+    content_kashmiri:
+      "آدھار: نزدیک آدھار سینٹر (پوسٹ آفس یا بینک) منٛز گژھِو۔ نو آدھار چھُ مفت، اپڈیٹ خٲطرٕ ₹50 لگان چھُ۔",
+    content_english:
+      "New Aadhaar enrolment is free at any Aadhaar Seva Kendra, post office or bank branch in J&K. Demographic update costs about Rs 50, biometric update Rs 100. Carry proof of identity and address. Check status or download e-Aadhaar at uidai.gov.in with your enrolment ID.",
+    category: "schemes",
+    source: "uidai.gov.in",
+  },
+  {
+    title: "Ayushman Bharat SEHAT card J&K",
+    content_kashmiri:
+      "سحت اسکیم: ہر جموں و کشمیر خاندانَس پیٹھ سالانہ ₹5 لاکھ مفت علاج۔ کارڈ بناوِو نزدیک CSC یا اسپتال ہیلپ ڈیسک پؠٹھ۔",
+    content_english:
+      "Ayushman Bharat PM-JAY SEHAT covers every J&K family for Rs 5 lakh of free hospital treatment per year, at all empanelled government and private hospitals. Make the golden card free of cost at any CSC, empanelled hospital help desk, or via beneficiary.nha.gov.in. Ration card or Aadhaar is needed.",
+    category: "schemes",
+    source: "jkhealth.org",
+  },
+  {
+    title: "Old age pension J&K",
+    content_kashmiri:
+      "بوڈؠن ہٕنٛدؠ پنشن: 60 ورؠ برونٛہہ عمر تہٕ کم آمدنی والؠن ہٕنٛدؠ خٲطرٕ ماہانہ امداد۔ درخواست کٔرِو سماجی بہبود محکمَس منٛز۔",
+    content_english:
+      "Integrated Social Security Scheme (ISSS) in J&K gives a monthly pension to citizens aged 60+ , widows, and persons with disability from low-income households. Apply through the Social Welfare Department office of your tehsil or online on jkisss.nic.in with Aadhaar, bank passbook, age proof and income certificate.",
+    category: "schemes",
+    source: "jkisss.nic.in",
+  },
+  {
+    title: "PM Kisan Samman Nidhi for Kashmiri farmers",
+    content_kashmiri:
+      "PM کسان: زمیندارَن ہِنٛدؠ خٲطرٕ سالانہ ₹6000، ترٛے قِستَن منٛز سیدھا بینک اکاؤنٹَس منٛز۔",
+    content_english:
+      "PM-KISAN pays eligible landholding farmer families Rs 6,000 a year in three instalments of Rs 2,000, sent directly to the bank account. Register at pmkisan.gov.in or your Patwari/Agriculture Extension office with land records, Aadhaar and bank details. e-KYC must be completed or the instalment is held.",
+    category: "schemes",
+    source: "pmkisan.gov.in",
+  },
+  {
+    title: "Kashmir winter Chillai Kalan",
+    content_kashmiri:
+      "چلہٕ کلان: 21 دسمبر پؠٹھ 30 جنوری تام سٲری خۄر سردی۔ پانی نلکہٕ جمن، بجلی کٹوتی گژھان۔ کانگٕر تہٕ پھیرن استعمال کٔرِو۔",
+    content_english:
+      "Chillai Kalan is the harshest 40-day winter period in Kashmir, from 21 December to 30 January, followed by Chillai Khurd (20 days) and Chillai Bachha (10 days). Expect sub-zero nights, frozen taps and power cuts. Insulate pipes, keep a kangri and pheran, store drinking water, and keep emergency medicines at home.",
+    category: "weather",
+    source: "imdsrinagar",
+  },
+  {
+    title: "Srinagar to Jammu highway travel advice",
+    content_kashmiri:
+      "سرینگر-جموں شاہراہ: برفَس تہٕ لینڈسلائیڈَس ہیتھ بند گژھان۔ سفرٕ برونٛہہ ٹریفک پولیس ایڈوائزری چیک کٔرِو۔",
+    content_english:
+      "The NH-44 Srinagar–Jammu highway (about 270 km, 8–10 hours) often closes due to snow at Jawahar Tunnel or landslides at Ramban. Always check the daily advisory from J&K Traffic Police before travelling, keep water and warm clothes in the vehicle, and consider the Srinagar–Banihal train or a flight when the road is shut.",
+    category: "transport",
+    source: "jktraffic",
+  },
+  {
+    title: "Kashmir local bus and Sumo fares",
+    content_kashmiri:
+      "لوکل سفر: سرینگرَس منٛز مٹاڈور تہٕ بس، ضلعن خٲطرٕ سومو ٹیکسی اسٹینڈ لال چوک تہٕ بٹمالو پؠٹھ۔",
+    content_english:
+      "Within Srinagar, matador minibuses and JKRTC buses connect Lal Chowk, Batmaloo, Hazratbal and Dalgate for Rs 10–30. Shared Sumo taxis for Anantnag, Baramulla, Kupwara and Pahalgam leave from Batmaloo and Parimpora stands. Srinagar–Baramulla and Srinagar–Banihal trains are the cheapest option at Rs 25–60.",
+    category: "transport",
+    source: "jkrtc",
+  },
+  {
+    title: "Diabetes care in Kashmir",
+    content_kashmiri:
+      "شوگر: دوا وقتَس پؠٹھ ہیو، نون تہٕ مِٹھ کم کٔرِو، ڈؠلی وۄلر یا پارکَس منٛز پؠدل چلِو، تہٕ ترٛے ماہَس HbA1c ٹیسٹ کروٲو۔",
+    content_english:
+      "For type-2 diabetes: take medicines at fixed times, walk 30 minutes daily, cut sugary noon-chai snacks, bakery items and rice portions, and eat more haakh, vegetables and pulses. Get HbA1c every three months and an annual eye and foot check. Free medicines and tests are available at district hospitals and PHCs under NPCDCS.",
+    category: "health",
+    source: "nhm.gov.in",
+  },
+  {
+    title: "High blood pressure advice",
+    content_kashmiri:
+      "بلڈ پریشر: نمکین چائے تہٕ نون کم کٔرِو، دوا کدنہٕ روزٕ نہٕ چھوڑِو، تہٕ ہفتَس اکہ لٹہ BP چیک کروٲو۔",
+    content_english:
+      "High blood pressure is very common in Kashmir partly due to salty noon chai and salted snacks. Reduce salt to under 5 g a day, avoid smoking and hookah, walk daily, and never stop BP medicine on your own. Check BP at least weekly at your nearest health centre — it is free. Sudden severe headache, chest pain or one-sided weakness needs emergency care.",
+    category: "health",
+    source: "nhm.gov.in",
+  },
+  {
+    title: "Mental health helpline Kashmir",
+    content_kashmiri:
+      "دماغی صحت: اگر توہیہ پرؠشان یا اداس چھِو، IMHANS سرینگر پؠٹھ مفت مشورٕ ملان چھُ۔ ٹیلی مانس ہیلپ لائن: 14416۔",
+    content_english:
+      "Free confidential mental-health support: national Tele-MANAS helpline 14416 (24x7, available in Urdu/Hindi/English) and IMHANS-Kashmir, Rainawari Srinagar, which runs free OPD counselling and de-addiction services. Talking to a counsellor is normal and private — depression, anxiety and sleep problems are treatable.",
+    category: "health",
+    source: "telemanas.mohfw.gov.in",
+  },
+  {
+    title: "Kashmiri wazwan dishes",
+    content_kashmiri:
+      "وازوان: روگن جوش، رِستہٕ، گوشتابہٕ، تباخ ماز، آب گوشت — کٲشُر شادی ہٕنٛدؠ 36 ہٲضری۔",
+    content_english:
+      "Wazwan is the traditional multi-course Kashmiri feast served at weddings, with up to 36 dishes prepared by a Waza. Signature items include rogan josh, rista, gushtaba, tabak maaz, aab gosht, marchwangan korma and daniwal korma, eaten from a shared trami with four guests. Vegetarian wazwan uses nadru, dum aloo and haakh.",
+    category: "culture",
+    source: "local",
+  },
+  {
+    title: "Kashmiri noon chai and kahwa",
+    content_kashmiri:
+      "نون چٲے: گلابی چٲے نمکَن ہیتھ، تہٕ قہوٕ زعفران، دٲرچین تہٕ باداماو ہیتھ۔",
+    content_english:
+      "Noon chai (pink salt tea) is brewed with green tea leaves, soda and salt, and served with tsot or bakarkhani at breakfast. Kahwa is the sweet green tea with saffron, cinnamon, cardamom and crushed almonds, served after meals and to guests. Both are central to Kashmiri hospitality.",
+    category: "culture",
+    source: "local",
+  },
+  {
+    title: "Kashmiri handicrafts and pashmina",
+    content_kashmiri:
+      "دستکاری: پشمینہ شال، قالین، پیپر ماشی، اخروٹ کاٹھ تہٕ سوزنی کڑھٲے چھِ کشیرِ ہٕنٛدؠ مشہور ہنر۔",
+    content_english:
+      "Kashmir's famous crafts are hand-spun Pashmina and Kani shawls, hand-knotted silk carpets, papier-mâché, walnut wood carving, crewel and sozni embroidery, and willow wicker from Ganderbal. Genuine Pashmina carries a GI mark from the Craft Development Institute — always ask for the GI label and a receipt.",
+    category: "culture",
+    source: "cdisrinagar",
+  },
+  {
+    title: "Best time to visit Kashmir",
+    content_kashmiri:
+      "سفرٕ وقت: اپریل-جون بہار تہٕ پھول، جولٲی-اگست ٹھنڈ گرمی، ستمبر-اکتوبر چنار زرد، دسمبر-فروری برٕف۔",
+    content_english:
+      "Best seasons: April–June for tulips, almond blossom and pleasant days; July–August for cool escape and Amarnath yatra; September–October for golden chinar and saffron bloom in Pampore; December–February for snow and skiing at Gulmarg. Book Gulmarg gondola tickets online in peak season.",
+    category: "tourism",
+    source: "jktourism.gov.in",
+  },
+  {
+    title: "Gulmarg gondola and skiing",
+    content_kashmiri:
+      "گلمرگ: گونڈولا ہٕنٛدؠ زٕ فیز — کھلن مرگ تہٕ افروات۔ آن لائن ٹکٹ بک کٔرِو تہٕ گرم کپڑٕ ہیتھ گژھِو۔",
+    content_english:
+      "Gulmarg, 50 km from Srinagar, has one of the world's highest cable cars: Phase 1 to Kongdoori and Phase 2 to Apharwat peak (about 3,979 m). Book gondola tickets online at jktdc/ gulmarggondola portal, arrive early, and hire proper snow boots and jackets locally. Ski courses run at the Indian Institute of Skiing.",
+    category: "tourism",
+    source: "jktourism.gov.in",
+  },
+  {
+    title: "Dal Lake shikara and houseboats",
+    content_kashmiri:
+      "ڈل جھیل: شکارٕ سواری، ہاؤس بوٹ، تہٕ صبح ہٕنٛد تیرتھ بازار۔ سرکٲری ریٹ کارڈ پرٛژھِو۔",
+    content_english:
+      "Dal Lake offers shikara rides (government rate card is displayed at ghats — around Rs 750–900 per hour), houseboat stays in Nigeen and Dal, and the early-morning floating vegetable market near Kabutar Khana. Nearby are the Mughal gardens Nishat, Shalimar and Chashme Shahi, and Hazratbal shrine.",
+    category: "tourism",
+    source: "jktourism.gov.in",
+  },
+  {
+    title: "Saffron farming in Pampore",
+    content_kashmiri:
+      "زعفران: پامپور تہٕ پلوامَس منٛز اکتوبر-نومبر منٛز گُل نیران۔ GI ٹیگ ہیتھ کٲشُر زعفران خرٲدِو۔",
+    content_english:
+      "Kashmiri saffron from Pampore, Pulwama and Budgam has a GI tag and is among the world's costliest spices. Flowering happens late October to mid-November. Buy from the National Saffron Mission's Saffron Park trading centre or registered growers, and avoid roadside sellers offering unusually cheap saffron.",
+    category: "agriculture",
+    source: "nsm.jk.gov.in",
+  },
+  {
+    title: "Apple orchard care in Kashmir",
+    content_kashmiri:
+      "ژُنٹھ باغ: مارچَس منٛز اسپرے، جولٲی منٛز کیلشیم، تہٕ ستمبر-اکتوبر منٛز ژٕٹن۔ اسکیب پؠٹھ محکمہ باغبٲنی ہٕنٛد شیڈول ہیو۔",
+    content_english:
+      "For apple orchards, follow the Horticulture Department's annual spray schedule: dormant oil in March, scab control at pink-bud and petal-fall, calcium sprays in July for better shelf life, and harvest from September to October depending on variety. High-density plantation subsidies are available through the Holistic Agriculture Development Programme.",
+    category: "agriculture",
+    source: "hortikashmir.gov.in",
+  },
+  {
+    title: "Selling produce at Parimpora mandi",
+    content_kashmiri:
+      "منڈی: پریم پورٕ فروٹ منڈی چھُ سب سٕہ بۆڈ۔ ریٹ فون یا منڈی بورڈ پؠٹھ پرؠژھِو تہٕ کمیشن ایجنٹ ہٕنٛد رسید ہیو۔",
+    content_english:
+      "Parimpora Fruit Mandi in Srinagar is Asia's large fruit market and the main auction point for Kashmiri apples, pears and cherries. Check daily rates before dispatch, insist on a written receipt from the commission agent, and keep grading and packing standards high — A-grade boxes fetch far better prices.",
+    category: "agriculture",
+    source: "local",
+  },
+  {
+    title: "Emergency numbers in Kashmir",
+    content_kashmiri:
+      "ایمرجنسی: پولیس 112، ایمبولینس 108، فٲر بریگیڈ 101، ویمن ہیلپ لائن 181، چائلڈ لائن 1098۔",
+    content_english:
+      "Key emergency numbers: 112 all-in-one emergency, 108 ambulance, 101 fire and emergency services, 181 women's helpline, 1098 childline, 1091 women's police, 14416 Tele-MANAS mental health, and 1073 highway/traffic help. Save these in your phone and teach them to elderly family members.",
+    category: "general",
+    source: "jkpolice.gov.in",
+  },
+  {
+    title: "Earthquake safety in Kashmir",
+    content_kashmiri:
+      "زلزلہ: کشیر چھِ زون V منٛز۔ ہلن ہیتھ میز تلہ گژھِو، سر بچٲوِو، تہٕ ہلن بند گژھنہٕ پتہٕ کھلہٕ جایہ نیرِو۔",
+    content_english:
+      "Kashmir lies in seismic zone V, the highest risk category. During shaking: drop, cover under a sturdy table, and hold on; stay away from windows and old brick walls. Do not use lifts. Afterwards, move to open ground, check gas connections, and keep an emergency bag with documents, water, torch and medicines ready.",
+    category: "general",
+    source: "ndma.gov.in",
+  },
+  {
+    title: "Snow and avalanche safety",
+    content_kashmiri:
+      "برٕف: بھاری برفباری منٛز چھت پؠٹھ برٕف ہٹٲوِو، ہیٹر ہیتھ ہوا آنٛدُر رٲوِو، تہٕ ایوالانچ وارننگ زونن منٛز مہ گژھِو।",
+    content_english:
+      "During heavy snowfall clear roof snow to prevent collapse, never sleep with a coal bukhari or gas heater in a sealed room (carbon monoxide risk), and keep torches and power banks charged. Avoid Sonamarg, Gurez and Zojila routes when the J&K Disaster Management Authority issues avalanche warnings.",
+    category: "general",
+    source: "jkdma",
+  },
+  {
+    title: "Electricity complaints in Kashmir (KPDCL)",
+    content_kashmiri:
+      "بجلی: شکایت خٲطرٕ KPDCL ہیلپ لائن یا نزدیک رسیور سٹیشنَس منٛز رابطہ کٔرِو۔ بل آن لائن jkpdd پورٹلَس پؠٹھ ادا کٔرِو۔",
+    content_english:
+      "For power cuts, damaged transformers or metering issues contact the Kashmir Power Distribution Corporation (KPDCL) division office or its complaint helpline; note your consumer ID from the bill. Bills can be paid online through the JKPDD/Bharat BillPay portal, at CSCs, or at the divisional cash counter.",
+    category: "general",
+    source: "jkpdcl.nic.in",
+  },
+  {
+    title: "Drinking water supply (Jal Shakti)",
+    content_kashmiri:
+      "پانی: پانی ہٕنٛد مسئلہ خٲطرٕ جل شکتی محکمَس منٛز شکایت کٔرِو۔ گندٕ پانی اُبٲلِو یا کلورین گولی ہیو۔",
+    content_english:
+      "For water supply failures or contamination, complain to the Jal Shakti (PHE) sub-division office in your area, or through the Jal Jeevan Mission grievance line. During floods or pipe damage, boil water for at least one minute or use chlorine tablets from the PHC before drinking.",
+    category: "general",
+    source: "jaljeevanmission.gov.in",
+  },
+  {
+    title: "Ration card and PDS in J&K",
+    content_kashmiri:
+      "راشن کارڈ: نۄو کارڈ یا نام شٲملٕ کرنہٕ خٲطرٕ نزدیک FCS&CA آفسَس یا آن لائن درخواست دِیُت۔",
+    content_english:
+      "Apply for a new ration card, add family members or transfer it through the Food, Civil Supplies and Consumer Affairs (FCS&CA) office of your tehsil or the jkfcsca.gov.in portal, with Aadhaar, address proof and family photo. AAY and PHH households get subsidised rice, atta and sugar from the fair price shop each month.",
+    category: "schemes",
+    source: "jkfcsca.gov.in",
+  },
+  {
+    title: "Domicile certificate J&K",
+    content_kashmiri:
+      "ڈومیسائل: ای-سروسز پورٹلَس پؠٹھ آن لائن درخواست دِیُت، 15 دۄہن منٛز سرٹیفکیٹ ملان چھُ۔",
+    content_english:
+      "A J&K domicile certificate is required for jobs and admissions. Apply online at the J&K e-Services portal (serviceonline.gov.in/jammu) or at your tehsildar's office with proof of residence, Aadhaar, ration card and school certificate. It is issued within 15 days; delays can be escalated to the Deputy Commissioner.",
+    category: "schemes",
+    source: "serviceonline.gov.in",
+  },
+  {
+    title: "Birth and death certificate registration",
+    content_kashmiri:
+      "پٲدٲیش تہٕ مرنہٕ سرٹیفکیٹ: 21 دۄہن اندر مقٲمی میونسپل یا پنچایت آفسَس منٛز رجسٹر کٔرِو۔",
+    content_english:
+      "Register a birth or death within 21 days at the Srinagar Municipal Corporation, municipal committee or panchayat/ village registrar where the event happened; hospital records help. Late registration needs an affidavit and magistrate order. Digital copies can be downloaded from the J&K e-services portal.",
+    category: "general",
+    source: "crsorgi.gov.in",
+  },
+  {
+    title: "Government jobs and JKSSB exams",
+    content_kashmiri:
+      "نوکری: JKSSB تہٕ JKPSC ہٕنٛدؠ اشتہار ویب سائٹ پؠٹھ چھِ نیران۔ ڈومیسائل تہٕ زمرہ سرٹیفکیٹ تیار تھٲوِو।",
+    content_english:
+      "Government recruitment in J&K is mainly through JKSSB (class IV to sub-inspector, junior assistant, teacher posts) and JKPSC (KAS, medical, lecturer). Watch jkssb.nic.in and jkpsc.nic.in for notifications, keep domicile, category and educational certificates ready, and never pay any agent promising a job.",
+    category: "general",
+    source: "jkssb.nic.in",
+  },
+  {
+    title: "Student scholarships in J&K",
+    content_kashmiri:
+      "وظیفہ: پری میٹرک تہٕ پوسٹ میٹرک اسکالرشپ خٲطرٕ NSP پورٹلَس پؠٹھ درخواست دِیُت۔",
+    content_english:
+      "Students can apply for pre-matric and post-matric scholarships on the National Scholarship Portal (scholarships.gov.in), usually between August and November. J&K also runs the PM Special Scholarship Scheme (PMSSS) for students studying outside the UT, with tuition and maintenance support through AICTE.",
+    category: "schemes",
+    source: "scholarships.gov.in",
+  },
+  {
+    title: "Internet and mobile services in Kashmir",
+    content_kashmiri:
+      "انٹرنیٹ: BSNL، Jio، Airtel تہٕ VI چھِ کام کران۔ دیہاتَس منٛز BSNL بہتر چھُ، تہٕ اسکولن خٲطرٕ آفلائن مواد رٲکھِو।",
+    content_english:
+      "Jio, Airtel, VI and BSNL all operate in Kashmir with 4G/5G in Srinagar and district towns; BSNL often has better reach in remote areas like Gurez, Karnah and Machil. Keep important documents downloaded offline, since connectivity can drop during heavy snow or maintenance.",
+    category: "general",
+    source: "local",
+  },
+  {
+    title: "Banking and Jammu Kashmir Bank services",
+    content_kashmiri:
+      "بینک: J&K بینک ہٕنٛدؠ شاخہ ہر ضلعَس منٛز چھِ۔ زیرو بیلنس جن دھن اکاؤنٹ کھۆلِو تہٕ پاس بک اپڈیٹ رٲکھِو۔",
+    content_english:
+      "J&K Bank is the largest bank in the UT, with branches and ATMs in every district, plus SBI, PNB and cooperative banks. Open a zero-balance PM Jan Dhan account with Aadhaar for pension and subsidy transfers (DBT). Never share OTP, ATM PIN or card details with callers claiming to be bank staff.",
+    category: "general",
+    source: "jkbank.com",
+  },
+  {
+    title: "Online fraud and cyber safety",
+    content_kashmiri:
+      "دھوکہ: OTP کٲنسہ ہٕندؠ ساتھ شیئر مہ کٔرِو۔ فراڈ گژھنہٕ پتہٕ فوراً 1930 پؠٹھ کال کٔرِو।",
+    content_english:
+      "Never share OTP, UPI PIN, or bank details, and do not install screen-sharing apps like AnyDesk on a caller's request. If money is lost to online fraud, call the cybercrime helpline 1930 within the first hour and file a report at cybercrime.gov.in — early reporting improves the chance of recovery.",
+    category: "general",
+    source: "cybercrime.gov.in",
+  },
+  {
+    title: "Kashmiri language basics",
+    content_kashmiri:
+      "کٲشُر: سلام (سلام), شُکریہ (شکریہ), کٕتھ چھُکھ؟ (کیسے ہو؟), وارٕے چھُس (میں ٹھیک ہوں), نمسکار۔",
+    content_english:
+      "Useful Kashmiri phrases: 'Assalamu alaikum' greeting; 'Kyah haal chhu?' — how are you; 'Bah chhus wariyah' — I am fine; 'Shukriya' — thank you; 'Kot chhukh gasaan?' — where are you going; 'Chhu na?' — isn't it? Kashmiri is written in Perso-Arabic Nastaliq script and is one of the official languages of J&K.",
+    category: "culture",
+    source: "local",
+  },
+  {
+    title: "Traditional Kashmiri clothing",
+    content_kashmiri:
+      "پوشاک: پھیرن، کانگٕر، تہٕ عورتَن ہٕنٛد کسابہٕ تہٕ تَرَنگہٕ چھِ کٲشُر روایتی لباس۔",
+    content_english:
+      "The pheran, a long loose woollen gown, is worn in winter with a kangri (portable firepot) underneath. Traditional women's dress includes the pheran with tilla embroidery, a taranga headdress in Kashmiri Pandit tradition, and the kasaba headwear in Muslim tradition. Modern pherans in tweed and raffal are popular year-round.",
+    category: "culture",
+    source: "local",
+  },
+  {
+    title: "Kashmir school and exam calendar",
+    content_kashmiri:
+      "اسکول: کشمیر ڈویژنَس منٛز سرمائی تعطیل دسمبر-فروری چھِ، تہٕ امتحان اکتوبر-نومبر منٛز گژھان چھِ۔",
+    content_english:
+      "Schools in the Kashmir division follow a winter-zone calendar: long winter vacation from late December to end of February, with annual exams generally held in October–November and the new session starting in March. Board exams are conducted by JKBOSE; datesheets and results are published at jkbose.nic.in.",
+    category: "general",
+    source: "jkbose.nic.in",
+  },
+  {
+    title: "Nadru and local Kashmiri vegetables",
+    content_kashmiri:
+      "سبزی: نَدرُو، ہاکھ، مُنجہٕ ہاکھ، وۄپل ہاکھ تہٕ گوگجہ چھِ مقٲمی سبزی۔",
+    content_english:
+      "Local Kashmiri vegetables include nadru (lotus stem from Dal and Wular), haakh (collard greens, eaten almost daily), monj haakh, wopal haakh, gogji (turnip) and roadside sun-dried vegetables called hokh syun used in winter. They are cheap, seasonal and nutritious — haakh is rich in iron and calcium.",
+    category: "culture",
+    source: "local",
+  },
+  {
+    title: "Winter heating safety (bukhari and kangri)",
+    content_kashmiri:
+      "بُخٲری: کمرٕ بند مہ تھٲوِو، ہوا نیرنہٕ ہٕنٛد راستہٕ رٲکھِو۔ کانگٕر ہیتھ سیٹھاہ نزدیک مہ ژھپِو، جلن ہٕنٛد خطرہ چھُ۔",
+    content_english:
+      "Wood or LPG bukharis must have a proper chimney and a slightly open window — carbon monoxide from a sealed room kills every winter in Kashmir. Keep a kangri away from bedding and children, never sleep with it inside a pheran, and keep a bucket of sand or water nearby. Get chimneys cleaned before winter.",
+    category: "general",
+    source: "jkfireservice",
+  },
+  {
+    title: "Pregnancy and maternal care",
+    content_kashmiri:
+      "حاملہ: ہر ماہ چیک اپ کروٲو، آئرن تہٕ فولک ایسڈ گولی ہیو، تہٕ اسپتالَس منٛز زچگی کٔرِو۔ JSY ہیتھ مالی امداد ملان چھُ۔",
+    content_english:
+      "Pregnant women should register at the nearest PHC in the first trimester, get at least four antenatal check-ups, take iron-folic acid and calcium tablets, and get TT/Td vaccination. Institutional delivery is free at government hospitals, and Janani Suraksha Yojana gives cash assistance. Danger signs: bleeding, severe headache, swelling, reduced baby movement — go to hospital immediately.",
+    category: "health",
+    source: "nhm.gov.in",
+  },
+  {
+    title: "Child vaccination schedule",
+    content_kashmiri:
+      "بچَن ہٕنٛد ٹیکہٕ: BCG، پولیو، پینٹا، خسرہ — سٲری ٹیکہٕ سرکٲری مرکزَس منٛز مفت چھِ۔ ٹیکہٕ کارڈ سنبھال تھٲوِو۔",
+    content_english:
+      "All childhood vaccines under the Universal Immunisation Programme are free at government health centres and Anganwadi sessions: BCG and OPV-0 at birth, pentavalent/OPV/rotavirus at 6, 10 and 14 weeks, measles-rubella at 9 months and 16–24 months, plus DPT boosters. Keep the immunisation card safe and follow the due dates.",
+    category: "health",
+    source: "nhm.gov.in",
+  },
+  {
+    title: "Kashmir air quality and winter smog",
+    content_kashmiri:
+      "ہوا: سردین منٛز سرینگرَس منٛز دھواں تہٕ دھول زیادٕ گژھان چھِ۔ دمہٕ ہٕنٛدؠ مریض ماسک پھیرِن تہٕ اِنہیلر ہیتھ رٔٹن۔",
+    content_english:
+      "Air quality in Srinagar worsens in winter due to temperature inversion, wood and coal burning and vehicle emissions. People with asthma or COPD should keep inhalers refilled, avoid early-morning outdoor exertion on smoggy days, use a mask, and avoid burning tyres or plastics for heat.",
+    category: "health",
+    source: "cpcb.nic.in",
+  },
+  {
+    title: "Solid waste and cleanliness in Srinagar",
+    content_kashmiri:
+      "صفٲی: کچرٕ گٲڑی ہیتھ دِیُت، ڈل جھیلَس منٛز کچرٕ مہ ژُنِو۔ SMC ہیلپ لائن پؠٹھ شکایت کٔرِو۔",
+    content_english:
+      "Srinagar Municipal Corporation collects household waste door-to-door; segregate wet and dry waste and hand it to the collection vehicle rather than dumping into drains or the Dal and Jhelum. Report uncollected garbage or blocked drains through the SMC complaint number or the Swachhata app.",
+    category: "general",
+    source: "smcsrinagar",
+  },
 ];
-
