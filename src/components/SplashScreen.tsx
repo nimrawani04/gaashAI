@@ -1,18 +1,29 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import ChinarLoader from "@/components/ChinarLoader";
 
 const SEEN_KEY = "kb_splash_seen_at";
 const REPEAT_AFTER_MS = 1000 * 60 * 30; // replay only after 30 min
+const ANIMATION_CYCLE_MS = 3200; // one chinar↔bot cycle = 3.2s
+const TWO_CYCLES_MS = ANIMATION_CYCLE_MS * 2; // 6.4s for 2 full cycles
 
 /**
- * Startup animation: chinar leaf blooms, morphs into the bot, then the
- * wordmark fades in and the whole screen lifts away.
+ * Startup animation: chinar leaf morphs into bot and back (infinite loop)
+ * for 2 complete cycles, then the wordmark fades in and screen lifts away.
  */
 export default function SplashScreen({ onDone }: { onDone?: () => void }) {
   const [hidden, setHidden] = useState(true);
   const [leaving, setLeaving] = useState(false);
+  const onDoneRef = useRef(onDone);
+
+  // Keep onDone ref up to date
+  useEffect(() => {
+    onDoneRef.current = onDone;
+  }, [onDone]);
 
   useEffect(() => {
+    // TESTING MODE: Uncomment to always show splash on refresh (ignores 30min cooldown)
+    // sessionStorage.removeItem(SEEN_KEY);
+    
     let last = 0;
     try {
       last = Number(sessionStorage.getItem(SEEN_KEY) || 0);
@@ -24,7 +35,7 @@ export default function SplashScreen({ onDone }: { onDone?: () => void }) {
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
     if (reduced || Date.now() - last < REPEAT_AFTER_MS) {
-      onDone?.();
+      onDoneRef.current?.();
       return;
     }
 
@@ -35,16 +46,19 @@ export default function SplashScreen({ onDone }: { onDone?: () => void }) {
       /* ignore */
     }
 
-    const leaveTimer = setTimeout(() => setLeaving(true), 1900);
+    // Start leave animation after 2 complete cycles
+    const leaveTimer = setTimeout(() => setLeaving(true), TWO_CYCLES_MS);
+    // Hide and call onDone after leave animation completes
     const doneTimer = setTimeout(() => {
       setHidden(true);
-      onDone?.();
-    }, 2500);
+      onDoneRef.current?.();
+    }, TWO_CYCLES_MS + 600); // +600ms for splash-out animation
+    
     return () => {
       clearTimeout(leaveTimer);
       clearTimeout(doneTimer);
     };
-  }, [onDone]);
+  }, []);
 
   if (hidden) return null;
 
