@@ -52,7 +52,7 @@ export default function ContributionsReview() {
   async function moveToKb(c: Contribution) {
     setBusy(c.id);
     try {
-      const allowed = ["health", "government", "agriculture", "general"];
+      const allowed = ["health", "government", "schemes", "agriculture", "weather", "transport", "tourism", "culture", "general"];
       const cat = c.category && allowed.includes(c.category) ? c.category : "general";
       const { data, error } = await supabase
         .from("knowledge_base")
