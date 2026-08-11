@@ -6,18 +6,18 @@ GaashAI-گاش اے آئی
 
 ## ✨ Features
 
-| Feature | Details |
-|---|---|
-| **Trilingual Chat** | Kashmiri (Nastaliq script), Urdu, and English — switch with one tap |
-| **AI-Powered Responses** | Powered by Lovable AI via Supabase Edge Functions |
-| **Read Aloud (TTS)** | Browser text-to-speech with automatic voice selection for Urdu/Kashmiri |
-| **Voice Input** | Speak your message using the built-in microphone button |
-| **RTL Support** | Automatic right-to-left layout for Kashmiri and Urdu text |
-| **Chat Sessions** | Persistent conversation history stored in Supabase |
-| **File Attachments** | Drag & drop or click to attach images, PDFs, and documents |
-| **Community Contributions** | Users can submit Kashmiri phrases to grow the knowledge base |
-| **Feedback System** | Thumbs up/down on bot responses to improve quality |
-| **Accessibility** | Large fonts, high contrast, and elder-friendly design |
+| Feature                     | Details                                                                 |
+| --------------------------- | ----------------------------------------------------------------------- |
+| **Trilingual Chat**         | Kashmiri (Nastaliq script), Urdu, and English — switch with one tap     |
+| **AI-Powered Responses**    | Powered by Lovable AI via Supabase Edge Functions                       |
+| **Read Aloud (TTS)**        | Browser text-to-speech with automatic voice selection for Urdu/Kashmiri |
+| **Voice Input**             | Speak your message using the built-in microphone button                 |
+| **RTL Support**             | Automatic right-to-left layout for Kashmiri and Urdu text               |
+| **Chat Sessions**           | Persistent conversation history stored in Supabase                      |
+| **File Attachments**        | Drag & drop or click to attach images, PDFs, and documents              |
+| **Community Contributions** | Users can submit Kashmiri phrases to grow the knowledge base            |
+| **Feedback System**         | Thumbs up/down on bot responses to improve quality                      |
+| **Accessibility**           | Large fonts, high contrast, and elder-friendly design                   |
 
 ---
 
@@ -93,7 +93,11 @@ Edit `.env` with your values:
 
 ```env
 VITE_SUPABASE_URL=https://your-project-ref.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-public-key
+VITE_SUPABASE_PUBLISHABLE_KEY=your-publishable-public-key
+
+# Optional server aliases for deployed functions
+SUPABASE_URL=https://your-project-ref.supabase.co
+SUPABASE_PUBLISHABLE_KEY=your-publishable-public-key
 ```
 
 > ⚠️ **Never commit your `.env` file.** It is excluded via `.gitignore`.
@@ -110,13 +114,13 @@ The app will be available at `http://localhost:5173`.
 
 ## 📦 Scripts
 
-| Command | Description |
-|---|---|
-| `npm run dev` | Start the development server |
-| `npm run build` | Build for production |
+| Command           | Description                  |
+| ----------------- | ---------------------------- |
+| `npm run dev`     | Start the development server |
+| `npm run build`   | Build for production         |
 | `npm run preview` | Preview the production build |
-| `npm run lint` | Run ESLint |
-| `npm run format` | Format code with Prettier |
+| `npm run lint`    | Run ESLint                   |
+| `npm run format`  | Format code with Prettier    |
 
 ---
 

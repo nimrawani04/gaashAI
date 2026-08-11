@@ -1,17 +1,24 @@
-import { memo } from "react";
+import { memo, type AnimationEventHandler } from "react";
 
 /**
- * Chinar leaf ⇄ AI bot morphing loader.
- * Two stacked SVGs cross-fade / cross-rotate on an infinite loop, so the
- * Kashmiri chinar leaf appears to turn into a friendly bot and back.
+ * Chinar leaf <-> AI bot morphing loader.
+ * Two stacked SVGs cross-fade and cross-rotate on an infinite loop.
  */
 export const ChinarLoader = memo(function ChinarLoader({
   size = 40,
   className = "",
+  onCycleComplete,
 }: {
   size?: number;
   className?: string;
+  onCycleComplete?: () => void;
 }) {
+  const handleLeafIteration: AnimationEventHandler<SVGSVGElement> | undefined = onCycleComplete
+    ? (event) => {
+        if (event.animationName === "chinar-leaf-cycle") onCycleComplete();
+      }
+    : undefined;
+
   return (
     <span
       className={`chinar-morph relative inline-block shrink-0 ${className}`}
@@ -24,6 +31,7 @@ export const ChinarLoader = memo(function ChinarLoader({
         viewBox="0 0 48 48"
         className="chinar-morph-leaf absolute inset-0 h-full w-full"
         aria-hidden="true"
+        onAnimationIteration={handleLeafIteration}
       >
         <path
           fill="currentColor"
@@ -42,7 +50,15 @@ export const ChinarLoader = memo(function ChinarLoader({
         <circle cx="24" cy="5" r="3" fill="currentColor" />
         <circle className="chinar-bot-eye" cx="18" cy="26" r="3.2" fill="var(--color-background)" />
         <circle className="chinar-bot-eye" cx="30" cy="26" r="3.2" fill="var(--color-background)" />
-        <rect x="19" y="32" width="10" height="2.4" rx="1.2" fill="var(--color-background)" opacity="0.7" />
+        <rect
+          x="19"
+          y="32"
+          width="10"
+          height="2.4"
+          rx="1.2"
+          fill="var(--color-background)"
+          opacity="0.7"
+        />
       </svg>
     </span>
   );
