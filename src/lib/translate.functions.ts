@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { translateOffline } from "@/lib/lexicon";
 
 const Input = z.object({
   text: z.string().min(1).max(2000),
@@ -18,8 +19,14 @@ const SCHEMA_HINT = `Reply ONLY with compact JSON:
 export const translateText = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => Input.parse(input))
   .handler(async ({ data }): Promise<TranslateResult> => {
+    // Instant, offline answer from the built-in lexicon (also our safety net).
+    const offline = translateOffline(data.text, data.direction);
+
     const key = process.env["LOVABLE_API_KEY"];
-    if (!key) throw new Error("AI is not configured");
+    if (!key) {
+      if (offline) return { ...offline, notes: offline.notes };
+      throw new Error("AI is not configured");
+    }
 
     const system =
       data.direction === "en2ks"
@@ -50,9 +57,18 @@ export const translateText = createServerFn({ method: "POST" })
       }),
     });
 
-    if (res.status === 429) throw new Error("rate_limited");
-    if (res.status === 402) throw new Error("credits_exhausted");
-    if (!res.ok) throw new Error(`ai_failed_${res.status}`);
+    if (res.status === 429) {
+      if (offline) return offline;
+      throw new Error("rate_limited");
+    }
+    if (res.status === 402) {
+      if (offline) return offline;
+      throw new Error("credits_exhausted");
+    }
+    if (!res.ok) {
+      if (offline) return offline;
+      throw new Error(`ai_failed_${res.status}`);
+    }
 
     const json = await res.json();
     const raw: string = json?.choices?.[0]?.message?.content?.trim() ?? "";
@@ -60,6 +76,7 @@ export const translateText = createServerFn({ method: "POST" })
     if (match) {
       try {
         const parsed = JSON.parse(match[0]);
+        if (!String(parsed.translation ?? "").trim() && offline) return offline;
         return {
           translation: String(parsed.translation ?? "").trim(),
           roman: String(parsed.roman ?? "").trim(),
@@ -69,5 +86,7 @@ export const translateText = createServerFn({ method: "POST" })
         /* fall through */
       }
     }
-    return { translation: raw, roman: "", notes: "" };
+    if (raw) return { translation: raw, roman: offline?.roman ?? "", notes: offline?.notes ?? "" };
+    if (offline) return offline;
+    return { translation: "", roman: "", notes: "" };
   });
