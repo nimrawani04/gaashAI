@@ -6,6 +6,8 @@ import { toast } from "sonner";
 
 import { translateText, type TranslateResult } from "@/lib/translate.functions";
 import { speak } from "@/lib/tts";
+import GuestPrompt from "@/components/GuestPrompt";
+import { isGuestMode } from "@/lib/guest";
 
 
 export const Route = createFileRoute("/translate")({
@@ -64,10 +66,16 @@ function TranslatePage() {
   const [result, setResult] = useState<TranslateResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [guest, setGuest] = useState(false);
+  const [showGuestPrompt, setShowGuestPrompt] = useState(false);
 
   const toKashmiri = direction === "en2ks";
 
   useEffect(() => {
+    if (isGuestMode()) {
+      setGuest(true);
+      return; // guests get no persisted history
+    }
     try {
       const raw = localStorage.getItem(HISTORY_KEY);
       if (raw) setHistory(JSON.parse(raw) as HistoryItem[]);
@@ -77,6 +85,10 @@ function TranslatePage() {
   }, []);
 
   const persist = (items: HistoryItem[]) => {
+    if (guest) {
+      setShowGuestPrompt(true);
+      return;
+    }
     setHistory(items);
     try {
       localStorage.setItem(HISTORY_KEY, JSON.stringify(items));
@@ -137,6 +149,9 @@ function TranslatePage() {
 
   return (
     <div className="min-h-[100dvh] bg-background">
+      {showGuestPrompt && (
+        <GuestPrompt feature="history" onDismiss={() => setShowGuestPrompt(false)} />
+      )}
       <header className="border-b border-border bg-card/80 backdrop-blur">
         <div className="mx-auto flex w-full max-w-3xl lg:max-w-4xl xl:max-w-5xl items-center gap-2 xs:gap-3 px-3 xs:px-4 sm:px-6 py-3 xs:py-4">
           <Link

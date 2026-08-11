@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { SEED_ENTRIES, type KbCategory } from "@/lib/seedKnowledge";
+import { ALL_SEED_ENTRIES as SEED_ENTRIES, type KbCategory } from "@/lib/seedKnowledge";
 import ContributionsReview from "@/components/admin/ContributionsReview";
 
 export const Route = createFileRoute("/admin")({
