@@ -1,3 +1,5 @@
+import { LEXICON } from "./lexicon";
+
 export type KbCategory =
   | "health"
   | "government"
@@ -1557,3 +1559,27 @@ export const SEED_ENTRIES: KbSeed[] = [
     source: "smcsrinagar",
   },
 ];
+
+/* ------------------------------------------------------------------ */
+/* Language entries generated from the shared Kashmiri lexicon.        */
+/* Keeps the knowledge base and the translator on one vocabulary.      */
+/* ------------------------------------------------------------------ */
+
+export const LEXICON_SEED_ENTRIES: KbSeed[] = LEXICON.map((e) => ({
+  title: `Kashmiri: ${e.en[0]}`,
+  content_kashmiri: e.ks,
+  content_english: [
+    `Kashmiri "${e.ks}" (pronounced "${e.roman}") means "${e.en.join('", "')}" in English.`,
+    e.kind === "word"
+      ? "Use it as an everyday Kashmiri word."
+      : "Use it as an everyday Kashmiri phrase in conversation.",
+    e.variants?.length ? `Also written as ${e.variants.join(", ")}.` : "",
+  ]
+    .filter(Boolean)
+    .join(" "),
+  category: "culture" as KbCategory,
+  source: "kashmirbot-lexicon",
+}));
+
+/** Everything the admin "seed" action pushes into the knowledge base. */
+export const ALL_SEED_ENTRIES: KbSeed[] = [...SEED_ENTRIES, ...LEXICON_SEED_ENTRIES];
