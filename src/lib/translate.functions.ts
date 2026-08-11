@@ -45,17 +45,28 @@ export const translateText = createServerFn({ method: "POST" })
             SCHEMA_HINT,
           ].join(" ");
 
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: { "Lovable-API-Key": key, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          { role: "system", content: system },
-          { role: "user", content: data.text },
-        ],
-      }),
-    });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 20000);
+    let res: Response;
+    try {
+      res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: { "Lovable-API-Key": key, "Content-Type": "application/json" },
+        signal: controller.signal,
+        body: JSON.stringify({
+          model: "google/gemini-3-flash-preview",
+          messages: [
+            { role: "system", content: system },
+            { role: "user", content: data.text },
+          ],
+        }),
+      });
+    } catch {
+      if (offline) return offline;
+      throw new Error("ai_unreachable");
+    } finally {
+      clearTimeout(timeout);
+    }
 
     if (res.status === 429) {
       if (offline) return offline;
