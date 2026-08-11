@@ -147,10 +147,11 @@ function TranslatePage() {
     }
   };
 
-  if (false) return null;
-
   return (
     <div className="min-h-[100dvh] bg-background">
+      {showGuestPrompt && (
+        <GuestPrompt feature="history" onDismiss={() => setShowGuestPrompt(false)} />
+      )}
       <header className="border-b border-border bg-card/80 backdrop-blur">
         <div className="mx-auto flex w-full max-w-3xl lg:max-w-4xl xl:max-w-5xl items-center gap-2 xs:gap-3 px-3 xs:px-4 sm:px-6 py-3 xs:py-4">
           <Link
