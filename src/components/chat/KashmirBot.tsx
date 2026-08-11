@@ -8,6 +8,9 @@ const SessionsPanel = lazy(() => import("@/components/chat/SessionsPanel"));
 import FeedbackButtons from "@/components/chat/FeedbackButtons";
 import { speak, stopSpeaking, ttsSupported, getVoices, unlockTts, installTtsUnlock } from "@/lib/tts";
 import ChinarLoader from "@/components/ChinarLoader";
+import GuestPrompt from "@/components/GuestPrompt";
+import { bumpGuestUses, guestLimitReached, type GuestFeature } from "@/lib/guest";
+import { localChatReply } from "@/lib/lexicon";
 
 // Lovable AI is the only backend — no local fallback Q&A.
 
@@ -135,7 +138,7 @@ const MessageBubble = memo(function MessageBubble({
                 <Volume2 className="h-3 w-3 xs:h-3.5 xs:w-3.5" aria-hidden="true" />
               </button>
             )}
-            <FeedbackButtons messageId={msg.dbId ?? null} userId={userId} />
+            {userId ? <FeedbackButtons messageId={msg.dbId ?? null} userId={userId} /> : null}
           </div>
         )}
       </div>
@@ -204,8 +207,17 @@ function rowToMessage(r: ChatMessageRow): Message {
   };
 }
 
-export default function KashmirBot({ session }: { session: Session }) {
-  const userId = session.user.id;
+export default function KashmirBot({
+  session,
+  isGuest = false,
+  onExitGuest,
+}: {
+  session: Session | null;
+  isGuest?: boolean;
+  onExitGuest?: () => void;
+}) {
+  const userId = session?.user.id ?? "";
+  const [guestPrompt, setGuestPrompt] = useState<GuestFeature | null>(null);
   const [lang, setLang] = useState<Lang>("ks");
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -245,6 +257,7 @@ export default function KashmirBot({ session }: { session: Session }) {
 
   // Load sessions list + most recent session's messages
   const refreshSessions = useCallback(async () => {
+    if (!userId) return [] as ChatSession[];
     const { data, error } = await supabase
       .from("chat_sessions")
       .select("*")
@@ -259,6 +272,7 @@ export default function KashmirBot({ session }: { session: Session }) {
   }, [userId]);
 
   const loadMessagesFor = useCallback(async (sessionId: string) => {
+    if (!userId) return;
     const { data, error } = await supabase
       .from("chat_messages")
       .select("*")
@@ -271,7 +285,7 @@ export default function KashmirBot({ session }: { session: Session }) {
     }
     const rows = (data ?? []).slice().reverse();
     setMessages(rows.map(rowToMessage));
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     (async () => {
@@ -389,6 +403,7 @@ export default function KashmirBot({ session }: { session: Session }) {
   };
 
   const ensureSession = async (firstUserText: string): Promise<string | null> => {
+    if (!userId) return null; // guests keep the conversation in memory only
     if (currentSessionId) return currentSessionId;
     const title = firstUserText.slice(0, 60);
     const { data, error } = await supabase
@@ -406,6 +421,7 @@ export default function KashmirBot({ session }: { session: Session }) {
   };
 
   const persistMessage = async (sessionId: string, msg: Message): Promise<string | null> => {
+    if (!userId) return null;
     const { data, error } = await supabase
       .from("chat_messages")
       .insert({
@@ -463,6 +479,26 @@ export default function KashmirBot({ session }: { session: Session }) {
     toast.dismiss(thinkingToast);
 
     if (usedFallback) {
+      // Try the built-in Kashmiri lexicon before showing an error, so the
+      // user still gets a relevant answer when the backend is unreachable.
+      const offline = localChatReply(userMsg.text);
+      if (offline) {
+        const offlineMsg: Message = {
+          id: crypto.randomUUID(),
+          role: "assistant",
+          text: offline,
+          timestamp: Date.now(),
+          isRTL: isRTL(offline),
+        };
+        setMessages((m) => [...m, offlineMsg]);
+        setIsThinking(false);
+        if (!mutedRef.current) void handleSpeak(offline, offlineMsg.id);
+        if (sessionId) {
+          const dbId = await persistMessage(sessionId, offlineMsg);
+          if (dbId) setMessages((m) => m.map((x) => (x.id === offlineMsg.id ? { ...x, dbId } : x)));
+        }
+        return;
+      }
       setIsThinking(false);
       toast.error("معاف کریں، کچھ غلطی ہوئی — دوبارہ کوشش کریں", {
         action: {
@@ -496,6 +532,10 @@ export default function KashmirBot({ session }: { session: Session }) {
 
   const uploadFiles = async (files: File[]) => {
     if (!files.length) return;
+    if (!userId) {
+      setGuestPrompt("attachments");
+      return;
+    }
     const MAX = 20 * 1024 * 1024;
     setUploading(true);
     try {
@@ -540,6 +580,13 @@ export default function KashmirBot({ session }: { session: Session }) {
   const handleSend = async () => {
     const text = input.trim();
     if ((!text && attachments.length === 0) || isThinking) return;
+    if (isGuest) {
+      if (guestLimitReached()) {
+        setGuestPrompt("limit");
+        return;
+      }
+      bumpGuestUses();
+    }
     const attachLines = attachments.map((a) => `📎 [${a.name}](${a.url})`).join("\n");
     const fullText = [text, attachLines].filter(Boolean).join("\n\n");
     const userMsg: Message = {
@@ -662,6 +709,9 @@ export default function KashmirBot({ session }: { session: Session }) {
           </div>
         </div>
       )}
+      {guestPrompt && (
+        <GuestPrompt feature={guestPrompt} onDismiss={() => setGuestPrompt(null)} />
+      )}
       <Suspense fallback={null}>
         <SessionsPanel
           open={panelOpen}
@@ -680,7 +730,7 @@ export default function KashmirBot({ session }: { session: Session }) {
         <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-1.5 px-2 py-2 xs:gap-2 xs:px-3 xs:py-3 sm:gap-3 sm:px-4 sm:py-4 lg:max-w-4xl xl:max-w-5xl">
           <div className="flex items-center gap-1.5 min-w-0 xs:gap-2 sm:gap-3">
             <button
-              onClick={() => setPanelOpen(true)}
+              onClick={() => (isGuest ? setGuestPrompt("sessions") : setPanelOpen(true))}
               aria-label="Previous chats"
               className="flex h-9 w-9 xs:h-10 xs:w-10 md:h-11 md:w-11 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
@@ -744,9 +794,9 @@ export default function KashmirBot({ session }: { session: Session }) {
               <span className={lang === "ks" ? "font-nastaliq text-base xs:text-lg md:text-xl" : ""}>{t.langLabel}</span>
             </button>
             <button
-              onClick={handleSignOut}
-              aria-label="Sign out"
-              title="Sign out"
+              onClick={isGuest ? onExitGuest : handleSignOut}
+              aria-label={isGuest ? "Sign in" : "Sign out"}
+              title={isGuest ? "Sign in" : "Sign out"}
               className="hidden xs:flex h-9 w-9 xs:h-10 xs:w-10 md:h-11 md:w-11 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
               <LogOut className="h-4 w-4 xs:h-5 xs:w-5" />

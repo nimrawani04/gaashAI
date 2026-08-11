@@ -1,32 +1,36 @@
 import { useCallback, useEffect, useRef, useState, type AnimationEvent } from "react";
 import ChinarLoader from "@/components/ChinarLoader";
 
-const REQUIRED_CYCLES = 2;
+/** One chinar ⇄ bot morph cycle, matching the CSS animation duration. */
+const ANIMATION_CYCLE_MS = 3200;
+/** Exactly two complete transitions, then we leave — no matter what. */
+const TWO_CYCLES_MS = ANIMATION_CYCLE_MS * 2;
+const LEAVE_MS = 600;
 
 /**
- * Startup animation: chinar leaf morphs into bot and back exactly twice,
- * then the wordmark fades out and hands off to the entry screen.
+ * Startup animation with a deterministic lifecycle: it always runs exactly two
+ * chinar↔bot cycles and then reports done. It never waits on auth, network or
+ * any other async work, so it can't strand the user on a loading screen.
  */
 export default function SplashScreen({ onDone }: { onDone?: () => void }) {
-  const [hidden, setHidden] = useState(true);
+  const [visible, setVisible] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const onDoneRef = useRef(onDone);
-  const cycleCountRef = useRef(0);
-  const leavingRef = useRef(false);
-  const doneRef = useRef(false);
+  const finishedRef = useRef(false);
 
   useEffect(() => {
     onDoneRef.current = onDone;
   }, [onDone]);
 
-  const finish = useCallback(() => {
-    if (doneRef.current) return;
-    doneRef.current = true;
-    setHidden(true);
-    onDoneRef.current?.();
-  }, []);
-
   useEffect(() => {
+    // Idempotent: safe under StrictMode double-mount (finishedRef guards it).
+    const finish = () => {
+      if (finishedRef.current) return;
+      finishedRef.current = true;
+      setVisible(false);
+      onDoneRef.current?.();
+    };
+
     const reduced =
       typeof window !== "undefined" &&
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
@@ -36,29 +40,21 @@ export default function SplashScreen({ onDone }: { onDone?: () => void }) {
       return;
     }
 
-    setHidden(false);
-  }, [finish]);
+    setVisible(true);
+    const leaveTimer = setTimeout(() => setLeaving(true), TWO_CYCLES_MS);
+    const doneTimer = setTimeout(finish, TWO_CYCLES_MS + LEAVE_MS);
+    // Hard safety net: even if a timer is throttled by a background tab,
+    // the splash can never outlive this.
+    const failsafe = setTimeout(finish, TWO_CYCLES_MS + LEAVE_MS + 4000);
 
-  const startLeaving = useCallback(() => {
-    if (leavingRef.current || doneRef.current) return;
-    leavingRef.current = true;
-    setLeaving(true);
+    return () => {
+      clearTimeout(leaveTimer);
+      clearTimeout(doneTimer);
+      clearTimeout(failsafe);
+    };
   }, []);
 
-  const handleCycleComplete = useCallback(() => {
-    if (leavingRef.current || doneRef.current) return;
-    cycleCountRef.current += 1;
-    if (cycleCountRef.current >= REQUIRED_CYCLES) startLeaving();
-  }, [startLeaving]);
-
-  const handleAnimationEnd = useCallback(
-    (event: AnimationEvent<HTMLDivElement>) => {
-      if (event.animationName === "splash-out") finish();
-    },
-    [finish],
-  );
-
-  if (hidden) return null;
+  if (!visible) return null;
 
   return (
     <div
@@ -69,12 +65,11 @@ export default function SplashScreen({ onDone }: { onDone?: () => void }) {
         paddingTop: "env(safe-area-inset-top)",
         paddingBottom: "env(safe-area-inset-bottom)",
       }}
-      onAnimationEnd={handleAnimationEnd}
     >
       <div className="splash-glow pointer-events-none absolute inset-0" aria-hidden="true" />
       <div className="relative flex flex-col items-center gap-5 text-center">
         <div className="splash-mark text-primary">
-          <ChinarLoader size={96} onCycleComplete={handleCycleComplete} />
+          <ChinarLoader size={96} />
         </div>
         <div className="splash-title flex flex-col items-center gap-1">
           <h1 className="font-nastaliq text-3xl text-foreground sm:text-4xl">کٲشُر مددگار</h1>
