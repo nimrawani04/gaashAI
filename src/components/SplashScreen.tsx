@@ -16,7 +16,6 @@ export default function SplashScreen({ onDone }: { onDone?: () => void }) {
   const [visible, setVisible] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const onDoneRef = useRef(onDone);
-  const startedRef = useRef(false);
   const finishedRef = useRef(false);
 
   useEffect(() => {
@@ -24,10 +23,7 @@ export default function SplashScreen({ onDone }: { onDone?: () => void }) {
   }, [onDone]);
 
   useEffect(() => {
-    // Guard against StrictMode double-invocation / re-mount loops.
-    if (startedRef.current) return;
-    startedRef.current = true;
-
+    // Idempotent: safe under StrictMode double-mount (finishedRef guards it).
     const finish = () => {
       if (finishedRef.current) return;
       finishedRef.current = true;
