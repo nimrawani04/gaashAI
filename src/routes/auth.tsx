@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
+import { enterGuestMode, exitGuestMode } from "@/lib/guest";
 
 export const Route = createFileRoute("/auth")({
   component: AuthPage,
@@ -72,32 +73,56 @@ function AuthPage() {
 
   useEffect(() => {
     let cancelled = false;
+    // Never let the session check strand the page on a spinner.
+    const failsafe = setTimeout(() => {
+      if (!cancelled) setIsCheckingSession(false);
+    }, 5000);
     (async () => {
-      const { data, error } = await supabase.auth.getUser();
-      if (cancelled) return;
-      if (data.user && !error) {
-        router.navigate({ to: "/", replace: true });
+      try {
+        const { data, error } = await supabase.auth.getUser();
+        if (cancelled) return;
+        if (data.user && !error) {
+          exitGuestMode();
+          router.navigate({ to: "/", replace: true });
+        }
+      } catch {
+        /* offline or backend unavailable — still show the form */
+      } finally {
+        if (!cancelled) setIsCheckingSession(false);
       }
-      setIsCheckingSession(false);
     })();
     return () => {
       cancelled = true;
+      clearTimeout(failsafe);
     };
   }, [router]);
 
+  function handleContinueAsGuest() {
+    enterGuestMode();
+    router.navigate({ to: "/", replace: true });
+  }
+
   async function handleGoogleSignIn() {
     setIsGoogleLoading(true);
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
-    });
-    if (result.error) {
-      toast.error("Google sign-in failed. Please try again.");
+    try {
+      // Always return to the current origin so localhost signs back into
+      // localhost and production into production.
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+      });
+      if (result.error) {
+        toast.error("Google sign-in failed. Please try again.");
+        setIsGoogleLoading(false);
+        return;
+      }
+      if (result.redirected) return;
+      exitGuestMode();
+      toast.success("Signed in successfully");
+      router.navigate({ to: "/", replace: true });
+    } catch {
+      toast.error("Google sign-in is unavailable right now.");
       setIsGoogleLoading(false);
-      return;
     }
-    if (result.redirected) return;
-    toast.success("Signed in successfully");
-    router.navigate({ to: "/", replace: true });
   }
 
   async function handleEmailSubmit(e: React.FormEvent) {
@@ -114,6 +139,7 @@ function AuthPage() {
           toast.error(error.message);
           return;
         }
+        exitGuestMode();
         toast.success("Signed in successfully");
         router.navigate({ to: "/", replace: true });
       } else {
@@ -127,6 +153,7 @@ function AuthPage() {
           return;
         }
         if (data.session) {
+          exitGuestMode();
           toast.success("Account created");
           router.navigate({ to: "/", replace: true });
         } else {
@@ -250,6 +277,16 @@ function AuthPage() {
               {mode === "signin" ? "Sign up" : "Sign in"}
             </button>
           </p>
+
+          <Button
+            type="button"
+            variant="ghost"
+            className="w-full text-sm xs:text-base"
+            onClick={handleContinueAsGuest}
+            disabled={busy}
+          >
+            Continue as guest
+          </Button>
 
           <p className="text-center text-[10px] xs:text-xs text-muted-foreground">
             By continuing, you agree to our{" "}
