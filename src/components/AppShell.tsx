@@ -42,6 +42,13 @@ export default function AppShell() {
 
   const handleSplashDone = useCallback(() => setSplashDone(true), []);
 
+  // Independent failsafe: the entry screen appears after the two animation
+  // cycles even if the splash component never reports back.
+  useEffect(() => {
+    const timer = setTimeout(() => setSplashDone(true), 7000);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Restore guest choice once, on the client only.
   useEffect(() => {
     if (isGuestMode()) setGuest(true);
