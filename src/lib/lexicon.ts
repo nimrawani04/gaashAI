@@ -180,7 +180,7 @@ export const LEXICON: LexEntry[] = [
   { ks: "پرون", roman: "puron", en: ["old"], kind: "word" },
 
   // ---------- Family & people ----------
-  { ks: "م�折", roman: "moj", en: ["mother"], kind: "word", variants: ["موج"] },
+  { ks: "موج", roman: "moj", en: ["mother"], kind: "word", variants: ["ماجی"] },
   { ks: "مول", roman: "mol", en: ["father"], kind: "word" },
   { ks: "بۄے", roman: "boy", en: ["brother"], kind: "word" },
   { ks: "بێنؠ", roman: "beni", en: ["sister"], kind: "word", variants: ["بینی"] },
