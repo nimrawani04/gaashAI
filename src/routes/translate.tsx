@@ -6,6 +6,8 @@ import { toast } from "sonner";
 
 import { translateText, type TranslateResult } from "@/lib/translate.functions";
 import { speak } from "@/lib/tts";
+import GuestPrompt from "@/components/GuestPrompt";
+import { isGuestMode } from "@/lib/guest";
 
 
 export const Route = createFileRoute("/translate")({
@@ -64,10 +66,16 @@ function TranslatePage() {
   const [result, setResult] = useState<TranslateResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [guest, setGuest] = useState(false);
+  const [showGuestPrompt, setShowGuestPrompt] = useState(false);
 
   const toKashmiri = direction === "en2ks";
 
   useEffect(() => {
+    if (isGuestMode()) {
+      setGuest(true);
+      return; // guests get no persisted history
+    }
     try {
       const raw = localStorage.getItem(HISTORY_KEY);
       if (raw) setHistory(JSON.parse(raw) as HistoryItem[]);
@@ -77,6 +85,10 @@ function TranslatePage() {
   }, []);
 
   const persist = (items: HistoryItem[]) => {
+    if (guest) {
+      setShowGuestPrompt(true);
+      return;
+    }
     setHistory(items);
     try {
       localStorage.setItem(HISTORY_KEY, JSON.stringify(items));
@@ -134,6 +146,8 @@ function TranslatePage() {
       toast.error("Couldn't copy");
     }
   };
+
+  if (false) return null;
 
   return (
     <div className="min-h-[100dvh] bg-background">

@@ -160,6 +160,8 @@ function AuthPage() {
           toast.success("Check your email to confirm your account.");
         }
       }
+    } catch {
+      toast.error("We couldn't reach the sign-in service. Check your connection and try again.");
     } finally {
       setIsEmailLoading(false);
     }
