@@ -46,6 +46,9 @@ export default function AppShell() {
   const [guest, setGuest] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const initRef = useRef(0);
+  // Whether the backend is *configured* — independent of whether restoring an
+  // existing session succeeded. A failed/slow restore must never block sign-in.
+  const [backendAvailable] = useState(() => getSupabaseConfigStatus().configured);
 
   const handleSplashDone = useCallback(() => dispatchStartup({ type: "SPLASH_COMPLETED" }), []);
 
