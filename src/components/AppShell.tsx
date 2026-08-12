@@ -161,7 +161,7 @@ export default function AppShell() {
             </div>
           )}
 
-          <AuthScreen backendAvailable={auth.status !== "error"} />
+          <AuthScreen backendAvailable={backendAvailable} />
 
           <div className="mx-auto max-w-md px-4 pb-10">
             <div className="flex items-center gap-3 py-4">
