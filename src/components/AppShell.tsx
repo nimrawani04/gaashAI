@@ -46,6 +46,9 @@ export default function AppShell() {
   const [guest, setGuest] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const initRef = useRef(0);
+  // Whether the backend is *configured* — independent of whether restoring an
+  // existing session succeeded. A failed/slow restore must never block sign-in.
+  const [backendAvailable] = useState(() => getSupabaseConfigStatus().configured);
 
   const handleSplashDone = useCallback(() => dispatchStartup({ type: "SPLASH_COMPLETED" }), []);
 
@@ -77,14 +80,11 @@ export default function AppShell() {
         if (!active || runId !== initRef.current) return;
         setAuth({ status: "ready", session: data.session ?? null });
       })
-      .catch((err: unknown) => {
+      .catch(() => {
         if (!active || runId !== initRef.current) return;
-        const message =
-          (err as Error)?.message === "auth_timeout"
-            ? "We couldn't reach the sign-in service in time."
-            : "We couldn't start the sign-in service.";
-        // Degrade gracefully: the app is still usable, just signed out.
-        setAuth({ status: "error", message });
+        // Restoring a previous session failed — that says nothing about the
+        // ability to sign in now. Show the signed-out form, fully usable.
+        setAuth({ status: "ready", session: null });
       });
 
     return () => {
@@ -161,7 +161,7 @@ export default function AppShell() {
             </div>
           )}
 
-          <AuthScreen backendAvailable={auth.status !== "error"} />
+          <AuthScreen backendAvailable={backendAvailable} />
 
           <div className="mx-auto max-w-md px-4 pb-10">
             <div className="flex items-center gap-3 py-4">
