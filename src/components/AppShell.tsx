@@ -80,14 +80,11 @@ export default function AppShell() {
         if (!active || runId !== initRef.current) return;
         setAuth({ status: "ready", session: data.session ?? null });
       })
-      .catch((err: unknown) => {
+      .catch(() => {
         if (!active || runId !== initRef.current) return;
-        const message =
-          (err as Error)?.message === "auth_timeout"
-            ? "We couldn't reach the sign-in service in time."
-            : "We couldn't start the sign-in service.";
-        // Degrade gracefully: the app is still usable, just signed out.
-        setAuth({ status: "error", message });
+        // Restoring a previous session failed — that says nothing about the
+        // ability to sign in now. Show the signed-out form, fully usable.
+        setAuth({ status: "ready", session: null });
       });
 
     return () => {
