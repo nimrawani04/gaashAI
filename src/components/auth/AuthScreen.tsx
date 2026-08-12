@@ -7,7 +7,7 @@ type Mode = "signin" | "signup";
 type Method = "email" | "phone";
 type PhoneStep = "enter" | "verify";
 
-export default function AuthScreen() {
+export default function AuthScreen({ backendAvailable = true }: { backendAvailable?: boolean }) {
   const [method, setMethod] = useState<Method>("email");
   const [mode, setMode] = useState<Mode>("signin");
   const [email, setEmail] = useState("");
@@ -48,6 +48,7 @@ export default function AuthScreen() {
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!backendAvailable) return;
     if (!email || !password) return;
     setLoading(true);
     try {
@@ -71,6 +72,7 @@ export default function AuthScreen() {
   };
 
   const handleGoogle = async () => {
+    if (!backendAvailable) return;
     setLoading(true);
     try {
       const result = await lovable.auth.signInWithOAuth("google", {
@@ -87,6 +89,7 @@ export default function AuthScreen() {
 
   const sendOtp = async (e?: React.FormEvent) => {
     e?.preventDefault();
+    if (!backendAvailable) return;
     if (!phone) return;
     setLoading(true);
     try {
@@ -103,7 +106,7 @@ export default function AuthScreen() {
   };
 
   const handleResend = async () => {
-    if (resendIn > 0 || loading) return;
+    if (!backendAvailable || resendIn > 0 || loading) return;
     setLoading(true);
     try {
       const { error } = await supabase.auth.signInWithOtp({ phone });
@@ -119,6 +122,7 @@ export default function AuthScreen() {
   };
 
   const verifyOtp = async (code: string) => {
+    if (!backendAvailable) return;
     setLoading(true);
     try {
       const { error } = await supabase.auth.verifyOtp({
@@ -165,7 +169,7 @@ export default function AuthScreen() {
         <button
           type="button"
           onClick={handleGoogle}
-          disabled={loading}
+          disabled={loading || !backendAvailable}
           className="mb-4 flex w-full items-center justify-center gap-3 rounded-full border border-border bg-background px-5 py-3 text-base font-medium text-foreground shadow-sm transition hover:bg-muted disabled:opacity-50"
         >
           <GoogleIcon />
@@ -225,7 +229,7 @@ export default function AuthScreen() {
                 disabled={loading}
                 className="mt-2 rounded-full bg-primary px-5 py-3 text-base font-semibold text-primary-foreground shadow-md transition hover:opacity-90 disabled:opacity-50"
               >
-                {loading ? "Please wait…" : mode === "signin" ? "Sign in" : "Sign up"}
+                {!backendAvailable ? "Sign-in unavailable" : loading ? "Please wait…" : mode === "signin" ? "Sign in" : "Sign up"}
               </button>
             </form>
             <button
@@ -255,7 +259,7 @@ export default function AuthScreen() {
             </label>
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !backendAvailable}
               className="mt-2 rounded-full bg-primary px-5 py-3 text-base font-semibold text-primary-foreground shadow-md transition hover:opacity-90 disabled:opacity-50"
             >
               {loading ? "Sending…" : "Send OTP"}

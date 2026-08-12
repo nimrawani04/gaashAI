@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { AlertTriangle, LogIn, UserRound } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { getSupabaseClient, getSupabaseConfigStatus } from "@/integrations/supabase/client";
 import KashmirBot from "@/components/chat/KashmirBot";
 import AuthScreen from "@/components/auth/AuthScreen";
 import AppErrorBoundary from "@/components/AppErrorBoundary";
@@ -16,6 +16,13 @@ type AuthState =
   | { status: "loading" }
   | { status: "ready"; session: Session | null }
   | { status: "error"; message: string };
+
+type StartupState = { phase: "splash" | "entry" };
+
+function startupReducer(state: StartupState, event: { type: "SPLASH_COMPLETED" }): StartupState {
+  if (event.type === "SPLASH_COMPLETED" && state.phase === "splash") return { phase: "entry" };
+  return state;
+}
 
 function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -35,19 +42,12 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 
 export default function AppShell() {
   const [auth, setAuth] = useState<AuthState>({ status: "loading" });
-  const [splashDone, setSplashDone] = useState(false);
+  const [startup, dispatchStartup] = useReducer(startupReducer, { phase: "splash" });
   const [guest, setGuest] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const initRef = useRef(0);
 
-  const handleSplashDone = useCallback(() => setSplashDone(true), []);
-
-  // Independent failsafe: the entry screen appears after the two animation
-  // cycles even if the splash component never reports back.
-  useEffect(() => {
-    const timer = setTimeout(() => setSplashDone(true), 7000);
-    return () => clearTimeout(timer);
-  }, []);
+  const handleSplashDone = useCallback(() => dispatchStartup({ type: "SPLASH_COMPLETED" }), []);
 
   // Restore guest choice once, on the client only.
   useEffect(() => {
@@ -60,7 +60,19 @@ export default function AppShell() {
     let active = true;
     setAuth({ status: "loading" });
 
-    withTimeout(supabase.auth.getSession(), AUTH_TIMEOUT_MS)
+    const client = getSupabaseClient();
+    if (!client) {
+      const status = getSupabaseConfigStatus();
+      setAuth({
+        status: "error",
+        message: status.configured
+          ? "The sign-in service is unavailable."
+          : "Sign-in is temporarily unavailable because the app configuration is incomplete.",
+      });
+      return;
+    }
+
+    withTimeout(client.auth.getSession(), AUTH_TIMEOUT_MS)
       .then(({ data }) => {
         if (!active || runId !== initRef.current) return;
         setAuth({ status: "ready", session: data.session ?? null });
@@ -82,7 +94,9 @@ export default function AppShell() {
 
   // Live session changes (sign in / sign out / token refresh).
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
+    const client = getSupabaseClient();
+    if (!client) return;
+    const { data: sub } = client.auth.onAuthStateChange((_event, s) => {
       setAuth({ status: "ready", session: s });
       if (s) {
         exitGuestMode();
@@ -103,24 +117,22 @@ export default function AppShell() {
   }, []);
 
   const session = auth.status === "ready" ? auth.session : null;
-  const showLoader = !splashDone || (auth.status === "loading" && !guest);
+  const showAuthLoader = auth.status === "loading" && !guest;
 
   return (
     <AppErrorBoundary>
-      <SplashScreen onDone={handleSplashDone} />
-
-      {showLoader ? (
+      {startup.phase === "splash" ? (
+        <SplashScreen onDone={handleSplashDone} />
+      ) : showAuthLoader ? (
         <div className="flex min-h-[100dvh] flex-col items-center justify-center gap-3 bg-background px-6 text-center">
           <ChinarLoader size={56} />
           <p className="font-nastaliq text-sm text-muted-foreground">لوڈ گژھان...</p>
-          {splashDone && (
-            <button
-              onClick={continueAsGuest}
-              className="mt-2 rounded-full border border-border px-5 py-2 text-sm font-semibold text-foreground transition hover:bg-accent"
-            >
-              Continue as guest
-            </button>
-          )}
+          <button
+            onClick={continueAsGuest}
+            className="mt-2 rounded-full border border-border px-5 py-2 text-sm font-semibold text-foreground transition hover:bg-accent"
+          >
+            Continue as guest
+          </button>
         </div>
       ) : session ? (
         <KashmirBot session={session} />
@@ -149,7 +161,7 @@ export default function AppShell() {
             </div>
           )}
 
-          <AuthScreen />
+          <AuthScreen backendAvailable={auth.status !== "error"} />
 
           <div className="mx-auto max-w-md px-4 pb-10">
             <div className="flex items-center gap-3 py-4">
