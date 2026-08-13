@@ -80,7 +80,6 @@ export default function AuthScreen({ backendAvailable = true }: { backendAvailab
       });
       if (result.error) throw result.error;
       if (result.redirected) return;
-      if (result.tokens) await supabase.auth.setSession(result.tokens);
     } catch (err: any) {
       toast.error(err?.message ?? "Google sign-in failed");
       setLoading(false);
