@@ -76,9 +76,7 @@ export default function AuthScreen({ backendAvailable = true }: { backendAvailab
     if (!backendAvailable) return;
     setLoading(true);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
-      });
+      const result = await signInWithGoogle("/");
       if (result.error) throw result.error;
       if (result.redirected) return;
     } catch (err: any) {
@@ -86,6 +84,15 @@ export default function AuthScreen({ backendAvailable = true }: { backendAvailab
       setLoading(false);
     }
   };
+
+  // Resume Google sign-in when we were sent here from a host without the
+  // OAuth broker (?google=1).
+  useEffect(() => {
+    if (!backendAvailable || !shouldAutostartGoogle()) return;
+    clearGoogleAutostart();
+    void handleGoogle();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [backendAvailable]);
 
   const sendOtp = async (e?: React.FormEvent) => {
     e?.preventDefault();
