@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { lovable } from "@/integrations/lovable";
+import { signInWithGoogle } from "@/lib/oauth";
 import { supabase } from "@/integrations/supabase/client";
 import { enterGuestMode, exitGuestMode } from "@/lib/guest";
 
