@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState, useCallback, memo, lazy, Suspense } from "react";
+import ThemeToggle from "@/components/ThemeToggle";
+import { readImage } from "@/lib/vision.functions";
 import { Mic, Send, Volume2, VolumeX, LogOut, Menu, HeartHandshake, Paperclip, X, FileText, Loader2, Languages } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -587,7 +589,8 @@ export default function KashmirBot({
       }
       bumpGuestUses();
     }
-    const attachLines = attachments.map((a) => `📎 [${a.name}](${a.url})`).join("\n");
+    const sent = attachments;
+    const attachLines = sent.map((a) => `📎 [${a.name}](${a.url})`).join("\n");
     const fullText = [text, attachLines].filter(Boolean).join("\n\n");
     const userMsg: Message = {
       id: crypto.randomUUID(),
@@ -600,11 +603,40 @@ export default function KashmirBot({
     setInput("");
     setAttachments([]);
 
-    const sessionId = await ensureSession(text || attachments[0]?.name || "Attachment");
+    const sessionId = await ensureSession(text || sent[0]?.name || "Attachment");
     if (sessionId) await persistMessage(sessionId, userMsg);
 
-    // Send only the text portion to the AI (it can't see the files)
-    const aiMsg: Message = { ...userMsg, text: text || "(user sent an attachment)" };
+    // Read any attached images so their text becomes part of the question.
+    const images = sent.filter((a) => a.type.startsWith("image/") || IMG_EXT_RE.test(a.name));
+    let visionNotes = "";
+    if (images.length) {
+      setIsThinking(true);
+      const reads = await Promise.all(
+        images.map(async (img) => {
+          try {
+            const { text: read } = await readImage({
+              data: { imageUrl: img.url, question: text || undefined },
+            });
+            return read ? `Image "${img.name}":\n${read}` : "";
+          } catch {
+            return "";
+          }
+        }),
+      );
+      visionNotes = reads.filter(Boolean).join("\n\n");
+      if (!visionNotes) toast.error("تصویر پڑھی نہیں جا سکی — دوبارہ کوشش کریں");
+    }
+
+    const otherFiles = sent.filter((a) => !images.includes(a)).map((a) => a.name);
+    const aiText = [
+      text,
+      visionNotes ? `The user attached image(s). Extracted content:\n${visionNotes}\nAnswer the user's question using this content.` : "",
+      otherFiles.length ? `The user also attached file(s): ${otherFiles.join(", ")}.` : "",
+    ]
+      .filter(Boolean)
+      .join("\n\n");
+
+    const aiMsg: Message = { ...userMsg, text: aiText || "(user sent an attachment)" };
     await sendWithRetry(aiMsg, sessionId);
   };
 
@@ -778,6 +810,7 @@ export default function KashmirBot({
             >
               <HeartHandshake className="h-4 w-4 xs:h-5 xs:w-5" />
             </Link>
+            <ThemeToggle />
             <button
               onClick={toggleMute}
               aria-label={muted ? "Unmute auto-read" : "Mute auto-read"}

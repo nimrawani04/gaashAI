@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
+import ThemeToggle from "@/components/ThemeToggle";
+import { clearGoogleAutostart, shouldAutostartGoogle, signInWithGoogle } from "@/lib/oauth";
 
 type Mode = "signin" | "signup";
 type Method = "email" | "phone";
@@ -75,9 +76,7 @@ export default function AuthScreen({ backendAvailable = true }: { backendAvailab
     if (!backendAvailable) return;
     setLoading(true);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
-      });
+      const result = await signInWithGoogle("/");
       if (result.error) throw result.error;
       if (result.redirected) return;
     } catch (err: any) {
@@ -85,6 +84,15 @@ export default function AuthScreen({ backendAvailable = true }: { backendAvailab
       setLoading(false);
     }
   };
+
+  // Resume Google sign-in when we were sent here from a host without the
+  // OAuth broker (?google=1).
+  useEffect(() => {
+    if (!backendAvailable || !shouldAutostartGoogle()) return;
+    clearGoogleAutostart();
+    void handleGoogle();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [backendAvailable]);
 
   const sendOtp = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -146,6 +154,9 @@ export default function AuthScreen({ backendAvailable = true }: { backendAvailab
   return (
     <div className="flex min-h-[100dvh] items-center justify-center bg-background px-4 py-10">
       <div className="w-full max-w-md rounded-3xl border border-border bg-card p-8 shadow-lg">
+        <div className="mb-2 flex justify-end">
+          <ThemeToggle className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+        </div>
         <div className="mb-6 flex flex-col items-center text-center">
           <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md">
             <span className="font-nastaliq text-3xl leading-none">ک</span>

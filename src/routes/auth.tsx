@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { lovable } from "@/integrations/lovable";
+import { signInWithGoogle } from "@/lib/oauth";
 import { supabase } from "@/integrations/supabase/client";
 import { enterGuestMode, exitGuestMode } from "@/lib/guest";
 
@@ -105,11 +105,9 @@ function AuthPage() {
   async function handleGoogleSignIn() {
     setIsGoogleLoading(true);
     try {
-      // Always return to the current origin so localhost signs back into
-      // localhost and production into production.
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
-      });
+      // Returns to this origin's /oauth-callback route, or hands off to the
+      // canonical origin when this host cannot serve the OAuth broker.
+      const result = await signInWithGoogle("/");
       if (result.error) {
         toast.error("Google sign-in failed. Please try again.");
         setIsGoogleLoading(false);
