@@ -154,6 +154,9 @@ export default function AuthScreen({ backendAvailable = true }: { backendAvailab
   return (
     <div className="flex min-h-[100dvh] items-center justify-center bg-background px-4 py-10">
       <div className="w-full max-w-md rounded-3xl border border-border bg-card p-8 shadow-lg">
+        <div className="mb-2 flex justify-end">
+          <ThemeToggle className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+        </div>
         <div className="mb-6 flex flex-col items-center text-center">
           <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md">
             <span className="font-nastaliq text-3xl leading-none">ک</span>
