@@ -9,6 +9,7 @@ GaashAI-گاش اے آئی
 | Feature                     | Details                                                                 |
 | --------------------------- | ----------------------------------------------------------------------- |
 | **Trilingual Chat**         | Kashmiri (Nastaliq script), Urdu, and English — switch with one tap     |
+| **Translation Tool**        | Dedicated page to translate Kashmiri, Urdu, and English text             |
 | **AI-Powered Responses**    | Powered by Lovable AI via Supabase Edge Functions                       |
 | **Read Aloud (TTS)**        | Browser text-to-speech with automatic voice selection for Urdu/Kashmiri |
 | **Voice Input**             | Speak your message using the built-in microphone button                 |
@@ -50,6 +51,7 @@ kashmiriBot/
 │   │   ├── index.tsx        # Main chat page
 │   │   ├── auth.tsx         # Login / signup
 │   │   ├── contribute.tsx   # Community contribution form
+│   │   ├── translate.tsx    # Translation tool and phrasebook
 │   │   └── admin.tsx        # Admin dashboard
 │   └── styles.css           # Global styles & design tokens
 ├── supabase/
