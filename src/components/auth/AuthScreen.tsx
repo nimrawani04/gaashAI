@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
+import ThemeToggle from "@/components/ThemeToggle";
+import { clearGoogleAutostart, shouldAutostartGoogle, signInWithGoogle } from "@/lib/oauth";
 
 type Mode = "signin" | "signup";
 type Method = "email" | "phone";
