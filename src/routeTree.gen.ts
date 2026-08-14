@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TranslateRouteImport } from './routes/translate'
+import { Route as OauthCallbackRouteImport } from './routes/oauth-callback'
 import { Route as ContributeRouteImport } from './routes/contribute'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -18,6 +19,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const TranslateRoute = TranslateRouteImport.update({
   id: '/translate',
   path: '/translate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OauthCallbackRoute = OauthCallbackRouteImport.update({
+  id: '/oauth-callback',
+  path: '/oauth-callback',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContributeRoute = ContributeRouteImport.update({
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/contribute': typeof ContributeRoute
+  '/oauth-callback': typeof OauthCallbackRoute
   '/translate': typeof TranslateRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/contribute': typeof ContributeRoute
+  '/oauth-callback': typeof OauthCallbackRoute
   '/translate': typeof TranslateRoute
 }
 export interface FileRoutesById {
@@ -61,14 +69,34 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/contribute': typeof ContributeRoute
+  '/oauth-callback': typeof OauthCallbackRoute
   '/translate': typeof TranslateRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/auth' | '/contribute' | '/translate'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/auth'
+    | '/contribute'
+    | '/oauth-callback'
+    | '/translate'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/auth' | '/contribute' | '/translate'
-  id: '__root__' | '/' | '/admin' | '/auth' | '/contribute' | '/translate'
+  to:
+    | '/'
+    | '/admin'
+    | '/auth'
+    | '/contribute'
+    | '/oauth-callback'
+    | '/translate'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/auth'
+    | '/contribute'
+    | '/oauth-callback'
+    | '/translate'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -76,6 +104,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   ContributeRoute: typeof ContributeRoute
+  OauthCallbackRoute: typeof OauthCallbackRoute
   TranslateRoute: typeof TranslateRoute
 }
 
@@ -86,6 +115,13 @@ declare module '@tanstack/react-router' {
       path: '/translate'
       fullPath: '/translate'
       preLoaderRoute: typeof TranslateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/oauth-callback': {
+      id: '/oauth-callback'
+      path: '/oauth-callback'
+      fullPath: '/oauth-callback'
+      preLoaderRoute: typeof OauthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contribute': {
@@ -124,6 +160,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   ContributeRoute: ContributeRoute,
+  OauthCallbackRoute: OauthCallbackRoute,
   TranslateRoute: TranslateRoute,
 }
 export const routeTree = rootRouteImport
