@@ -49,7 +49,11 @@
 }
 
 :root {
-  --radius: 1rem;
+  --radius-sm: 8px;
+  --radius-card: 16px;
+  --radius-pill: 9999px;
+  --radius: 16px;
+  
   /* Warm, high-contrast palette inspired by Kashmiri saffron + chinar greens */
   --background: oklch(0.985 0.012 90);
   --foreground: oklch(0.20 0.03 150);
@@ -60,20 +64,21 @@
   --primary: oklch(0.48 0.12 155);          /* deep chinar green */
   --primary-foreground: oklch(0.99 0.01 100);
 
-  --secondary: oklch(0.93 0.05 90);         /* soft cream */
-  --secondary-foreground: oklch(0.25 0.04 150);
+  /* High contrast secondary color replacing tan/beige-on-cream */
+  --secondary: oklch(0.90 0.04 150);        /* distinct muted chinar tint */
+  --secondary-foreground: oklch(0.20 0.04 150);
 
-  --muted: oklch(0.95 0.02 90);
-  --muted-foreground: oklch(0.42 0.03 150);
+  --muted: oklch(0.94 0.03 90);
+  --muted-foreground: oklch(0.40 0.03 150);
 
   --accent: oklch(0.78 0.16 70);            /* saffron */
   --accent-foreground: oklch(0.20 0.04 60);
 
-  --border: oklch(0.88 0.02 90);
-  --input: oklch(0.92 0.02 90);
+  --border: oklch(0.84 0.03 90);
+  --input: oklch(0.88 0.03 90);
   --ring: oklch(0.48 0.12 155);
 
-  --bot-bubble: oklch(0.96 0.03 90);
+  --bot-bubble: oklch(0.96 0.02 90);
   --bot-bubble-foreground: oklch(0.18 0.03 150);
   
   /* Base font size adjusts based on viewport */
@@ -81,20 +86,25 @@
 }
 
 .dark {
+  --radius-sm: 8px;
+  --radius-card: 16px;
+  --radius-pill: 9999px;
+  --radius: 16px;
+
   --background: oklch(0.18 0.02 150);
   --foreground: oklch(0.98 0.01 90);
   --card: oklch(0.22 0.025 150);
   --card-foreground: oklch(0.98 0.01 90);
   --primary: oklch(0.78 0.15 70);
   --primary-foreground: oklch(0.18 0.03 60);
-  --secondary: oklch(0.28 0.03 150);
+  --secondary: oklch(0.28 0.04 150);
   --secondary-foreground: oklch(0.98 0.01 90);
   --muted: oklch(0.28 0.03 150);
   --muted-foreground: oklch(0.78 0.02 90);
   --accent: oklch(0.78 0.16 70);
   --accent-foreground: oklch(0.18 0.04 60);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 14%);
+  --border: oklch(1 0 0 / 14%);
+  --input: oklch(1 0 0 / 16%);
   --ring: oklch(0.78 0.15 70);
   --bot-bubble: oklch(0.26 0.03 150);
   --bot-bubble-foreground: oklch(0.98 0.01 90);

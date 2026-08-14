@@ -106,38 +106,55 @@ const MessageBubble = memo(function MessageBubble({
 }) {
   const dir = msg.isRTL ? "rtl" : "ltr";
   const isUser = msg.role === "user";
+
   return (
     <div
-      className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}
+      className={`flex w-full ${isUser ? "justify-end" : "justify-start"} my-1`}
       style={{ contentVisibility: "auto", containIntrinsicSize: "auto 72px" } as React.CSSProperties}
     >
-      <div className={`flex max-w-[90%] xs:max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] flex-col gap-1 ${isUser ? "items-end" : "items-start"}`}>
+      <div className={`flex max-w-[92%] xs:max-w-[85%] sm:max-w-[80%] md:max-w-[75%] flex-col gap-1.5 ${isUser ? "items-end" : "items-start"}`}>
+        {/* Role & Script Indicator */}
+        <div className="flex items-center gap-1.5 px-1 text-[11px] font-medium text-muted-foreground">
+          {isUser ? (
+            <span>You</span>
+          ) : (
+            <span className="flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+              {msg.isRTL ? "کٲشُر — Kashmiri" : "Assistant"}
+            </span>
+          )}
+        </div>
+
+        {/* Message Bubble Container */}
         <div
           dir={dir}
           className={[
-            "rounded-2xl px-3 xs:px-4 sm:px-5 py-2 xs:py-2.5 sm:py-3 text-base xs:text-[1.05rem] sm:text-[1.15rem] md:text-[1.2rem] leading-relaxed shadow-sm",
+            "rounded-[16px] px-4 py-3 text-base sm:text-lg leading-relaxed shadow-sm transition-colors",
             msg.isRTL ? "font-nastaliq" : "",
             isUser
-              ? "bg-primary text-primary-foreground rounded-br-sm"
-              : "bg-bot-bubble text-bot-bubble-foreground rounded-bl-sm border border-border",
+              ? "bg-primary text-primary-foreground rounded-br-[4px]"
+              : "bg-bot-bubble text-bot-bubble-foreground border border-border rounded-bl-[4px]",
           ].join(" ")}
         >
           {renderMessageContent(msg.text)}
         </div>
+
+        {/* Assistant Action Bar (Audio & Feedback) */}
         {!isUser && (
-          <div className="flex items-start gap-1.5 xs:gap-2">
+          <div className="flex items-center gap-2 pt-0.5 px-1">
             {lang !== "ks" && (
               <button
                 type="button"
                 onClick={() => onSpeak(msg.text, msg.id)}
-                aria-label={speaking ? "Stop reading" : "Read aloud"}
+                aria-label={speaking ? "Stop reading aloud" : "Listen to response"}
                 aria-pressed={speaking}
                 className={[
-                  "ms-1 inline-flex items-center gap-1 rounded-full px-1.5 xs:px-2 py-0.5 xs:py-1 text-[10px] xs:text-xs transition hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring",
-                  speaking ? "text-primary bg-secondary animate-pulse" : "text-muted-foreground hover:text-foreground",
+                  "inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-[8px] px-3 text-xs font-medium transition border border-border bg-secondary text-secondary-foreground hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring",
+                  speaking ? "text-primary border-primary animate-pulse" : "",
                 ].join(" ")}
               >
-                <Volume2 className="h-3 w-3 xs:h-3.5 xs:w-3.5" aria-hidden="true" />
+                <Volume2 className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <span>{speaking ? "Stop" : "Listen"}</span>
               </button>
             )}
             {userId ? <FeedbackButtons messageId={msg.dbId ?? null} userId={userId} /> : null}
@@ -758,81 +775,69 @@ export default function KashmirBot({
       </Suspense>
 
       {/* Header */}
-      <header className="border-b border-border bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/60">
-        <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-1.5 px-2 py-2 xs:gap-2 xs:px-3 xs:py-3 sm:gap-3 sm:px-4 sm:py-4 lg:max-w-4xl xl:max-w-5xl">
-          <div className="flex items-center gap-1.5 min-w-0 xs:gap-2 sm:gap-3">
+      <header className="border-b border-border bg-card/90 backdrop-blur supports-[backdrop-filter]:bg-card/75">
+        <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-2 px-3 py-3 sm:px-4 lg:max-w-4xl xl:max-w-5xl">
+          {/* Signature Kashmiri Wordmark */}
+          <div className="flex items-center gap-2.5 min-w-0">
             <button
               onClick={() => (isGuest ? setGuestPrompt("sessions") : setPanelOpen(true))}
               aria-label="Previous chats"
-              className="flex h-9 w-9 xs:h-10 xs:w-10 md:h-11 md:w-11 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-[8px] border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
             >
-              <Menu className="h-4 w-4 xs:h-5 xs:w-5" />
+              <Menu className="h-5 w-5" />
             </button>
-            <div className="hidden h-10 w-10 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 shadow-md sm:flex overflow-hidden">
+            <div className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-[12px] bg-primary/10 shadow-sm sm:flex overflow-hidden">
               <img src="/favicon.png" alt="KashmirBot Logo" className="h-full w-full object-cover" />
             </div>
             <div className="min-w-0">
-              <h1 className="font-nastaliq truncate text-xl xs:text-2xl sm:text-3xl md:text-3xl lg:text-4xl text-foreground" dir="rtl">
+              <h1 className="font-nastaliq truncate text-2xl sm:text-3xl text-foreground leading-normal" dir="rtl">
                 کٲشُر مددگار
               </h1>
-              <p className="truncate text-[10px] xs:text-xs sm:text-sm md:text-base text-muted-foreground">{t.subtitle}</p>
-              <span
-                title="Active AI backend: Lovable AI (fallbacks disabled)"
-                className="mt-0.5 hidden xs:inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[9px] xs:text-[10px] font-semibold uppercase tracking-wide text-primary"
-              >
-                <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-                Lovable AI
-              </span>
+              <p className="truncate text-xs sm:text-sm text-muted-foreground">{t.subtitle}</p>
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-1 xs:gap-1.5 sm:gap-2">
+
+          {/* Clean, 2-3 Action Cluster with Labels */}
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             <Link
               to="/translate"
               aria-label="Learn Kashmiri translator"
-              title="Learn Kashmiri"
-              className="hidden xs:flex h-9 w-9 xs:h-10 xs:w-10 md:h-11 md:w-11 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-[8px] border border-border bg-secondary px-3 py-2 text-xs font-semibold text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
             >
-              <Languages className="h-4 w-4 xs:h-5 xs:w-5" />
+              <Languages className="h-4 w-4 shrink-0 text-primary" />
+              <span className="hidden sm:inline">Learn</span>
             </Link>
-            <Link
-              to="/contribute"
-              aria-label="Contribute"
-              title="دیو مدد"
-              className="hidden md:inline-flex h-10 md:h-11 items-center gap-1.5 rounded-full border border-border bg-secondary px-3 md:px-4 text-sm md:text-base font-semibold text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            >
-              <HeartHandshake className="h-4 w-4" />
-              <span className="font-nastaliq text-base md:text-lg">دیو مدد</span>
-            </Link>
-            <Link
-              to="/contribute"
-              aria-label="Contribute"
-              className="flex md:hidden h-9 w-9 xs:h-10 xs:w-10 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            >
-              <HeartHandshake className="h-4 w-4 xs:h-5 xs:w-5" />
-            </Link>
-            <ThemeToggle />
-            <button
-              onClick={toggleMute}
-              aria-label={muted ? "Unmute auto-read" : "Mute auto-read"}
-              aria-pressed={muted}
-              className="flex h-9 w-9 xs:h-10 xs:w-10 md:h-11 md:w-11 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            >
-              {muted ? <VolumeX className="h-4 w-4 xs:h-5 xs:w-5" /> : <Volume2 className="h-4 w-4 xs:h-5 xs:w-5" />}
-            </button>
+
             <button
               onClick={cycleLang}
               aria-label="Switch language"
-              className="rounded-full border border-border bg-secondary px-2 xs:px-3 py-1.5 xs:py-2 md:py-2.5 text-xs xs:text-sm md:text-base font-semibold text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-[8px] border border-border bg-secondary px-3 py-2 text-xs font-semibold text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
             >
-              <span className={lang === "ks" ? "font-nastaliq text-base xs:text-lg md:text-xl" : ""}>{t.langLabel}</span>
+              <span className={lang === "ks" ? "font-nastaliq text-sm" : ""}>{t.langLabel}</span>
             </button>
+
+            <ThemeToggle />
+
+            {/* Menu Drawer Toggle / Secondary Actions Menu */}
+            <div className="relative">
+              <button
+                onClick={toggleMute}
+                aria-label={muted ? "Unmute auto-read" : "Mute auto-read"}
+                aria-pressed={muted}
+                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-[8px] border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+                title={muted ? "Unmute" : "Mute"}
+              >
+                {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+              </button>
+            </div>
+
             <button
               onClick={isGuest ? onExitGuest : handleSignOut}
               aria-label={isGuest ? "Sign in" : "Sign out"}
-              title={isGuest ? "Sign in" : "Sign out"}
-              className="hidden xs:flex h-9 w-9 xs:h-10 xs:w-10 md:h-11 md:w-11 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-[8px] border border-border bg-secondary px-3 py-2 text-xs font-semibold text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
             >
-              <LogOut className="h-4 w-4 xs:h-5 xs:w-5" />
+              <LogOut className="h-4 w-4 shrink-0" />
+              <span className="hidden md:inline">{isGuest ? "Sign in" : "Sign out"}</span>
             </button>
           </div>
         </div>
@@ -855,6 +860,15 @@ export default function KashmirBot({
               >
                 {t.empty}
               </p>
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                <Link
+                  to="/contribute"
+                  className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-border bg-secondary px-4 py-2 text-sm font-semibold text-secondary-foreground transition hover:bg-accent"
+                >
+                  <HeartHandshake className="h-4 w-4 text-primary" />
+                  <span>Contribute (دیو مدد)</span>
+                </Link>
+              </div>
             </div>
           ) : (
             <MessageList
@@ -915,9 +929,9 @@ export default function KashmirBot({
               disabled={uploading}
               aria-label="Attach file"
               title="Attach file"
-              className="flex h-11 w-11 xs:h-12 xs:w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+              className="flex min-h-[44px] min-w-[44px] h-11 w-11 xs:h-12 xs:w-12 shrink-0 items-center justify-center rounded-[8px] border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
             >
-              {uploading ? <Loader2 className="h-5 w-5 xs:h-6 xs:w-6 animate-spin" /> : <Paperclip className="h-5 w-5 xs:h-6 xs:w-6" />}
+              {uploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Paperclip className="h-5 w-5" />}
             </button>
             <div className="relative shrink-0">
               {isListening && <span className="mic-listening-ring" aria-hidden="true" />}
@@ -927,11 +941,11 @@ export default function KashmirBot({
                 aria-label={t.mic}
                 aria-pressed={isListening}
                 className={[
-                  "flex h-11 w-11 xs:h-12 xs:w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring",
+                  "flex min-h-[44px] min-w-[44px] h-11 w-11 xs:h-12 xs:w-12 items-center justify-center rounded-[8px] border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring",
                   isListening ? "mic-listening" : "",
                 ].join(" ")}
               >
-                <Mic className="h-5 w-5 xs:h-6 xs:w-6" aria-hidden="true" />
+                <Mic className="h-5 w-5" aria-hidden="true" />
               </button>
             </div>
             <textarea
@@ -946,7 +960,7 @@ export default function KashmirBot({
               autoCorrect="on"
               spellCheck={false}
               className={[
-                "min-h-11 xs:min-h-12 sm:min-h-14 md:min-h-16 max-h-32 xs:max-h-36 sm:max-h-40 flex-1 resize-none rounded-2xl border border-border bg-background px-3 xs:px-4 py-2 xs:py-2.5 sm:py-3 md:py-4 text-base xs:text-lg md:text-xl text-foreground shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring",
+                "min-h-[44px] max-h-32 flex-1 resize-none rounded-[8px] border border-border bg-background px-3 py-2.5 text-base text-foreground shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring",
                 inputIsRTL ? "font-nastaliq" : "",
               ].join(" ")}
             />
@@ -955,10 +969,14 @@ export default function KashmirBot({
               onClick={handleSend}
               disabled={(!input.trim() && attachments.length === 0) || isThinking || uploading}
               aria-label={t.send}
-              className="flex h-11 w-11 xs:h-12 xs:w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex min-h-[44px] min-w-[44px] h-11 w-11 xs:h-12 xs:w-12 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <Send className="h-5 w-5 xs:h-6 xs:w-6" aria-hidden="true" />
+              <Send className="h-5 w-5" aria-hidden="true" />
             </button>
+          </div>
+          <div className="mt-2 flex items-center justify-center gap-1.5 text-[10px] text-muted-foreground">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary/70" />
+            <span>Powered by Lovable AI</span>
           </div>
         </div>
       </div>

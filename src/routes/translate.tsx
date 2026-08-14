@@ -213,9 +213,9 @@ function TranslatePage() {
             <button
               onClick={handleTranslate}
               disabled={!text.trim() || loading}
-              className="inline-flex h-9 xs:h-10 sm:h-11 items-center gap-1.5 xs:gap-2 rounded-full bg-primary px-4 xs:px-5 text-xs xs:text-sm sm:text-base font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-ring"
+              className="inline-flex min-h-[44px] items-center gap-2 rounded-[9999px] bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:opacity-60 disabled:shadow-none focus:outline-none focus:ring-2 focus:ring-ring"
             >
-              {loading ? <Loader2 className="h-3.5 w-3.5 xs:h-4 xs:w-4 animate-spin" /> : null}
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
               Translate
             </button>
           </div>
@@ -223,7 +223,7 @@ function TranslatePage() {
 
         {/* Result */}
         {result ? (
-          <div className="mt-3 xs:mt-4 rounded-2xl border border-primary/30 bg-primary/5 p-3 xs:p-4 sm:p-5">
+          <div className="mt-3 xs:mt-4 rounded-[16px] border border-primary/30 bg-primary/5 p-3 xs:p-4 sm:p-5">
             <p
               dir={toKashmiri ? "rtl" : "ltr"}
               className={`text-foreground ${toKashmiri ? "font-nastaliq text-xl xs:text-2xl sm:text-3xl leading-loose" : "text-base xs:text-lg sm:text-xl"}`}
@@ -233,26 +233,26 @@ function TranslatePage() {
             {result.roman ? (
               <p className="mt-2 text-xs xs:text-sm italic text-muted-foreground">{result.roman}</p>
             ) : null}
-            <div className="mt-2 xs:mt-3 flex items-center gap-1.5 xs:gap-2">
+            <div className="mt-2 xs:mt-3 flex items-center gap-2">
               {!toKashmiri && (
                 <button
                   onClick={() => handleSpeak(result.translation)}
                   aria-label="Read translation aloud"
-                  className="flex h-8 w-8 xs:h-9 xs:w-9 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-[8px] border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
                 >
-                  <Volume2 className="h-3.5 w-3.5 xs:h-4 xs:w-4" />
+                  <Volume2 className="h-4 w-4" />
                 </button>
               )}
               <button
                 onClick={() => handleCopy(result.translation)}
                 aria-label="Copy translation"
-                className="flex h-8 w-8 xs:h-9 xs:w-9 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-[8px] border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
               >
-                <Copy className="h-3.5 w-3.5 xs:h-4 xs:w-4" />
+                <Copy className="h-4 w-4" />
               </button>
             </div>
             {result.notes ? (
-              <p className="mt-2 xs:mt-3 rounded-xl bg-card p-2.5 xs:p-3 text-xs xs:text-sm text-muted-foreground">💡 {result.notes}</p>
+              <p className="mt-2 xs:mt-3 rounded-[8px] bg-card p-2.5 xs:p-3 text-xs xs:text-sm text-muted-foreground">💡 {result.notes}</p>
             ) : null}
           </div>
         ) : null}
@@ -262,23 +262,23 @@ function TranslatePage() {
           <section className="mt-6 xs:mt-8">
             <div className="flex items-center justify-between gap-2 xs:gap-3">
               <h2 className="flex items-center gap-1.5 xs:gap-2 text-sm xs:text-base sm:text-lg font-semibold text-foreground">
-                <History className="h-3.5 w-3.5 xs:h-4 xs:w-4" /> Recent translations
+                <History className="h-4 w-4" /> Recent translations
               </h2>
               <button
                 onClick={() => {
                   persist([]);
                   toast.success("History cleared");
                 }}
-                className="inline-flex items-center gap-1 rounded-full border border-border px-2 xs:px-3 py-1 xs:py-1.5 text-[10px] xs:text-xs text-muted-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                className="inline-flex min-h-[44px] items-center gap-1 rounded-[8px] border border-border px-3 text-xs text-muted-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               >
-                <Trash2 className="h-3 w-3 xs:h-3.5 xs:w-3.5" /> Clear
+                <Trash2 className="h-3.5 w-3.5" /> Clear
               </button>
             </div>
             <ul className="mt-2 xs:mt-3 space-y-2">
               {history.map((h) => (
                 <li
                   key={h.id}
-                  className="flex items-start justify-between gap-2 rounded-xl border border-border bg-card p-2.5 xs:p-3"
+                  className="flex items-start justify-between gap-2 rounded-[16px] border border-border bg-card p-3 border-s-4 border-s-primary/40"
                 >
                   <button
                     onClick={() => {
@@ -288,27 +288,27 @@ function TranslatePage() {
                     }}
                     className="min-w-0 flex-1 rounded text-left focus:outline-none focus:ring-2 focus:ring-ring"
                   >
-                    <span className="block text-[9px] xs:text-[11px] uppercase tracking-wide text-muted-foreground">
+                    <span className="block text-[11px] uppercase tracking-wide text-muted-foreground">
                       {h.direction === "en2ks" ? "English → کٲشُر" : "کٲشُر → English"}
                     </span>
                     <span
                       dir={h.direction === "en2ks" ? "ltr" : "rtl"}
-                      className={`mt-0.5 xs:mt-1 block truncate text-xs xs:text-sm text-muted-foreground ${
-                        h.direction === "en2ks" ? "" : "font-nastaliq text-sm xs:text-base"
+                      className={`mt-1 block truncate text-xs xs:text-sm text-muted-foreground ${
+                        h.direction === "en2ks" ? "" : "font-nastaliq text-base"
                       }`}
                     >
                       {h.source}
                     </span>
                     <span
                       dir={h.direction === "en2ks" ? "rtl" : "ltr"}
-                      className={`mt-0.5 xs:mt-1 block text-foreground ${
-                        h.direction === "en2ks" ? "font-nastaliq text-lg xs:text-xl" : "text-xs xs:text-sm"
+                      className={`mt-1 block text-foreground ${
+                        h.direction === "en2ks" ? "font-nastaliq text-xl" : "text-sm"
                       }`}
                     >
                       {h.translation}
                     </span>
                     {h.roman ? (
-                      <span className="mt-0.5 block text-[10px] xs:text-xs italic text-muted-foreground">{h.roman}</span>
+                      <span className="mt-0.5 block text-xs italic text-muted-foreground">{h.roman}</span>
                     ) : null}
                   </button>
                   <div className="flex shrink-0 flex-col gap-1">
@@ -316,17 +316,17 @@ function TranslatePage() {
                       <button
                         onClick={() => handleSpeak(h.translation)}
                         aria-label="Read this translation aloud"
-                        className="flex h-7 w-7 xs:h-8 xs:w-8 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+                        className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-[8px] border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
                       >
-                        <Volume2 className="h-3.5 w-3.5 xs:h-4 xs:w-4" />
+                        <Volume2 className="h-4 w-4" />
                       </button>
                     )}
                     <button
                       onClick={() => persist(history.filter((x) => x.id !== h.id))}
                       aria-label="Remove from history"
-                      className="flex h-7 w-7 xs:h-8 xs:w-8 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+                      className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-[8px] border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
                     >
-                      <Trash2 className="h-3.5 w-3.5 xs:h-4 xs:w-4" />
+                      <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
                 </li>
@@ -337,13 +337,13 @@ function TranslatePage() {
 
         {/* Phrasebook */}
         <section className="mt-6 xs:mt-8">
-          <h2 className="text-sm xs:text-base sm:text-lg font-semibold text-foreground">Everyday phrases</h2>
+          <h2 className="text-base sm:text-lg font-semibold text-foreground">Everyday phrases</h2>
           <p className="mt-1 text-xs xs:text-sm text-muted-foreground">Tap a phrase to load it, or press play to hear it.</p>
-          <ul className="mt-2 xs:mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {PHRASES.map((p) => (
               <li
                 key={p.en}
-                className="flex items-start justify-between gap-2 rounded-xl border border-border bg-card p-2.5 xs:p-3"
+                className="flex items-start justify-between gap-2 rounded-[16px] border border-border bg-card p-3.5 border-s-4 border-s-primary/50 shadow-sm transition-all hover:border-primary"
               >
                 <button
                   onClick={() => {
@@ -353,11 +353,19 @@ function TranslatePage() {
                   }}
                   className="min-w-0 flex-1 text-left focus:outline-none focus:ring-2 focus:ring-ring rounded"
                 >
-                  <span className="block text-xs xs:text-sm text-foreground">{p.en}</span>
-                  <span dir="rtl" className="mt-1 block font-nastaliq text-lg xs:text-xl sm:text-2xl text-foreground">
+                  <span className="block text-xs xs:text-sm font-medium text-foreground">{p.en}</span>
+                  <span dir="rtl" className="mt-1 block font-nastaliq text-xl sm:text-2xl text-foreground">
                     {p.ks}
                   </span>
-                  <span className="mt-0.5 block text-[10px] xs:text-xs italic text-muted-foreground">{p.roman}</span>
+                  <span className="mt-0.5 block text-xs italic text-muted-foreground">{p.roman}</span>
+                </button>
+                <button
+                  onClick={() => handleSpeak(p.ks)}
+                  aria-label={`Hear "${p.en}" in Kashmiri`}
+                  className="flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-[8px] border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+                  title="Press play to hear it"
+                >
+                  <Volume2 className="h-4 w-4 text-primary" />
                 </button>
               </li>
             ))}

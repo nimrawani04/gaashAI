@@ -87,83 +87,93 @@ function ContributePage() {
   return (
     <div className="min-h-[100dvh] bg-background text-foreground">
       <div className="mx-auto max-w-2xl lg:max-w-3xl px-3 xs:px-4 sm:px-6 md:px-8 py-4 xs:py-6 sm:py-8">
-        <header className="mb-4 xs:mb-6 flex flex-col xs:flex-row items-start xs:items-center justify-between gap-3">
+        <header className="mb-4 xs:mb-6 flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <h1
-              dir="rtl"
-              className="font-nastaliq text-2xl xs:text-3xl sm:text-4xl text-foreground"
-            >
-              اپنا کاشمیری جملہ لکھو
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+              Contribute Sentence / دیو مدد
             </h1>
-            <p className="mt-1 text-xs xs:text-sm sm:text-base text-muted-foreground">
-              Help build the Kashmiri language dataset.
+            <p className="mt-1 text-xs xs:text-sm text-muted-foreground">
+              Help build the Kashmiri language dataset with authentic phrases.
             </p>
           </div>
-          <Link to="/" className="text-xs xs:text-sm underline whitespace-nowrap">
+          <Link
+            to="/"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-[8px] border border-border bg-secondary px-3 py-2 text-xs xs:text-sm font-semibold text-secondary-foreground transition hover:bg-accent"
+          >
             ← Back
           </Link>
         </header>
 
-        <div className="mb-4 xs:mb-6 rounded-lg border bg-card p-3 xs:p-4 text-xs xs:text-sm">
-          <span className="font-medium">{count ?? "…"}</span>
-          <span className="ms-2 text-muted-foreground">contributions so far</span>
+        <div className="mb-4 xs:mb-6 rounded-[16px] border border-border bg-card p-4 text-sm flex items-center gap-2">
+          <span className="font-semibold text-primary text-lg">{count ?? "…"}</span>
+          <span className="text-muted-foreground">contributions submitted so far</span>
         </div>
 
         {success && (
           <div
             dir="rtl"
-            className="font-nastaliq mb-3 xs:mb-4 rounded-md border border-primary/30 bg-primary/10 px-3 xs:px-4 py-2 xs:py-3 text-sm xs:text-base text-primary"
+            className="font-nastaliq mb-4 rounded-[16px] border border-primary/30 bg-primary/10 px-4 py-3 text-base text-primary"
           >
             شکریہ! آپ کا حصہ محفوظ ہوگیا
           </div>
         )}
 
         {authLoaded && !userId && (
-          <div className="mb-3 xs:mb-4 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 xs:px-4 py-2 xs:py-3 text-xs xs:text-sm">
-            Please <Link to="/" className="underline">sign in</Link> to submit a contribution.
+          <div className="mb-4 rounded-[16px] border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-xs xs:text-sm text-foreground">
+            Please <Link to="/" className="font-semibold underline">sign in</Link> to submit a contribution to the dataset.
           </div>
         )}
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-3 xs:space-y-4 rounded-lg border bg-card p-4 xs:p-5 sm:p-6"
+          className="space-y-4 rounded-[16px] border border-border bg-card p-4 sm:p-6 shadow-sm"
         >
+          {/* Kashmiri sentence label + input */}
           <div>
-            <label
-              dir="rtl"
-              className="font-nastaliq mb-1 xs:mb-1.5 block text-sm xs:text-base"
-            >
-              کاشمیری جملہ
-            </label>
+            <div className="mb-1.5 flex items-center justify-between">
+              <label className="text-xs xs:text-sm font-semibold text-foreground">
+                Kashmiri sentence
+              </label>
+              <span dir="rtl" className="font-nastaliq text-sm text-muted-foreground">
+                کٲشُر جملہ
+              </span>
+            </div>
             <textarea
               dir="rtl"
               rows={4}
               value={kashmiri}
               onChange={(e) => setKashmiri(e.target.value)}
               required
-              className="font-nastaliq w-full rounded-md border bg-background px-3 py-2 text-base xs:text-lg sm:text-xl focus:outline-none focus:ring-2 focus:ring-ring"
-              placeholder="..."
+              className="font-nastaliq w-full rounded-[8px] border border-border bg-background px-3 py-2.5 text-lg sm:text-xl text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              placeholder="اَتہِ لیٚکھِو..."
             />
           </div>
 
+          {/* English meaning */}
           <div>
-            <label className="mb-1 xs:mb-1.5 block text-xs xs:text-sm">English meaning</label>
+            <label className="mb-1.5 block text-xs xs:text-sm font-semibold text-foreground">
+              English meaning / translation
+            </label>
             <input
               type="text"
               value={english}
               onChange={(e) => setEnglish(e.target.value)}
               required
-              className="w-full rounded-md border bg-background px-3 py-2 text-sm xs:text-base focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full rounded-[8px] border border-border bg-background px-3 py-2.5 text-sm sm:text-base text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              placeholder="Type English meaning..."
             />
           </div>
 
-          <div className="grid gap-3 xs:gap-4 sm:grid-cols-2">
+          {/* Category dropdown & Optional name - Uniformly styled */}
+          <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 xs:mb-1.5 block text-xs xs:text-sm">Category</label>
+              <label className="mb-1.5 block text-xs xs:text-sm font-semibold text-foreground">
+                Category
+              </label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full rounded-md border bg-background px-3 py-2 text-sm xs:text-base focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full h-[44px] rounded-[8px] border border-border bg-background px-3 py-2 text-sm sm:text-base text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               >
                 {CATEGORIES.map((c) => (
                   <option key={c.value} value={c.value}>
@@ -173,12 +183,15 @@ function ContributePage() {
               </select>
             </div>
             <div>
-              <label className="mb-1 xs:mb-1.5 block text-xs xs:text-sm">Your name (optional)</label>
+              <label className="mb-1.5 block text-xs xs:text-sm font-semibold text-foreground">
+                Your name (optional)
+              </label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full rounded-md border bg-background px-3 py-2 text-sm xs:text-base focus:outline-none focus:ring-2 focus:ring-ring"
+                placeholder="Enter your name"
+                className="w-full h-[44px] rounded-[8px] border border-border bg-background px-3 py-2 text-sm sm:text-base text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               />
             </div>
           </div>
@@ -186,7 +199,7 @@ function ContributePage() {
           <button
             type="submit"
             disabled={busy || !userId}
-            className="w-full rounded-md bg-primary px-4 py-2.5 xs:py-3 text-sm xs:text-base font-medium text-primary-foreground disabled:opacity-50"
+            className="w-full min-h-[44px] rounded-[9999px] bg-primary px-4 py-3 text-sm sm:text-base font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-ring"
           >
             {busy ? "Saving…" : !userId ? "Sign in to submit" : "Submit contribution"}
           </button>
