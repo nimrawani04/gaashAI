@@ -285,6 +285,10 @@ function AdminPage() {
 
         <ContributionsReview />
 
+        <BpccPanel />
+
+
+
 
 
         <section>
