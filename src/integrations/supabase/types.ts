@@ -171,6 +171,36 @@ export type Database = {
         }
         Relationships: []
       }
+      translation_pairs: {
+        Row: {
+          created_at: string
+          domain: string
+          embedding: string | null
+          en: string
+          id: string
+          ks: string
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          domain?: string
+          embedding?: string | null
+          en: string
+          id?: string
+          ks: string
+          source?: string
+        }
+        Update: {
+          created_at?: string
+          domain?: string
+          embedding?: string | null
+          en?: string
+          id?: string
+          ks?: string
+          source?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -218,6 +248,16 @@ export type Database = {
           id: string
           similarity: number
           title: string
+        }[]
+      }
+      match_translation_pairs: {
+        Args: { match_count?: number; query_embedding: string }
+        Returns: {
+          domain: string
+          en: string
+          id: string
+          ks: string
+          similarity: number
         }[]
       }
     }

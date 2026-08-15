@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { ALL_SEED_ENTRIES as SEED_ENTRIES, type KbCategory } from "@/lib/seedKnowledge";
 import ContributionsReview from "@/components/admin/ContributionsReview";
+import BpccPanel from "@/components/admin/BpccPanel";
+
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
@@ -284,6 +286,10 @@ function AdminPage() {
         </section>
 
         <ContributionsReview />
+
+        <BpccPanel />
+
+
 
 
 
