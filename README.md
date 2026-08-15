@@ -1,6 +1,8 @@
 GaashAI-گاش اے آئی
 
-> **Your Kashmiri AI Assistant** — a multilingual chatbot that helps users communicate in Kashmiri (کٲشُر), Urdu, and English.
+> **Your Kashmiri AI Assistant** — A powerful multilingual translation bot and chatbot that helps users communicate in Kashmiri (کٲشُر), Urdu, and English, featuring advanced image recognition capabilities.
+
+GaashAI serves as a comprehensive tool for bridging language gaps, acting primarily as a sophisticated **translation bot** and conversational agent. It empowers users to converse naturally across Kashmiri, Urdu, and English while offering a dedicated translation interface. The integrated **image recognition** feature takes this a step further, allowing users to upload images, extract text automatically, and receive instant translations—making it easier than ever to digitize and understand physical documents.
 
 ---
 
@@ -10,6 +12,7 @@ GaashAI-گاش اے آئی
 | --------------------------- | ----------------------------------------------------------------------- |
 | **Trilingual Chat**         | Kashmiri (Nastaliq script), Urdu, and English — switch with one tap     |
 | **Translation Tool**        | Dedicated page to translate Kashmiri, Urdu, and English text             |
+| **Image Recognition**       | Analyze images and extract text with AI vision capabilities             |
 | **AI-Powered Responses**    | Powered by Lovable AI via Supabase Edge Functions                       |
 | **Read Aloud (TTS)**        | Browser text-to-speech with automatic voice selection for Urdu/Kashmiri |
 | **Voice Input**             | Speak your message using the built-in microphone button                 |
@@ -39,6 +42,7 @@ GaashAI-گاش اے آئی
 ```
 kashmiriBot/
 ├── src/
+│   ├── data/               # BPCC corpus & dataset files (bpcc_kashmiri_training_data.csv)
 │   ├── components/
 │   │   ├── chat/           # KashmirBot, SessionsPanel, FeedbackButtons
 │   │   ├── auth/           # Authentication components
@@ -135,17 +139,3 @@ Contributions are welcome! You can help by:
 3. **Submitting PRs** — Fork, branch, and submit a pull request
 
 ---
-
-## 🔗 Lovable Integration
-
-This project is connected to [Lovable](https://lovable.dev). Changes pushed to `main` sync back into the Lovable editor.
-
-- **Lovable Editor:** [Open in Lovable](https://lovable.dev/projects/f10d8ce1-204b-4d41-9dbb-3725d39495e3)
-- Every change made in Lovable is committed to this repository
-- Avoid force-pushing or rewriting published git history
-
----
-
-## 📄 License
-
-This project is private. All rights reserved.
