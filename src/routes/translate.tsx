@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, ArrowRightLeft, Copy, History, Loader2, Trash2, Volume2 } from "lucide-react";
+import { ArrowLeft, ArrowRightLeft, Copy, History, ImagePlus, Loader2, Trash2, Volume2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { translateText, type TranslateResult } from "@/lib/translate.functions";
+import { readImage } from "@/lib/vision.functions";
 import { speak } from "@/lib/tts";
 import GuestPrompt from "@/components/GuestPrompt";
 import { isGuestMode } from "@/lib/guest";
+
 
 
 export const Route = createFileRoute("/translate")({
@@ -68,6 +70,8 @@ function TranslatePage() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [guest, setGuest] = useState(false);
   const [showGuestPrompt, setShowGuestPrompt] = useState(false);
+  const [reading, setReading] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   const toKashmiri = direction === "en2ks";
 
@@ -97,26 +101,27 @@ function TranslatePage() {
     }
   };
 
-  const handleTranslate = async () => {
-    if (!text.trim() || loading) return;
-    const source = text.trim();
+  const handleTranslate = async (override?: { text: string; direction: "en2ks" | "ks2en" }) => {
+    const source = (override?.text ?? text).trim();
+    const dir = override?.direction ?? direction;
+    if (!source || loading) return;
     setLoading(true);
     setResult(null);
     try {
-      const res = await run({ data: { text: source, direction } });
+      const res = await run({ data: { text: source, direction: dir } });
       setResult(res);
       if (res.translation) {
         persist(
           [
             {
               id: `${Date.now()}`,
-              direction,
+              direction: dir,
               source,
               translation: res.translation,
               roman: res.roman,
               at: Date.now(),
             },
-            ...history.filter((h) => !(h.source === source && h.direction === direction)),
+            ...history.filter((h) => !(h.source === source && h.direction === dir)),
           ].slice(0, HISTORY_LIMIT),
         );
       }
@@ -129,6 +134,53 @@ function TranslatePage() {
       setLoading(false);
     }
   };
+
+  const handlePickImage = () => imageInputRef.current?.click();
+
+  const handleImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please choose an image file.");
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      toast.error("Image too large (max 8MB).");
+      return;
+    }
+    setReading(true);
+    setResult(null);
+    try {
+      const dataUrl: string = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => reject(new Error("read_failed"));
+        reader.readAsDataURL(file);
+      });
+      const vision = await readImage({ data: { imageData: dataUrl } });
+      const extracted = vision.extracted.trim();
+      if (!extracted) {
+        toast.error("No readable text found in that image.");
+        return;
+      }
+      const dir: "en2ks" | "ks2en" = vision.script === "latin" ? "en2ks" : "ks2en";
+      setDirection(dir);
+      setText(extracted);
+      toast.success(
+        `Detected ${vision.language || (dir === "ks2en" ? "Kashmiri/Urdu" : "English")} — translating…`,
+      );
+      await handleTranslate({ text: extracted, direction: dir });
+    } catch (err) {
+      const msg = String((err as Error)?.message ?? "");
+      if (msg.includes("rate_limited")) toast.error("Too many requests — please try again in a moment.");
+      else if (msg.includes("credits_exhausted")) toast.error("AI credits exhausted. Add credits to continue.");
+      else toast.error("Couldn't read that image — try a clearer photo.");
+    } finally {
+      setReading(false);
+    }
+  };
+
 
 
   const handleSpeak = async (value: string) => {
@@ -210,15 +262,35 @@ function TranslatePage() {
           />
           <div className="mt-2 xs:mt-3 flex items-center justify-between gap-2 xs:gap-3">
             <span className="text-[10px] xs:text-xs text-muted-foreground">{text.length}/2000</span>
-            <button
-              onClick={handleTranslate}
-              disabled={!text.trim() || loading}
-              className="inline-flex min-h-[44px] items-center gap-2 rounded-[9999px] bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:opacity-60 disabled:shadow-none focus:outline-none focus:ring-2 focus:ring-ring"
-            >
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-              Translate
-            </button>
+            <div className="flex items-center gap-2">
+              <input
+                ref={imageInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImage}
+              />
+              <button
+                onClick={handlePickImage}
+                disabled={reading || loading}
+                aria-label="Translate text from an image"
+                title="Read text from an image"
+                className="inline-flex min-h-[44px] items-center gap-2 rounded-[9999px] border border-border bg-secondary px-4 text-sm font-medium text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                {reading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
+                <span className="hidden xs:inline">{reading ? "Reading…" : "Image"}</span>
+              </button>
+              <button
+                onClick={() => handleTranslate()}
+                disabled={!text.trim() || loading || reading}
+                className="inline-flex min-h-[44px] items-center gap-2 rounded-[9999px] bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:opacity-60 disabled:shadow-none focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                Translate
+              </button>
+            </div>
           </div>
+
         </div>
 
         {/* Result */}
