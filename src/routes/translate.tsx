@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, ArrowRightLeft, Copy, History, Loader2, Trash2, Volume2 } from "lucide-react";
+import { ArrowLeft, ArrowRightLeft, Copy, History, ImagePlus, Loader2, Trash2, Volume2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { translateText, type TranslateResult } from "@/lib/translate.functions";
+import { readImage } from "@/lib/vision.functions";
 import { speak } from "@/lib/tts";
 import GuestPrompt from "@/components/GuestPrompt";
 import { isGuestMode } from "@/lib/guest";
+
 
 
 export const Route = createFileRoute("/translate")({
