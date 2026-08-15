@@ -99,26 +99,27 @@ function TranslatePage() {
     }
   };
 
-  const handleTranslate = async () => {
-    if (!text.trim() || loading) return;
-    const source = text.trim();
+  const handleTranslate = async (override?: { text: string; direction: "en2ks" | "ks2en" }) => {
+    const source = (override?.text ?? text).trim();
+    const dir = override?.direction ?? direction;
+    if (!source || loading) return;
     setLoading(true);
     setResult(null);
     try {
-      const res = await run({ data: { text: source, direction } });
+      const res = await run({ data: { text: source, direction: dir } });
       setResult(res);
       if (res.translation) {
         persist(
           [
             {
               id: `${Date.now()}`,
-              direction,
+              direction: dir,
               source,
               translation: res.translation,
               roman: res.roman,
               at: Date.now(),
             },
-            ...history.filter((h) => !(h.source === source && h.direction === direction)),
+            ...history.filter((h) => !(h.source === source && h.direction === dir)),
           ].slice(0, HISTORY_LIMIT),
         );
       }
@@ -131,6 +132,53 @@ function TranslatePage() {
       setLoading(false);
     }
   };
+
+  const handlePickImage = () => imageInputRef.current?.click();
+
+  const handleImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please choose an image file.");
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      toast.error("Image too large (max 8MB).");
+      return;
+    }
+    setReading(true);
+    setResult(null);
+    try {
+      const dataUrl: string = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => reject(new Error("read_failed"));
+        reader.readAsDataURL(file);
+      });
+      const vision = await readImage({ data: { imageData: dataUrl } });
+      const extracted = vision.extracted.trim();
+      if (!extracted) {
+        toast.error("No readable text found in that image.");
+        return;
+      }
+      const dir: "en2ks" | "ks2en" = vision.script === "latin" ? "en2ks" : "ks2en";
+      setDirection(dir);
+      setText(extracted);
+      toast.success(
+        `Detected ${vision.language || (dir === "ks2en" ? "Kashmiri/Urdu" : "English")} — translating…`,
+      );
+      await handleTranslate({ text: extracted, direction: dir });
+    } catch (err) {
+      const msg = String((err as Error)?.message ?? "");
+      if (msg.includes("rate_limited")) toast.error("Too many requests — please try again in a moment.");
+      else if (msg.includes("credits_exhausted")) toast.error("AI credits exhausted. Add credits to continue.");
+      else toast.error("Couldn't read that image — try a clearer photo.");
+    } finally {
+      setReading(false);
+    }
+  };
+
 
 
   const handleSpeak = async (value: string) => {
