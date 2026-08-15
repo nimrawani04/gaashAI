@@ -70,6 +70,8 @@ function TranslatePage() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [guest, setGuest] = useState(false);
   const [showGuestPrompt, setShowGuestPrompt] = useState(false);
+  const [reading, setReading] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   const toKashmiri = direction === "en2ks";
 
