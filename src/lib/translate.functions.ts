@@ -28,6 +28,15 @@ export const translateText = createServerFn({ method: "POST" })
       throw new Error("AI is not configured");
     }
 
+    // Few-shot grounding from the BPCC (Bharat Parallel Corpus Collection) corpus.
+    let examples = "";
+    try {
+      const { retrieveBpccExamples, formatExamples } = await import("@/lib/bpcc.server");
+      examples = formatExamples(await retrieveBpccExamples(data.text, 5));
+    } catch {
+      examples = "";
+    }
+
     const system =
       data.direction === "en2ks"
         ? [
@@ -35,6 +44,7 @@ export const translateText = createServerFn({ method: "POST" })
             "Translate the user's English (or Urdu/Hindi) text into natural everyday Kashmiri written in Perso-Arabic Nastaliq script.",
             "'translation' = the Kashmiri Nastaliq text. 'roman' = the same Kashmiri in Roman letters so learners can pronounce it.",
             "'notes' = one short English learning tip (key word meanings or grammar), max 25 words.",
+            examples,
             SCHEMA_HINT,
           ].join(" ")
         : [
@@ -42,8 +52,10 @@ export const translateText = createServerFn({ method: "POST" })
             "The user writes Kashmiri (Nastaliq or Roman). Translate it into simple, natural English.",
             "'translation' = the English translation. 'roman' = the original Kashmiri written in Roman letters.",
             "'notes' = one short English learning tip about key Kashmiri words used, max 25 words.",
+            examples,
             SCHEMA_HINT,
           ].join(" ");
+
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 20000);
