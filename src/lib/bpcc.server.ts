@@ -76,8 +76,7 @@ export async function ingestBpccCorpus(limit?: number): Promise<IngestResult> {
   const { data: existing } = await supabaseAdmin
     .from("translation_pairs")
     .select("en")
-    .not("embedding", "is", null)
-    .limit(5000);
+    .limit(20000);
   const have = new Set((existing ?? []).map((r: { en: string }) => r.en));
 
   const todo = all.filter((p) => !have.has(p.en));
@@ -96,7 +95,7 @@ export async function ingestBpccCorpus(limit?: number): Promise<IngestResult> {
     const { error } = await supabaseAdmin
       .from("translation_pairs")
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .upsert(rows as any, { onConflict: "en,source", ignoreDuplicates: false });
+      .insert(rows as any);
     if (error) throw new Error(error.message);
     inserted += rows.length;
   }
