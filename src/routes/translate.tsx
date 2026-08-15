@@ -262,15 +262,35 @@ function TranslatePage() {
           />
           <div className="mt-2 xs:mt-3 flex items-center justify-between gap-2 xs:gap-3">
             <span className="text-[10px] xs:text-xs text-muted-foreground">{text.length}/2000</span>
-            <button
-              onClick={handleTranslate}
-              disabled={!text.trim() || loading}
-              className="inline-flex min-h-[44px] items-center gap-2 rounded-[9999px] bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:opacity-60 disabled:shadow-none focus:outline-none focus:ring-2 focus:ring-ring"
-            >
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-              Translate
-            </button>
+            <div className="flex items-center gap-2">
+              <input
+                ref={imageInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImage}
+              />
+              <button
+                onClick={handlePickImage}
+                disabled={reading || loading}
+                aria-label="Translate text from an image"
+                title="Read text from an image"
+                className="inline-flex min-h-[44px] items-center gap-2 rounded-[9999px] border border-border bg-secondary px-4 text-sm font-medium text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                {reading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
+                <span className="hidden xs:inline">{reading ? "Reading…" : "Image"}</span>
+              </button>
+              <button
+                onClick={() => handleTranslate()}
+                disabled={!text.trim() || loading || reading}
+                className="inline-flex min-h-[44px] items-center gap-2 rounded-[9999px] bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:opacity-60 disabled:shadow-none focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                Translate
+              </button>
+            </div>
           </div>
+
         </div>
 
         {/* Result */}
