@@ -786,8 +786,8 @@ export default function KashmirBot({
             >
               <Menu className="h-5 w-5" />
             </button>
-            <div className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-[12px] bg-primary/10 shadow-sm sm:flex overflow-hidden">
-              <img src="/favicon.png" alt="KashmirBot Logo" className="h-full w-full object-cover" />
+            <div className="hidden h-11 w-11 shrink-0 items-center justify-center sm:flex">
+              <img src="/chinar-leaf.jpg" alt="Chinar Leaf" className="h-full w-full object-contain" />
             </div>
             <div className="min-w-0">
               <h1 className="font-nastaliq truncate text-2xl sm:text-3xl text-foreground leading-normal" dir="rtl">
@@ -851,8 +851,8 @@ export default function KashmirBot({
         <div className="mx-auto flex w-full max-w-3xl lg:max-w-4xl xl:max-w-5xl flex-col gap-3 xs:gap-4 md:gap-5 px-2 xs:px-3 sm:px-4 md:px-6 py-3 xs:py-4 sm:py-6">
           {messages.length === 0 && !isThinking ? (
             <div className="flex min-h-[50vh] xs:min-h-[60vh] flex-col items-center justify-center text-center px-4">
-              <div className="mb-4 xs:mb-6 flex h-16 w-16 xs:h-20 xs:w-20 sm:h-24 sm:w-24 md:h-28 md:w-28 items-center justify-center rounded-full shadow-lg overflow-hidden border border-border/50 bg-background p-2">
-                <img src="/favicon.png" alt="KashmirBot Logo" className="h-full w-full object-contain" />
+              <div className="mb-4 xs:mb-6 flex h-20 w-20 xs:h-24 xs:w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 items-center justify-center">
+                <img src="/chinar-leaf.jpg" alt="Chinar Leaf" className="h-full w-full object-contain drop-shadow-lg" />
               </div>
               <p
                 dir={t.emptyDir}
@@ -974,10 +974,7 @@ export default function KashmirBot({
               <Send className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>
-          <div className="mt-2 flex items-center justify-center gap-1.5 text-[10px] text-muted-foreground">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary/70" />
-            <span>Powered by Lovable AI</span>
-          </div>
+
         </div>
       </div>
     </div>
