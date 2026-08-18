@@ -106,6 +106,18 @@ const MessageBubble = memo(function MessageBubble({
 }) {
   const dir = msg.isRTL ? "rtl" : "ltr";
   const isUser = msg.role === "user";
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(msg.text);
+      setCopied(true);
+      toast.success("Copied");
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      toast.error("Couldn't copy");
+    }
+  };
 
   return (
     <div
@@ -139,27 +151,34 @@ const MessageBubble = memo(function MessageBubble({
           {renderMessageContent(msg.text)}
         </div>
 
-        {/* Assistant Action Bar (Audio & Feedback) */}
-        {!isUser && (
-          <div className="flex items-center gap-2 pt-0.5 px-1">
-            {lang !== "ks" && (
-              <button
-                type="button"
-                onClick={() => onSpeak(msg.text, msg.id)}
-                aria-label={speaking ? "Stop reading aloud" : "Listen to response"}
-                aria-pressed={speaking}
-                className={[
-                  "inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-[8px] px-3 text-xs font-medium transition border border-border bg-secondary text-secondary-foreground hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring",
-                  speaking ? "text-primary border-primary animate-pulse" : "",
-                ].join(" ")}
-              >
-                <Volume2 className="h-4 w-4 shrink-0" aria-hidden="true" />
-                <span>{speaking ? "Stop" : "Listen"}</span>
-              </button>
-            )}
-            {userId ? <FeedbackButtons messageId={msg.dbId ?? null} userId={userId} /> : null}
-          </div>
-        )}
+        {/* Action Bar: Copy (all messages), Audio & Feedback (assistant) */}
+        <div className={`flex items-center gap-2 pt-0.5 px-1 ${isUser ? "justify-end" : ""}`}>
+          <button
+            type="button"
+            onClick={handleCopy}
+            aria-label="Copy message"
+            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-[8px] px-3 text-xs font-medium transition border border-border bg-secondary text-secondary-foreground hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+          >
+            {copied ? <Check className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" /> : <Copy className="h-4 w-4 shrink-0" aria-hidden="true" />}
+            <span>{copied ? "Copied" : "Copy"}</span>
+          </button>
+          {!isUser && lang !== "ks" && (
+            <button
+              type="button"
+              onClick={() => onSpeak(msg.text, msg.id)}
+              aria-label={speaking ? "Stop reading aloud" : "Listen to response"}
+              aria-pressed={speaking}
+              className={[
+                "inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-[8px] px-3 text-xs font-medium transition border border-border bg-secondary text-secondary-foreground hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring",
+                speaking ? "text-primary border-primary animate-pulse" : "",
+              ].join(" ")}
+            >
+              <Volume2 className="h-4 w-4 shrink-0" aria-hidden="true" />
+              <span>{speaking ? "Stop" : "Listen"}</span>
+            </button>
+          )}
+          {!isUser && userId ? <FeedbackButtons messageId={msg.dbId ?? null} userId={userId} /> : null}
+        </div>
       </div>
     </div>
   );
