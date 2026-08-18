@@ -399,46 +399,46 @@ export default function KashmirBot({
     });
   }, []);
 
-  const handleMicClick = () => {
-    const SR: any =
-      (typeof window !== "undefined" &&
-        ((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition)) ||
-      null;
-    if (!SR) {
-      toast.error("آپ کا براؤزر آواز کی سہولت نہیں دیتا");
-      return;
-    }
-    if (isListening && recognitionRef.current) {
-      recognitionRef.current.stop();
-      return;
-    }
-    const recognition = new SR();
-    recognition.lang = "ur-PK";
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-    recognition.onstart = () => setIsListening(true);
-    recognition.onend = () => { setIsListening(false); recognitionRef.current = null; };
-    recognition.onerror = (e: any) => {
+  const handleMicClick = async () => {
+    if (isTranscribing) return;
+    if (isListening && recorderRef.current) {
+      const rec = recorderRef.current;
+      recorderRef.current = null;
       setIsListening(false);
-      recognitionRef.current = null;
-      if (e.error === "not-allowed" || e.error === "service-not-allowed") {
-        toast.error("مائیکروفون کی اجازت درکار ہے", {
-          description: "Please allow microphone access in your browser settings.",
-        });
-      } else if (e.error === "no-speech") {
-        toast("کوئی آواز نہیں سنی گئی");
-      } else if (e.error !== "aborted") {
-        toast.error("آواز کی شناخت میں مسئلہ");
+      setIsTranscribing(true);
+      try {
+        const wav = await rec.stop();
+        if (wav.size < 4096) {
+          toast("کوئی آواز نہیں سنی گئی");
+          return;
+        }
+        const audio = await blobToBase64(wav);
+        const { text } = await transcribeSpeech({ data: { audio } });
+        const clean = text.trim();
+        if (!clean) {
+          toast("کوئی آواز نہیں سنی گئی");
+          return;
+        }
+        setInput("");
+        await handleSend(clean);
+      } catch (err: any) {
+        toast.error("آواز کی شناخت میں مسئلہ", { description: err?.message?.slice(0, 160) });
+      } finally {
+        setIsTranscribing(false);
       }
-    };
-    recognition.onresult = (event: any) => {
-      const transcript = event.results?.[0]?.[0]?.transcript ?? "";
-      if (transcript) setInput((prev) => (prev ? prev + " " + transcript : transcript));
-    };
-    recognitionRef.current = recognition;
-    try { recognition.start(); } catch { setIsListening(false); recognitionRef.current = null; }
+      return;
+    }
+    try {
+      recorderRef.current = await startRecording();
+      setIsListening(true);
+    } catch {
+      recorderRef.current = null;
+      toast.error("مائیکروفون کی اجازت درکار ہے", {
+        description: "Please allow microphone access in your browser settings.",
+      });
+    }
   };
+
 
   const ensureSession = async (firstUserText: string): Promise<string | null> => {
     if (!userId) return null; // guests keep the conversation in memory only
