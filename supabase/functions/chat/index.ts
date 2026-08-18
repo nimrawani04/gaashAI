@@ -103,7 +103,51 @@ Deno.serve(async (req) => {
       console.error("RAG lookup failed", e);
     }
 
-    const systemPrompt = ragContext + BASE_SYSTEM_PROMPT;
+    // ---- BPCC few-shot: closest human-verified EN⇄KS sentence pairs -----
+    let bpccContext = "";
+    try {
+      const embRes = await fetch("https://ai.gateway.lovable.dev/v1/embeddings", {
+        method: "POST",
+        headers: {
+          "Lovable-API-Key": lovableKey,
+          Authorization: `Bearer ${lovableKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "openai/text-embedding-3-small",
+          input: englishMessage.slice(0, 1000),
+        }),
+      });
+      if (embRes.ok) {
+        const embJson = await embRes.json();
+        const vec = embJson?.data?.[0]?.embedding;
+        if (Array.isArray(vec)) {
+          const sb = createClient(
+            Deno.env.get("SUPABASE_URL")!,
+            Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+          );
+          const { data: pairs } = await sb.rpc("match_translation_pairs", {
+            query_embedding: vec,
+            match_count: 5,
+          });
+          const good = (pairs ?? []).filter(
+            (p: { similarity: number }) => p.similarity > 0.15,
+          );
+          if (good.length > 0) {
+            const lines = good
+              .map((p: { en: string; ks: string }) => `EN: ${p.en}\nKS: ${p.ks}`)
+              .join("\n---\n");
+            bpccContext =
+              `Reference translations from the BPCC human-verified English–Kashmiri corpus. Match their vocabulary, spelling and Nastaliq orthography as closely as possible when writing your Kashmiri reply:\n${lines}\n\n`;
+          }
+        }
+      }
+    } catch (e) {
+      console.error("BPCC lookup failed", e);
+    }
+
+    const systemPrompt = ragContext + bpccContext + BASE_SYSTEM_PROMPT;
+
     const recent = history.slice(-6).map((m) => ({ role: m.role, content: m.content }));
 
     const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
