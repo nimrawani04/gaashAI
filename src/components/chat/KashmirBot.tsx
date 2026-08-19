@@ -9,6 +9,9 @@ import { supabase, type ChatSession, type ChatMessageRow } from "@/lib/supabase"
 const SessionsPanel = lazy(() => import("@/components/chat/SessionsPanel"));
 import FeedbackButtons from "@/components/chat/FeedbackButtons";
 import { speak, stopSpeaking, ttsSupported, getVoices, unlockTts, installTtsUnlock } from "@/lib/tts";
+import { startRecording, blobToBase64, type Recorder } from "@/lib/recorder";
+import { transcribeSpeech } from "@/lib/stt.functions";
+import { speakKashmiri } from "@/lib/tts.functions";
 import ChinarLoader from "@/components/ChinarLoader";
 import GuestPrompt from "@/components/GuestPrompt";
 import { bumpGuestUses, guestLimitReached, type GuestFeature } from "@/lib/guest";
