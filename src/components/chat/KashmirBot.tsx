@@ -428,7 +428,7 @@ export default function KashmirBot({
     setMuted((m) => {
       const next = !m;
       if (next) {
-        stopSpeaking();
+        stopAudio();
         setSpeakingId(null);
       }
       return next;
