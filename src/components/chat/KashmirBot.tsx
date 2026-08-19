@@ -360,21 +360,52 @@ export default function KashmirBot({
     setLang((l) => LANG_ORDER[(LANG_ORDER.indexOf(l) + 1) % LANG_ORDER.length]);
   }, []);
 
-  const handleSpeak = useCallback(async (text: string, id?: string) => {
-    if (!ttsSupported()) {
-      toast.error("آپ کا براؤزر آواز کی سہولت نہیں دیتا");
-      return;
+  const stopAudio = useCallback(() => {
+    const el = audioRef.current;
+    if (el) {
+      el.pause();
+      if (el.src.startsWith("blob:")) URL.revokeObjectURL(el.src);
+      audioRef.current = null;
     }
+    stopSpeaking();
+  }, []);
+
+  const handleSpeak = useCallback(async (text: string, id?: string) => {
     // Clicking the speaker of the message already being read stops it.
     if (id && speakingIdRef.current === id) {
-      stopSpeaking();
+      stopAudio();
       setSpeakingId(null);
+      return;
+    }
+    stopAudio();
+    setSpeakingId(id ?? "auto");
+
+    // Kashmiri voice from the AI backend — the browser has no koshur voice.
+    try {
+      const { audio, mime } = await speakKashmiri({ data: { text: cleanForSpeech(text).slice(0, 2000) } });
+      const bytes = Uint8Array.from(atob(audio), (c) => c.charCodeAt(0));
+      const url = URL.createObjectURL(new Blob([bytes.buffer as ArrayBuffer], { type: mime }));
+      const el = new Audio(url);
+      audioRef.current = el;
+      el.onended = () => {
+        URL.revokeObjectURL(url);
+        if (audioRef.current === el) audioRef.current = null;
+        setSpeakingId(null);
+      };
+      await el.play();
+      return;
+    } catch {
+      // fall back to the browser voice below
+    }
+
+    if (!ttsSupported()) {
+      setSpeakingId(null);
+      toast.error("آپ کا براؤزر آواز کی سہولت نہیں دیتا");
       return;
     }
     // Unlock TTS if this is the first user-triggered speak. The unlock is
     // awaited inside speak() so we don't race the silent utterance.
     unlockTts();
-    setSpeakingId(id ?? "auto");
     const result = await speak(text, {
       onEnd: () => setSpeakingId(null),
       onError: (reason) => {
