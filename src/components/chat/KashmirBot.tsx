@@ -274,7 +274,9 @@ export default function KashmirBot({
   const [isDragging, setIsDragging] = useState(false);
   const dragCounter = useRef(0);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const recognitionRef = useRef<any>(null);
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const recorderRef = useRef<Recorder | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mutedRef = useRef(muted);
   const t = UI_STRINGS[lang];
