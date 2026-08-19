@@ -8,7 +8,7 @@ import type { Session } from "@supabase/supabase-js";
 import { supabase, type ChatSession, type ChatMessageRow } from "@/lib/supabase";
 const SessionsPanel = lazy(() => import("@/components/chat/SessionsPanel"));
 import FeedbackButtons from "@/components/chat/FeedbackButtons";
-import { speak, stopSpeaking, ttsSupported, getVoices, unlockTts, installTtsUnlock } from "@/lib/tts";
+import { speak, stopSpeaking, ttsSupported, getVoices, unlockTts, installTtsUnlock, cleanForSpeech } from "@/lib/tts";
 import { startRecording, blobToBase64, type Recorder } from "@/lib/recorder";
 import { transcribeSpeech } from "@/lib/stt.functions";
 import { speakKashmiri } from "@/lib/tts.functions";
