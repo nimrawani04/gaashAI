@@ -8,7 +8,10 @@ import type { Session } from "@supabase/supabase-js";
 import { supabase, type ChatSession, type ChatMessageRow } from "@/lib/supabase";
 const SessionsPanel = lazy(() => import("@/components/chat/SessionsPanel"));
 import FeedbackButtons from "@/components/chat/FeedbackButtons";
-import { speak, stopSpeaking, ttsSupported, getVoices, unlockTts, installTtsUnlock } from "@/lib/tts";
+import { speak, stopSpeaking, ttsSupported, getVoices, unlockTts, installTtsUnlock, cleanForSpeech } from "@/lib/tts";
+import { startRecording, blobToBase64, type Recorder } from "@/lib/recorder";
+import { transcribeSpeech } from "@/lib/stt.functions";
+import { speakKashmiri } from "@/lib/tts.functions";
 import ChinarLoader from "@/components/ChinarLoader";
 import GuestPrompt from "@/components/GuestPrompt";
 import { bumpGuestUses, guestLimitReached, type GuestFeature } from "@/lib/guest";
@@ -162,7 +165,7 @@ const MessageBubble = memo(function MessageBubble({
             {copied ? <Check className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" /> : <Copy className="h-4 w-4 shrink-0" aria-hidden="true" />}
             <span>{copied ? "Copied" : "Copy"}</span>
           </button>
-          {!isUser && lang !== "ks" && (
+          {!isUser && (
             <button
               type="button"
               onClick={() => onSpeak(msg.text, msg.id)}
@@ -271,7 +274,9 @@ export default function KashmirBot({
   const [isDragging, setIsDragging] = useState(false);
   const dragCounter = useRef(0);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const recognitionRef = useRef<any>(null);
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const recorderRef = useRef<Recorder | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mutedRef = useRef(muted);
   const t = UI_STRINGS[lang];
@@ -355,21 +360,52 @@ export default function KashmirBot({
     setLang((l) => LANG_ORDER[(LANG_ORDER.indexOf(l) + 1) % LANG_ORDER.length]);
   }, []);
 
-  const handleSpeak = useCallback(async (text: string, id?: string) => {
-    if (!ttsSupported()) {
-      toast.error("آپ کا براؤزر آواز کی سہولت نہیں دیتا");
-      return;
+  const stopAudio = useCallback(() => {
+    const el = audioRef.current;
+    if (el) {
+      el.pause();
+      if (el.src.startsWith("blob:")) URL.revokeObjectURL(el.src);
+      audioRef.current = null;
     }
+    stopSpeaking();
+  }, []);
+
+  const handleSpeak = useCallback(async (text: string, id?: string) => {
     // Clicking the speaker of the message already being read stops it.
     if (id && speakingIdRef.current === id) {
-      stopSpeaking();
+      stopAudio();
       setSpeakingId(null);
+      return;
+    }
+    stopAudio();
+    setSpeakingId(id ?? "auto");
+
+    // Kashmiri voice from the AI backend — the browser has no koshur voice.
+    try {
+      const { audio, mime } = await speakKashmiri({ data: { text: cleanForSpeech(text).slice(0, 2000) } });
+      const bytes = Uint8Array.from(atob(audio), (c) => c.charCodeAt(0));
+      const url = URL.createObjectURL(new Blob([bytes.buffer as ArrayBuffer], { type: mime }));
+      const el = new Audio(url);
+      audioRef.current = el;
+      el.onended = () => {
+        URL.revokeObjectURL(url);
+        if (audioRef.current === el) audioRef.current = null;
+        setSpeakingId(null);
+      };
+      await el.play();
+      return;
+    } catch {
+      // fall back to the browser voice below
+    }
+
+    if (!ttsSupported()) {
+      setSpeakingId(null);
+      toast.error("آپ کا براؤزر آواز کی سہولت نہیں دیتا");
       return;
     }
     // Unlock TTS if this is the first user-triggered speak. The unlock is
     // awaited inside speak() so we don't race the silent utterance.
     unlockTts();
-    setSpeakingId(id ?? "auto");
     const result = await speak(text, {
       onEnd: () => setSpeakingId(null),
       onError: (reason) => {
@@ -392,7 +428,7 @@ export default function KashmirBot({
     setMuted((m) => {
       const next = !m;
       if (next) {
-        stopSpeaking();
+        stopAudio();
         setSpeakingId(null);
       }
       return next;
@@ -615,8 +651,8 @@ export default function KashmirBot({
     setAttachments((prev) => prev.filter((_, i) => i !== idx));
   };
 
-  const handleSend = async () => {
-    const text = input.trim();
+  const handleSend = async (override?: string) => {
+    const text = (override ?? input).trim();
     if ((!text && attachments.length === 0) || isThinking) return;
     if (isGuest) {
       if (guestLimitReached()) {
@@ -679,7 +715,7 @@ export default function KashmirBot({
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSend();
+      void handleSend();
     }
   };
 
@@ -964,7 +1000,7 @@ export default function KashmirBot({
                   isListening ? "mic-listening" : "",
                 ].join(" ")}
               >
-                <Mic className="h-5 w-5" aria-hidden="true" />
+                {isTranscribing ? <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" /> : <Mic className="h-5 w-5" aria-hidden="true" />}
               </button>
             </div>
             <textarea
@@ -985,7 +1021,7 @@ export default function KashmirBot({
             />
             <button
               type="button"
-              onClick={handleSend}
+              onClick={() => handleSend()}
               disabled={(!input.trim() && attachments.length === 0) || isThinking || uploading}
               aria-label={t.send}
               className="flex min-h-[44px] min-w-[44px] h-11 w-11 xs:h-12 xs:w-12 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
