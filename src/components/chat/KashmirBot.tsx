@@ -165,7 +165,7 @@ const MessageBubble = memo(function MessageBubble({
             {copied ? <Check className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" /> : <Copy className="h-4 w-4 shrink-0" aria-hidden="true" />}
             <span>{copied ? "Copied" : "Copy"}</span>
           </button>
-          {!isUser && lang !== "ks" && (
+          {!isUser && (
             <button
               type="button"
               onClick={() => onSpeak(msg.text, msg.id)}
@@ -651,8 +651,8 @@ export default function KashmirBot({
     setAttachments((prev) => prev.filter((_, i) => i !== idx));
   };
 
-  const handleSend = async () => {
-    const text = input.trim();
+  const handleSend = async (override?: string) => {
+    const text = (override ?? input).trim();
     if ((!text && attachments.length === 0) || isThinking) return;
     if (isGuest) {
       if (guestLimitReached()) {
@@ -715,7 +715,7 @@ export default function KashmirBot({
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSend();
+      void handleSend();
     }
   };
 
@@ -1000,7 +1000,7 @@ export default function KashmirBot({
                   isListening ? "mic-listening" : "",
                 ].join(" ")}
               >
-                <Mic className="h-5 w-5" aria-hidden="true" />
+                {isTranscribing ? <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" /> : <Mic className="h-5 w-5" aria-hidden="true" />}
               </button>
             </div>
             <textarea
@@ -1021,7 +1021,7 @@ export default function KashmirBot({
             />
             <button
               type="button"
-              onClick={handleSend}
+              onClick={() => handleSend()}
               disabled={(!input.trim() && attachments.length === 0) || isThinking || uploading}
               aria-label={t.send}
               className="flex min-h-[44px] min-w-[44px] h-11 w-11 xs:h-12 xs:w-12 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
