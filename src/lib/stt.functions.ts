@@ -64,7 +64,9 @@ async function transcribeFallback(
 ): Promise<string> {
   const form = new FormData();
   form.append("model", "openai/gpt-4o-transcribe");
-  form.append("file", new Blob([bytes], { type: "audio/wav" }), "recording.wav");
+  const view = new Uint8Array(bytes.byteLength);
+  view.set(bytes);
+  form.append("file", new Blob([view.buffer as ArrayBuffer], { type: "audio/wav" }), "recording.wav");
   if (language) form.append("language", language);
   form.append(
     "prompt",
