@@ -377,12 +377,19 @@ export default function KashmirBot({
       setSpeakingId(null);
       return;
     }
+    // Pressing Listen on another message always stops what is playing first.
     stopAudio();
-    setSpeakingId(id ?? "auto");
+    const target = id ?? "auto";
+    speakRequestRef.current += 1;
+    const requestId = speakRequestRef.current;
+    speakingIdRef.current = target;
+    setSpeakingId(target);
 
     // Kashmiri voice from the AI backend — the browser has no koshur voice.
     try {
       const { audio, mime } = await speakKashmiri({ data: { text: cleanForSpeech(text).slice(0, 2000) } });
+      // A newer Listen press (or a stop) happened while this was generating.
+      if (speakRequestRef.current !== requestId) return;
       const bytes = Uint8Array.from(atob(audio), (c) => c.charCodeAt(0));
       const url = URL.createObjectURL(new Blob([bytes.buffer as ArrayBuffer], { type: mime }));
       const el = new Audio(url);
@@ -390,13 +397,15 @@ export default function KashmirBot({
       el.onended = () => {
         URL.revokeObjectURL(url);
         if (audioRef.current === el) audioRef.current = null;
-        setSpeakingId(null);
+        if (speakRequestRef.current === requestId) setSpeakingId(null);
       };
       await el.play();
       return;
     } catch {
+      if (speakRequestRef.current !== requestId) return;
       // fall back to the browser voice below
     }
+
 
     if (!ttsSupported()) {
       setSpeakingId(null);
