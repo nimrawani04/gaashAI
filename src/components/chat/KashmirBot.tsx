@@ -281,6 +281,9 @@ export default function KashmirBot({
   const mutedRef = useRef(muted);
   const t = UI_STRINGS[lang];
   const speakingIdRef = useRef<string | null>(null);
+  /** Bumped on every Listen press so stale audio never starts playing. */
+  const speakRequestRef = useRef(0);
+
 
   useEffect(() => { mutedRef.current = muted; }, [muted]);
   useEffect(() => { speakingIdRef.current = speakingId; }, [speakingId]);
