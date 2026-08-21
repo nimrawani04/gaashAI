@@ -364,6 +364,8 @@ export default function KashmirBot({
   }, []);
 
   const stopAudio = useCallback(() => {
+    // Invalidate any in-flight generation so it can't start after we stop.
+    speakRequestRef.current += 1;
     const el = audioRef.current;
     if (el) {
       el.pause();
@@ -371,7 +373,9 @@ export default function KashmirBot({
       audioRef.current = null;
     }
     stopSpeaking();
+    speakingIdRef.current = null;
   }, []);
+
 
   const handleSpeak = useCallback(async (text: string, id?: string) => {
     // Clicking the speaker of the message already being read stops it.
