@@ -75,6 +75,10 @@ function TranslatePage() {
   const [showGuestPrompt, setShowGuestPrompt] = useState(false);
   const [reading, setReading] = useState(false);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const [listening, setListening] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
+  const recorderRef = useRef<Recorder | null>(null);
+
 
   const toKashmiri = direction === "en2ks";
 
