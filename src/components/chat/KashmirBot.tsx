@@ -243,6 +243,8 @@ const MessageList = memo(function MessageList({
   userId,
   speakingId,
   lang,
+  rate,
+  onRate,
 }: {
   messages: Message[];
   isThinking: boolean;
@@ -250,6 +252,8 @@ const MessageList = memo(function MessageList({
   userId: string;
   speakingId: string | null;
   lang: Lang;
+  rate: number;
+  onRate: (r: number) => void;
 }) {
   return (
     <>
@@ -261,8 +265,11 @@ const MessageList = memo(function MessageList({
           userId={userId}
           speaking={speakingId === m.id}
           lang={lang}
+          rate={rate}
+          onRate={onRate}
         />
       ))}
+
       {isThinking && <TypingIndicator />}
     </>
   );
