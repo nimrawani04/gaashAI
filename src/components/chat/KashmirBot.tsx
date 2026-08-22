@@ -94,22 +94,29 @@ function renderMessageContent(text: string) {
   });
 }
 
+const SPEEDS = [0.9, 1, 1.1] as const;
+
 const MessageBubble = memo(function MessageBubble({
   msg,
   onSpeak,
   userId,
   speaking,
   lang,
+  rate,
+  onRate,
 }: {
   msg: Message;
   onSpeak: (text: string, id: string) => void;
   userId: string;
   speaking: boolean;
   lang: Lang;
+  rate: number;
+  onRate: (r: number) => void;
 }) {
   const dir = msg.isRTL ? "rtl" : "ltr";
   const isUser = msg.role === "user";
   const [copied, setCopied] = useState(false);
+
 
   const handleCopy = async () => {
     try {
