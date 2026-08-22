@@ -1,14 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, ArrowRightLeft, Copy, History, ImagePlus, Loader2, Trash2, Volume2 } from "lucide-react";
+import { ArrowLeft, ArrowRightLeft, Copy, History, ImagePlus, Loader2, Mic, Square, Trash2, Volume2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { translateText, type TranslateResult } from "@/lib/translate.functions";
 import { readImage } from "@/lib/vision.functions";
 import { speak } from "@/lib/tts";
+import { startRecording, blobToBase64, type Recorder } from "@/lib/recorder";
+import { transcribeSpeech } from "@/lib/stt.functions";
 import GuestPrompt from "@/components/GuestPrompt";
 import { isGuestMode } from "@/lib/guest";
+
 
 
 
@@ -72,6 +75,10 @@ function TranslatePage() {
   const [showGuestPrompt, setShowGuestPrompt] = useState(false);
   const [reading, setReading] = useState(false);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const [listening, setListening] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
+  const recorderRef = useRef<Recorder | null>(null);
+
 
   const toKashmiri = direction === "en2ks";
 
@@ -181,6 +188,48 @@ function TranslatePage() {
     }
   };
 
+  /** Speak instead of type: records mic audio and transcribes it into the box. */
+  const handleMic = async () => {
+    if (transcribing) return;
+    if (listening && recorderRef.current) {
+      const rec = recorderRef.current;
+      recorderRef.current = null;
+      setListening(false);
+      setTranscribing(true);
+      try {
+        const wav = await rec.stop();
+        if (wav.size < 4096) {
+          toast("No speech was heard — try again.");
+          return;
+        }
+        const audio = await blobToBase64(wav);
+        const { text: heard } = await transcribeSpeech({
+          data: { audio, ...(toKashmiri ? { language: "en" } : {}) },
+        });
+        const clean = heard.trim();
+        if (!clean) {
+          toast("No speech was heard — try again.");
+          return;
+        }
+        setText(clean);
+        await handleTranslate({ text: clean, direction });
+      } catch (err) {
+        toast.error("Couldn't understand that recording", {
+          description: String((err as Error)?.message ?? "").slice(0, 160),
+        });
+      } finally {
+        setTranscribing(false);
+      }
+      return;
+    }
+    try {
+      recorderRef.current = await startRecording();
+      setListening(true);
+    } catch {
+      recorderRef.current = null;
+      toast.error("Microphone access is needed to speak.");
+    }
+  };
 
 
   const handleSpeak = async (value: string) => {
@@ -271,6 +320,31 @@ function TranslatePage() {
                 onChange={handleImage}
               />
               <button
+                onClick={handleMic}
+                disabled={transcribing || loading || reading}
+                aria-pressed={listening}
+                aria-label={listening ? "Stop recording and transcribe" : "Speak instead of typing"}
+                title={listening ? "Stop and transcribe" : "Speak instead of typing"}
+                className={[
+                  "inline-flex min-h-[44px] items-center gap-2 rounded-[9999px] border px-4 text-sm font-medium transition disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-ring",
+                  listening
+                    ? "border-primary bg-primary text-primary-foreground animate-pulse"
+                    : "border-border bg-secondary text-secondary-foreground hover:bg-accent hover:text-accent-foreground",
+                ].join(" ")}
+              >
+                {transcribing ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : listening ? (
+                  <Square className="h-4 w-4" />
+                ) : (
+                  <Mic className="h-4 w-4" />
+                )}
+                <span className="hidden xs:inline">
+                  {transcribing ? "Transcribing…" : listening ? "Stop" : "Speak"}
+                </span>
+              </button>
+              <button
+
                 onClick={handlePickImage}
                 disabled={reading || loading}
                 aria-label="Translate text from an image"
