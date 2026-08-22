@@ -187,7 +187,32 @@ const MessageBubble = memo(function MessageBubble({
               <span>{speaking ? "Stop" : "Listen"}</span>
             </button>
           )}
+          {!isUser && speaking && (
+            <div
+              className="inline-flex items-center gap-1 rounded-[8px] border border-border bg-secondary px-1.5 py-1"
+              role="group"
+              aria-label="Playback speed"
+            >
+              {SPEEDS.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => onRate(s)}
+                  aria-pressed={rate === s}
+                  className={[
+                    "min-h-[36px] rounded-[6px] px-2 text-xs font-semibold transition focus:outline-none focus:ring-2 focus:ring-ring",
+                    rate === s
+                      ? "bg-primary text-primary-foreground"
+                      : "text-secondary-foreground hover:bg-accent",
+                  ].join(" ")}
+                >
+                  {s.toFixed(1)}x
+                </button>
+              ))}
+            </div>
+          )}
           {!isUser && userId ? <FeedbackButtons messageId={msg.dbId ?? null} userId={userId} /> : null}
+
         </div>
       </div>
     </div>
