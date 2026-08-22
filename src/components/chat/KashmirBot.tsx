@@ -407,7 +407,18 @@ export default function KashmirBot({
     return () => cancelAnimationFrame(id);
   }, [messageCount, isThinking]);
 
+  // Warm up the voice for the latest assistant reply as soon as it renders,
+  // so pressing Listen starts playback almost immediately.
+  useEffect(() => {
+    if (muted || isThinking) return;
+    const last = messages[messages.length - 1];
+    if (!last || last.role !== "assistant" || !last.text.trim()) return;
+    const id = setTimeout(() => prefetchSpeech(last.text), 150);
+    return () => clearTimeout(id);
+  }, [messages, isThinking, muted]);
+
   const cycleLang = useCallback(() => {
+
     setLang((l) => LANG_ORDER[(LANG_ORDER.indexOf(l) + 1) % LANG_ORDER.length]);
   }, []);
 
