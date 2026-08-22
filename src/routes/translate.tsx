@@ -320,6 +320,31 @@ function TranslatePage() {
                 onChange={handleImage}
               />
               <button
+                onClick={handleMic}
+                disabled={transcribing || loading || reading}
+                aria-pressed={listening}
+                aria-label={listening ? "Stop recording and transcribe" : "Speak instead of typing"}
+                title={listening ? "Stop and transcribe" : "Speak instead of typing"}
+                className={[
+                  "inline-flex min-h-[44px] items-center gap-2 rounded-[9999px] border px-4 text-sm font-medium transition disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-ring",
+                  listening
+                    ? "border-primary bg-primary text-primary-foreground animate-pulse"
+                    : "border-border bg-secondary text-secondary-foreground hover:bg-accent hover:text-accent-foreground",
+                ].join(" ")}
+              >
+                {transcribing ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : listening ? (
+                  <Square className="h-4 w-4" />
+                ) : (
+                  <Mic className="h-4 w-4" />
+                )}
+                <span className="hidden xs:inline">
+                  {transcribing ? "Transcribing…" : listening ? "Stop" : "Speak"}
+                </span>
+              </button>
+              <button
+
                 onClick={handlePickImage}
                 disabled={reading || loading}
                 aria-label="Translate text from an image"
