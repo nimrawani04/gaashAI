@@ -1,14 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, ArrowRightLeft, Copy, History, ImagePlus, Loader2, Trash2, Volume2 } from "lucide-react";
+import { ArrowLeft, ArrowRightLeft, Copy, History, ImagePlus, Loader2, Mic, Square, Trash2, Volume2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { translateText, type TranslateResult } from "@/lib/translate.functions";
 import { readImage } from "@/lib/vision.functions";
 import { speak } from "@/lib/tts";
+import { startRecording, blobToBase64, type Recorder } from "@/lib/recorder";
+import { transcribeSpeech } from "@/lib/stt.functions";
 import GuestPrompt from "@/components/GuestPrompt";
 import { isGuestMode } from "@/lib/guest";
+
 
 
 
