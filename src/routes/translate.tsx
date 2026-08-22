@@ -188,6 +188,48 @@ function TranslatePage() {
     }
   };
 
+  /** Speak instead of type: records mic audio and transcribes it into the box. */
+  const handleMic = async () => {
+    if (transcribing) return;
+    if (listening && recorderRef.current) {
+      const rec = recorderRef.current;
+      recorderRef.current = null;
+      setListening(false);
+      setTranscribing(true);
+      try {
+        const wav = await rec.stop();
+        if (wav.size < 4096) {
+          toast("No speech was heard — try again.");
+          return;
+        }
+        const audio = await blobToBase64(wav);
+        const { text: heard } = await transcribeSpeech({
+          data: { audio, ...(toKashmiri ? { language: "en" } : {}) },
+        });
+        const clean = heard.trim();
+        if (!clean) {
+          toast("No speech was heard — try again.");
+          return;
+        }
+        setText(clean);
+        await handleTranslate({ text: clean, direction });
+      } catch (err) {
+        toast.error("Couldn't understand that recording", {
+          description: String((err as Error)?.message ?? "").slice(0, 160),
+        });
+      } finally {
+        setTranscribing(false);
+      }
+      return;
+    }
+    try {
+      recorderRef.current = await startRecording();
+      setListening(true);
+    } catch {
+      recorderRef.current = null;
+      toast.error("Microphone access is needed to speak.");
+    }
+  };
 
 
   const handleSpeak = async (value: string) => {
