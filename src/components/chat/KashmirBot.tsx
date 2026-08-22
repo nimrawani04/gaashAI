@@ -1000,6 +1000,9 @@ export default function KashmirBot({
               userId={userId}
               speakingId={speakingId}
               lang={lang}
+              rate={speechRate}
+              onRate={handleRate}
+
             />
           )}
         </div>
