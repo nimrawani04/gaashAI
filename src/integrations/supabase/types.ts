@@ -103,6 +103,39 @@ export type Database = {
         }
         Relationships: []
       }
+      edu_glossary: {
+        Row: {
+          created_at: string
+          grade_band: string
+          id: string
+          subject: string
+          term_en: string
+          term_ks: string
+          term_ur: string
+          verified: boolean
+        }
+        Insert: {
+          created_at?: string
+          grade_band?: string
+          id?: string
+          subject?: string
+          term_en: string
+          term_ks?: string
+          term_ur?: string
+          verified?: boolean
+        }
+        Update: {
+          created_at?: string
+          grade_band?: string
+          id?: string
+          subject?: string
+          term_en?: string
+          term_ks?: string
+          term_ur?: string
+          verified?: boolean
+        }
+        Relationships: []
+      }
       feedback: {
         Row: {
           correction_text: string | null
@@ -167,6 +200,131 @@ export type Database = {
           embedding?: string | null
           id?: string
           source?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      lesson_corrections: {
+        Row: {
+          concept: string
+          created_at: string
+          id: string
+          kind: string
+          note: string
+          session_id: string | null
+          user_id: string
+        }
+        Insert: {
+          concept?: string
+          created_at?: string
+          id?: string
+          kind: string
+          note?: string
+          session_id?: string | null
+          user_id: string
+        }
+        Update: {
+          concept?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          note?: string
+          session_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_corrections_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "lesson_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lesson_sessions: {
+        Row: {
+          concepts: Json
+          created_at: string
+          difficulty: string
+          grade: number
+          id: string
+          objective: string
+          prerequisites: Json
+          quiz: Json
+          results: Json
+          source_text: string
+          subject: string
+          target_language: string
+          title: string
+          user_id: string
+          weak_concepts: Json
+        }
+        Insert: {
+          concepts?: Json
+          created_at?: string
+          difficulty?: string
+          grade?: number
+          id?: string
+          objective?: string
+          prerequisites?: Json
+          quiz?: Json
+          results?: Json
+          source_text?: string
+          subject?: string
+          target_language?: string
+          title?: string
+          user_id: string
+          weak_concepts?: Json
+        }
+        Update: {
+          concepts?: Json
+          created_at?: string
+          difficulty?: string
+          grade?: number
+          id?: string
+          objective?: string
+          prerequisites?: Json
+          quiz?: Json
+          results?: Json
+          source_text?: string
+          subject?: string
+          target_language?: string
+          title?: string
+          user_id?: string
+          weak_concepts?: Json
+        }
+        Relationships: []
+      }
+      local_examples: {
+        Row: {
+          body_en: string
+          concept_key: string
+          created_at: string
+          grade_band: string
+          id: string
+          region: string
+          subject: string
+          title: string
+        }
+        Insert: {
+          body_en: string
+          concept_key: string
+          created_at?: string
+          grade_band?: string
+          id?: string
+          region?: string
+          subject?: string
+          title: string
+        }
+        Update: {
+          body_en?: string
+          concept_key?: string
+          created_at?: string
+          grade_band?: string
+          id?: string
+          region?: string
+          subject?: string
           title?: string
         }
         Relationships: []
