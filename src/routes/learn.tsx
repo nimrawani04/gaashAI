@@ -250,6 +250,43 @@ function LearnPage() {
     }
   }
 
+  async function onPdf(file: File) {
+    setLoading("pdf");
+    setPdfStatus("Opening PDF…");
+    try {
+      const { extractPdf } = await import("@/lib/pdf");
+      const extraction = await extractPdf(file, (done, total) =>
+        setPdfStatus(`Reading page ${done} of ${total}…`),
+      );
+
+      const parts = [extraction.text].filter(Boolean);
+
+      // Scanned pages have no text layer — read them with the vision pipeline.
+      for (const page of extraction.needsOcr) {
+        setPdfStatus(`Scanning page ${page.page} with OCR…`);
+        try {
+          const res = await runVision({ data: { imageData: page.imageData! } });
+          if (res.extracted.trim()) parts.push(res.extracted.trim());
+        } catch {
+          /* skip unreadable page */
+        }
+      }
+
+      const combined = parts.join("\n\n").trim();
+      if (!combined) {
+        toast.error("No readable text found in that PDF.");
+        return;
+      }
+      setSource((prev) => (prev ? `${prev}\n\n${combined}` : combined));
+      toast.success(`Extracted text from ${extraction.pages.length} page(s)`);
+    } catch {
+      toast.error("Could not read that PDF.");
+    } finally {
+      setLoading(null);
+      setPdfStatus("");
+    }
+  }
+
   async function onImage(file: File) {
     setLoading("ocr");
     try {
