@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, ArrowRightLeft, Copy, History, ImagePlus, Loader2, Mic, Square, Trash2, Volume2 } from "lucide-react";
+import { ArrowLeft, ArrowRightLeft, Copy, GraduationCap, History, ImagePlus, Loader2, Mic, Square, Trash2, Volume2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { translateText, type TranslateResult } from "@/lib/translate.functions";
