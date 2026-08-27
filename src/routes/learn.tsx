@@ -6,6 +6,7 @@ import {
   BookOpen,
   Check,
   ChevronRight,
+  FileText,
   GraduationCap,
   ImagePlus,
   Loader2,
