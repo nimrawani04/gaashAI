@@ -6,6 +6,7 @@ import {
   BookOpen,
   Check,
   ChevronRight,
+  FileText,
   GraduationCap,
   ImagePlus,
   Loader2,
@@ -97,12 +98,14 @@ function LearnPage() {
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [scores, setScores] = useState<Record<string, { correct: number; total: number }>>({});
 
-  const [loading, setLoading] = useState<null | "lesson" | "quiz" | "ocr">(null);
+  const [loading, setLoading] = useState<null | "lesson" | "quiz" | "ocr" | "pdf">(null);
+  const [pdfStatus, setPdfStatus] = useState("");
   const [speaking, setSpeaking] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [flagged, setFlagged] = useState<Record<string, string>>({});
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const pdfInputRef = useRef<HTMLInputElement>(null);
 
   const rtl = isRtl(language);
 
@@ -250,6 +253,43 @@ function LearnPage() {
     }
   }
 
+  async function onPdf(file: File) {
+    setLoading("pdf");
+    setPdfStatus("Opening PDF…");
+    try {
+      const { extractPdf } = await import("@/lib/pdf");
+      const extraction = await extractPdf(file, (done, total) =>
+        setPdfStatus(`Reading page ${done} of ${total}…`),
+      );
+
+      const parts = [extraction.text].filter(Boolean);
+
+      // Scanned pages have no text layer — read them with the vision pipeline.
+      for (const page of extraction.needsOcr) {
+        setPdfStatus(`Scanning page ${page.page} with OCR…`);
+        try {
+          const res = await runVision({ data: { imageData: page.imageData! } });
+          if (res.extracted.trim()) parts.push(res.extracted.trim());
+        } catch {
+          /* skip unreadable page */
+        }
+      }
+
+      const combined = parts.join("\n\n").trim();
+      if (!combined) {
+        toast.error("No readable text found in that PDF.");
+        return;
+      }
+      setSource((prev) => (prev ? `${prev}\n\n${combined}` : combined));
+      toast.success(`Extracted text from ${extraction.pages.length} page(s)`);
+    } catch {
+      toast.error("Could not read that PDF.");
+    } finally {
+      setLoading(null);
+      setPdfStatus("");
+    }
+  }
+
   async function onImage(file: File) {
     setLoading("ocr");
     try {
@@ -357,6 +397,26 @@ function LearnPage() {
                   {loading === "ocr" ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
                   Upload textbook page
                 </button>
+                <input
+                  ref={pdfInputRef}
+                  type="file"
+                  accept="application/pdf,.pdf"
+                  hidden
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) void onPdf(f);
+                    e.target.value = "";
+                  }}
+                />
+                <button
+                  onClick={() => pdfInputRef.current?.click()}
+                  disabled={loading === "pdf"}
+                  className="inline-flex min-h-[40px] items-center gap-1.5 rounded-md border border-border px-3 text-sm font-medium text-foreground hover:bg-accent disabled:opacity-50"
+                >
+                  {loading === "pdf" ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
+                  Upload PDF
+                </button>
+                {pdfStatus && <span className="text-xs text-muted-foreground">{pdfStatus}</span>}
                 {source && (
                   <button
                     onClick={() => setSource("")}
