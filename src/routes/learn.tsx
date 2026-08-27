@@ -396,6 +396,26 @@ function LearnPage() {
                   {loading === "ocr" ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
                   Upload textbook page
                 </button>
+                <input
+                  ref={pdfInputRef}
+                  type="file"
+                  accept="application/pdf,.pdf"
+                  hidden
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) void onPdf(f);
+                    e.target.value = "";
+                  }}
+                />
+                <button
+                  onClick={() => pdfInputRef.current?.click()}
+                  disabled={loading === "pdf"}
+                  className="inline-flex min-h-[40px] items-center gap-1.5 rounded-md border border-border px-3 text-sm font-medium text-foreground hover:bg-accent disabled:opacity-50"
+                >
+                  {loading === "pdf" ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
+                  Upload PDF
+                </button>
+                {pdfStatus && <span className="text-xs text-muted-foreground">{pdfStatus}</span>}
                 {source && (
                   <button
                     onClick={() => setSource("")}
