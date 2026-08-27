@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback, memo, lazy, Suspense } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { readImage } from "@/lib/vision.functions";
-import { Mic, Send, Volume2, VolumeX, LogOut, Menu, HeartHandshake, Paperclip, X, FileText, Loader2, Languages, Copy, Check } from "lucide-react";
+import { Mic, Send, Volume2, VolumeX, LogOut, Menu, HeartHandshake, Paperclip, X, FileText, Loader2, Languages, GraduationCap, Copy, Check } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { Session } from "@supabase/supabase-js";

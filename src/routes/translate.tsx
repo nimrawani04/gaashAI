@@ -262,12 +262,20 @@ function TranslatePage() {
           >
             <ArrowLeft className="h-4 w-4 xs:h-5 xs:w-5" />
           </Link>
-          <div className="min-w-0">
-            <h1 className="truncate text-base xs:text-lg sm:text-xl md:text-2xl font-semibold text-foreground">Learn Kashmiri</h1>
+          <div className="min-w-0 flex-1">
+            <h1 className="truncate text-base xs:text-lg sm:text-xl md:text-2xl font-semibold text-foreground">Translate</h1>
             <p className="truncate text-[10px] xs:text-xs sm:text-sm text-muted-foreground">
               English ⇄ کٲشُر — translate, listen, practise
             </p>
           </div>
+          <Link
+            to="/learn"
+            aria-label="Adaptive learning lessons"
+            className="inline-flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-md border border-border bg-secondary px-3 text-sm font-semibold text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+          >
+            <GraduationCap className="h-4 w-4 text-primary" />
+            <span className="hidden xs:inline">Learn</span>
+          </Link>
         </div>
       </header>
 
