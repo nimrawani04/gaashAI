@@ -1,5 +1,19 @@
 import { createClient } from "@supabase/supabase-js";
 
+export type DiagramNode = {
+  label_en: string;
+  label_target: string;
+  note_target?: string;
+};
+
+/** A simple structured diagram the UI renders as SVG with mother-tongue labels. */
+export type LessonDiagram = {
+  kind: "cycle" | "flow" | "parts";
+  title_en: string;
+  title_target: string;
+  nodes: DiagramNode[];
+};
+
 export type LessonConcept = {
   name_en: string;
   name_target: string;
@@ -8,6 +22,11 @@ export type LessonConcept = {
   example_title: string;
   example_en: string;
   example_target: string;
+  /** Advanced-grade extras. */
+  deep_dive_en?: string;
+  formula?: string;
+  application_target?: string;
+  diagram?: LessonDiagram | null;
 };
 
 export type Lesson = {
@@ -17,6 +36,7 @@ export type Lesson = {
   difficulty: string;
   concepts: LessonConcept[];
 };
+
 
 export type QuizQuestion = {
   concept: string;
