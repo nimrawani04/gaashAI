@@ -2,7 +2,13 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import type { Lesson, QuizQuestion } from "@/lib/learn.server";
 
-export type { Lesson, LessonConcept, QuizQuestion } from "@/lib/learn.server";
+export type {
+  Lesson,
+  LessonConcept,
+  LessonDiagram,
+  DiagramNode,
+  QuizQuestion,
+} from "@/lib/learn.server";
 
 const LessonInput = z.object({
   source: z.string().min(10).max(12000),
