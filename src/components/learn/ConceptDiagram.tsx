@@ -1,6 +1,6 @@
 import { memo } from "react";
 
-import type { LessonDiagram } from "@/lib/learn.server";
+import type { LessonDiagram } from "@/lib/learn.functions";
 
 type Props = {
   diagram: LessonDiagram;
