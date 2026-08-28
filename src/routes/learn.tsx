@@ -102,6 +102,7 @@ function LearnPage() {
 
   const [loading, setLoading] = useState<null | "lesson" | "quiz" | "ocr" | "pdf">(null);
   const [pdfStatus, setPdfStatus] = useState("");
+  const [extracted, setExtracted] = useState<ExtractedPage[]>([]);
   const [speaking, setSpeaking] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [flagged, setFlagged] = useState<Record<string, string>>({});
