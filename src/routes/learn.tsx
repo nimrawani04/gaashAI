@@ -20,6 +20,7 @@ import { toast } from "sonner";
 
 import { buildLesson, buildQuiz, type Lesson, type QuizQuestion } from "@/lib/learn.functions";
 import { readImage } from "@/lib/vision.functions";
+import { ConceptDiagram } from "@/components/learn/ConceptDiagram";
 import { getSpeech } from "@/lib/ttsCache";
 import { supabase } from "@/integrations/supabase/client";
 
