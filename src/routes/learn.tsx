@@ -20,6 +20,7 @@ import { toast } from "sonner";
 
 import { buildLesson, buildQuiz, type Lesson, type QuizQuestion } from "@/lib/learn.functions";
 import { readImage } from "@/lib/vision.functions";
+import { ConceptDiagram } from "@/components/learn/ConceptDiagram";
 import { getSpeech } from "@/lib/ttsCache";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -75,6 +76,8 @@ const LANGS = [
   { value: "english", label: "English" },
 ] as const;
 
+type ExtractedPage = { id: string; label: string; text: string; selected: boolean };
+
 type Lang = (typeof LANGS)[number]["value"];
 type Stage = "setup" | "lesson" | "quiz" | "report";
 
@@ -100,6 +103,7 @@ function LearnPage() {
 
   const [loading, setLoading] = useState<null | "lesson" | "quiz" | "ocr" | "pdf">(null);
   const [pdfStatus, setPdfStatus] = useState("");
+  const [extracted, setExtracted] = useState<ExtractedPage[]>([]);
   const [speaking, setSpeaking] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [flagged, setFlagged] = useState<Record<string, string>>({});
@@ -262,32 +266,54 @@ function LearnPage() {
         setPdfStatus(`Reading page ${done} of ${total}…`),
       );
 
-      const parts = [extraction.text].filter(Boolean);
+      const pages: ExtractedPage[] = [];
 
-      // Scanned pages have no text layer — read them with the vision pipeline.
-      for (const page of extraction.needsOcr) {
-        setPdfStatus(`Scanning page ${page.page} with OCR…`);
-        try {
-          const res = await runVision({ data: { imageData: page.imageData! } });
-          if (res.extracted.trim()) parts.push(res.extracted.trim());
-        } catch {
-          /* skip unreadable page */
+      for (const page of extraction.pages) {
+        let text = page.text.trim();
+        let ocr = false;
+        // Scanned pages have no text layer — read them with the vision pipeline.
+        if (!text && page.imageData) {
+          setPdfStatus(`Scanning page ${page.page} with OCR…`);
+          ocr = true;
+          try {
+            const res = await runVision({ data: { imageData: page.imageData } });
+            text = res.extracted.trim();
+          } catch {
+            /* skip unreadable page */
+          }
+        }
+        if (text) {
+          pages.push({ id: `${file.name}-p${page.page}-${Date.now()}`, label: `Page ${page.page}${ocr ? " (OCR)" : ""}`, text, selected: true });
         }
       }
 
-      const combined = parts.join("\n\n").trim();
-      if (!combined) {
+      if (!pages.length) {
         toast.error("No readable text found in that PDF.");
         return;
       }
-      setSource((prev) => (prev ? `${prev}\n\n${combined}` : combined));
-      toast.success(`Extracted text from ${extraction.pages.length} page(s)`);
+      setExtracted((prev) => [...prev, ...pages]);
+      toast.success(`Extracted text from ${pages.length} page(s) — review below`);
     } catch {
       toast.error("Could not read that PDF.");
     } finally {
       setLoading(null);
       setPdfStatus("");
     }
+  }
+
+  function updatePage(id: string, patch: Partial<ExtractedPage>) {
+    setExtracted((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p)));
+  }
+
+  function useSelectedText() {
+    const chosen = extracted.filter((p) => p.selected && p.text.trim());
+    if (!chosen.length) {
+      toast.error("Select at least one page first.");
+      return;
+    }
+    const combined = chosen.map((p) => p.text.trim()).join("\n\n");
+    setSource((prev) => (prev ? `${prev}\n\n${combined}` : combined));
+    toast.success(`Added ${chosen.length} page(s) to the lesson text`);
   }
 
   async function onImage(file: File) {
@@ -304,8 +330,16 @@ function LearnPage() {
         toast.error("No readable text found on that page.");
         return;
       }
-      setSource((prev) => (prev ? `${prev}\n\n${res.extracted}` : res.extracted));
-      toast.success("Textbook page read");
+      setExtracted((prev) => [
+        ...prev,
+        {
+          id: `${file.name}-${Date.now()}`,
+          label: `${file.name} (OCR)`,
+          text: res.extracted.trim(),
+          selected: true,
+        },
+      ]);
+      toast.success("Textbook page read — review below");
     } catch {
       toast.error("Could not read that page.");
     } finally {
@@ -426,6 +460,73 @@ function LearnPage() {
                   </button>
                 )}
               </div>
+
+              {extracted.length > 0 && (
+                <div className="mt-4 rounded-lg border border-border bg-muted/30 p-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Extracted text · review &amp; edit
+                    </h3>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        onClick={() =>
+                          setExtracted((prev) => {
+                            const all = prev.every((p) => p.selected);
+                            return prev.map((p) => ({ ...p, selected: !all }));
+                          })
+                        }
+                        className="min-h-[36px] rounded-md border border-border px-2 text-xs text-foreground hover:bg-accent"
+                      >
+                        Select all / none
+                      </button>
+                      <button
+                        onClick={() => setExtracted([])}
+                        className="min-h-[36px] rounded-md border border-border px-2 text-xs text-muted-foreground hover:bg-accent"
+                      >
+                        Discard
+                      </button>
+                    </div>
+                  </div>
+
+                  <ul className="mt-3 space-y-3">
+                    {extracted.map((p) => (
+                      <li key={p.id} className="rounded-md border border-border bg-background p-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <label className="flex items-center gap-2 text-xs font-medium text-foreground">
+                            <input
+                              type="checkbox"
+                              checked={p.selected}
+                              onChange={(e) => updatePage(p.id, { selected: e.target.checked })}
+                              className="h-4 w-4 accent-[hsl(var(--primary))]"
+                            />
+                            {p.label}
+                          </label>
+                          <button
+                            onClick={() => setExtracted((prev) => prev.filter((x) => x.id !== p.id))}
+                            aria-label={`Remove ${p.label}`}
+                            className="rounded-md p-1 text-muted-foreground hover:bg-accent"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                        <textarea
+                          value={p.text}
+                          onChange={(e) => updatePage(p.id, { text: e.target.value })}
+                          rows={4}
+                          className="mt-2 w-full resize-y rounded-md border border-input bg-background p-2 text-xs leading-relaxed text-foreground outline-none focus:ring-2 focus:ring-ring"
+                        />
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button
+                    onClick={useSelectedText}
+                    className="mt-3 inline-flex min-h-[40px] items-center gap-1.5 rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+                  >
+                    <Check className="h-4 w-4" /> Use selected text
+                  </button>
+                </div>
+              )}
 
               <p className="mt-4 mb-2 text-xs font-medium text-muted-foreground">Or pick a topic</p>
               <div className="flex flex-wrap gap-2">
@@ -558,12 +659,49 @@ function LearnPage() {
 
                     <p className="mt-2 text-sm leading-relaxed text-foreground">{c.simplified_en}</p>
 
+                    {grade > 7 && c.deep_dive_en?.trim() && (
+                      <div className="mt-3 rounded-lg border-l-4 border-primary/60 bg-muted/40 p-3">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                          Deep dive
+                        </p>
+                        <p className="mt-1 text-sm leading-relaxed text-foreground">{c.deep_dive_en}</p>
+                      </div>
+                    )}
+
+                    {grade > 7 && c.formula?.trim() && (
+                      <div className="mt-3 rounded-lg border border-border bg-background p-3">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                          Key formula
+                        </p>
+                        <p dir="ltr" className="mt-1 overflow-x-auto font-mono text-sm text-primary">
+                          {c.formula}
+                        </p>
+                      </div>
+                    )}
+
                     <p
                       dir={rtl ? "rtl" : "ltr"}
                       className={`mt-3 rounded-lg bg-muted/60 p-3 text-base leading-loose text-foreground ${rtl ? "font-nastaliq" : ""}`}
                     >
                       {c.explanation_target}
                     </p>
+
+                    {grade > 7 && c.application_target?.trim() && (
+                      <div className="mt-3 rounded-lg border border-border p-3">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                          Real-world application
+                        </p>
+                        <p
+                          dir={rtl ? "rtl" : "ltr"}
+                          className={`mt-1 text-base leading-loose text-foreground ${rtl ? "font-nastaliq" : ""}`}
+                        >
+                          {c.application_target}
+                        </p>
+                      </div>
+                    )}
+
+                    {c.diagram && <ConceptDiagram diagram={c.diagram} rtl={rtl} />}
+
 
                     <div className="mt-3 rounded-lg border border-dashed border-border p-3">
                       <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
