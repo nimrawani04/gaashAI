@@ -658,12 +658,49 @@ function LearnPage() {
 
                     <p className="mt-2 text-sm leading-relaxed text-foreground">{c.simplified_en}</p>
 
+                    {grade > 7 && c.deep_dive_en?.trim() && (
+                      <div className="mt-3 rounded-lg border-l-4 border-primary/60 bg-muted/40 p-3">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                          Deep dive
+                        </p>
+                        <p className="mt-1 text-sm leading-relaxed text-foreground">{c.deep_dive_en}</p>
+                      </div>
+                    )}
+
+                    {grade > 7 && c.formula?.trim() && (
+                      <div className="mt-3 rounded-lg border border-border bg-background p-3">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                          Key formula
+                        </p>
+                        <p dir="ltr" className="mt-1 overflow-x-auto font-mono text-sm text-primary">
+                          {c.formula}
+                        </p>
+                      </div>
+                    )}
+
                     <p
                       dir={rtl ? "rtl" : "ltr"}
                       className={`mt-3 rounded-lg bg-muted/60 p-3 text-base leading-loose text-foreground ${rtl ? "font-nastaliq" : ""}`}
                     >
                       {c.explanation_target}
                     </p>
+
+                    {grade > 7 && c.application_target?.trim() && (
+                      <div className="mt-3 rounded-lg border border-border p-3">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                          Real-world application
+                        </p>
+                        <p
+                          dir={rtl ? "rtl" : "ltr"}
+                          className={`mt-1 text-base leading-loose text-foreground ${rtl ? "font-nastaliq" : ""}`}
+                        >
+                          {c.application_target}
+                        </p>
+                      </div>
+                    )}
+
+                    {c.diagram && <ConceptDiagram diagram={c.diagram} rtl={rtl} />}
+
 
                     <div className="mt-3 rounded-lg border border-dashed border-border p-3">
                       <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
