@@ -75,6 +75,8 @@ const LANGS = [
   { value: "english", label: "English" },
 ] as const;
 
+type ExtractedPage = { id: string; label: string; text: string; selected: boolean };
+
 type Lang = (typeof LANGS)[number]["value"];
 type Stage = "setup" | "lesson" | "quiz" | "report";
 
