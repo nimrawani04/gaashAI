@@ -329,8 +329,16 @@ function LearnPage() {
         toast.error("No readable text found on that page.");
         return;
       }
-      setSource((prev) => (prev ? `${prev}\n\n${res.extracted}` : res.extracted));
-      toast.success("Textbook page read");
+      setExtracted((prev) => [
+        ...prev,
+        {
+          id: `${file.name}-${Date.now()}`,
+          label: `${file.name} (OCR)`,
+          text: res.extracted.trim(),
+          selected: true,
+        },
+      ]);
+      toast.success("Textbook page read — review below");
     } catch {
       toast.error("Could not read that page.");
     } finally {
