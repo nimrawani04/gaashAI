@@ -262,32 +262,54 @@ function LearnPage() {
         setPdfStatus(`Reading page ${done} of ${total}…`),
       );
 
-      const parts = [extraction.text].filter(Boolean);
+      const pages: ExtractedPage[] = [];
 
-      // Scanned pages have no text layer — read them with the vision pipeline.
-      for (const page of extraction.needsOcr) {
-        setPdfStatus(`Scanning page ${page.page} with OCR…`);
-        try {
-          const res = await runVision({ data: { imageData: page.imageData! } });
-          if (res.extracted.trim()) parts.push(res.extracted.trim());
-        } catch {
-          /* skip unreadable page */
+      for (const page of extraction.pages) {
+        let text = page.text.trim();
+        let ocr = false;
+        // Scanned pages have no text layer — read them with the vision pipeline.
+        if (!text && page.imageData) {
+          setPdfStatus(`Scanning page ${page.page} with OCR…`);
+          ocr = true;
+          try {
+            const res = await runVision({ data: { imageData: page.imageData } });
+            text = res.extracted.trim();
+          } catch {
+            /* skip unreadable page */
+          }
+        }
+        if (text) {
+          pages.push({ id: `${file.name}-p${page.page}-${Date.now()}`, label: `Page ${page.page}${ocr ? " (OCR)" : ""}`, text, selected: true });
         }
       }
 
-      const combined = parts.join("\n\n").trim();
-      if (!combined) {
+      if (!pages.length) {
         toast.error("No readable text found in that PDF.");
         return;
       }
-      setSource((prev) => (prev ? `${prev}\n\n${combined}` : combined));
-      toast.success(`Extracted text from ${extraction.pages.length} page(s)`);
+      setExtracted((prev) => [...prev, ...pages]);
+      toast.success(`Extracted text from ${pages.length} page(s) — review below`);
     } catch {
       toast.error("Could not read that PDF.");
     } finally {
       setLoading(null);
       setPdfStatus("");
     }
+  }
+
+  function updatePage(id: string, patch: Partial<ExtractedPage>) {
+    setExtracted((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p)));
+  }
+
+  function useSelectedText() {
+    const chosen = extracted.filter((p) => p.selected && p.text.trim());
+    if (!chosen.length) {
+      toast.error("Select at least one page first.");
+      return;
+    }
+    const combined = chosen.map((p) => p.text.trim()).join("\n\n");
+    setSource((prev) => (prev ? `${prev}\n\n${combined}` : combined));
+    toast.success(`Added ${chosen.length} page(s) to the lesson text`);
   }
 
   async function onImage(file: File) {
