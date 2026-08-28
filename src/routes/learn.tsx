@@ -460,6 +460,73 @@ function LearnPage() {
                 )}
               </div>
 
+              {extracted.length > 0 && (
+                <div className="mt-4 rounded-lg border border-border bg-muted/30 p-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Extracted text · review &amp; edit
+                    </h3>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        onClick={() =>
+                          setExtracted((prev) => {
+                            const all = prev.every((p) => p.selected);
+                            return prev.map((p) => ({ ...p, selected: !all }));
+                          })
+                        }
+                        className="min-h-[36px] rounded-md border border-border px-2 text-xs text-foreground hover:bg-accent"
+                      >
+                        Select all / none
+                      </button>
+                      <button
+                        onClick={() => setExtracted([])}
+                        className="min-h-[36px] rounded-md border border-border px-2 text-xs text-muted-foreground hover:bg-accent"
+                      >
+                        Discard
+                      </button>
+                    </div>
+                  </div>
+
+                  <ul className="mt-3 space-y-3">
+                    {extracted.map((p) => (
+                      <li key={p.id} className="rounded-md border border-border bg-background p-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <label className="flex items-center gap-2 text-xs font-medium text-foreground">
+                            <input
+                              type="checkbox"
+                              checked={p.selected}
+                              onChange={(e) => updatePage(p.id, { selected: e.target.checked })}
+                              className="h-4 w-4 accent-[hsl(var(--primary))]"
+                            />
+                            {p.label}
+                          </label>
+                          <button
+                            onClick={() => setExtracted((prev) => prev.filter((x) => x.id !== p.id))}
+                            aria-label={`Remove ${p.label}`}
+                            className="rounded-md p-1 text-muted-foreground hover:bg-accent"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                        <textarea
+                          value={p.text}
+                          onChange={(e) => updatePage(p.id, { text: e.target.value })}
+                          rows={4}
+                          className="mt-2 w-full resize-y rounded-md border border-input bg-background p-2 text-xs leading-relaxed text-foreground outline-none focus:ring-2 focus:ring-ring"
+                        />
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button
+                    onClick={useSelectedText}
+                    className="mt-3 inline-flex min-h-[40px] items-center gap-1.5 rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+                  >
+                    <Check className="h-4 w-4" /> Use selected text
+                  </button>
+                </div>
+              )}
+
               <p className="mt-4 mb-2 text-xs font-medium text-muted-foreground">Or pick a topic</p>
               <div className="flex flex-wrap gap-2">
                 {TOPICS.map((t) => (
