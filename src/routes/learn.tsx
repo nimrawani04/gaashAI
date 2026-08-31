@@ -194,6 +194,7 @@ function LearnPage() {
       });
       setQuiz(questions);
       setAnswers({});
+      setGraded({});
       setStage("quiz");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not build the quiz.");
