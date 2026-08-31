@@ -173,6 +173,7 @@ function LearnPage() {
       setLesson(next);
       setQuiz([]);
       setAnswers({});
+      setGraded({});
       setStage("lesson");
       void persistSession(next);
       toast.success(weak?.length ? "Re-taught with a simpler explanation" : "Lesson ready");
