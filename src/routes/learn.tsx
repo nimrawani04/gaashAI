@@ -304,9 +304,17 @@ function LearnPage() {
     }
   }
 
+  function exportPdf() {
+    if (!lesson) return;
+    toast.info("Choose “Save as PDF” in the print dialog to store the lesson offline.");
+    // Let the toast paint before the modal print dialog blocks the main thread.
+    setTimeout(() => window.print(), 120);
+  }
+
   function updatePage(id: string, patch: Partial<ExtractedPage>) {
     setExtracted((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p)));
   }
+
 
   function useSelectedText() {
     const chosen = extracted.filter((p) => p.selected && p.text.trim());
