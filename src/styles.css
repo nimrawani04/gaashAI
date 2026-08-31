@@ -270,3 +270,26 @@
   .chinar-morph-leaf { opacity: 0; }
 }
 
+
+/* Offline lesson export: hidden on screen, printed as the whole document. */
+.lesson-print { display: none; }
+
+@media print {
+  body * { visibility: hidden !important; }
+  .lesson-print,
+  .lesson-print * { visibility: visible !important; }
+  .lesson-print {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    padding: 0;
+    background: #fff;
+    color: #000;
+  }
+  .lesson-print .print-block { break-inside: avoid; page-break-inside: avoid; }
+  .lesson-print .print-page-break { break-before: page; page-break-before: always; }
+  .lesson-print figure { overflow: visible !important; }
+  .lesson-print svg { min-width: 0 !important; max-width: 100%; }
+  @page { margin: 14mm; }
+}

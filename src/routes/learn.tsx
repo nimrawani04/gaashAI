@@ -6,6 +6,7 @@ import {
   BookOpen,
   Check,
   ChevronRight,
+  Download,
   FileText,
   GraduationCap,
   ImagePlus,
@@ -21,8 +22,10 @@ import { toast } from "sonner";
 import { buildLesson, buildQuiz, type Lesson, type QuizQuestion } from "@/lib/learn.functions";
 import { readImage } from "@/lib/vision.functions";
 import { ConceptDiagram } from "@/components/learn/ConceptDiagram";
+import { LessonPrintView } from "@/components/learn/LessonPrintView";
 import { getSpeech } from "@/lib/ttsCache";
 import { supabase } from "@/integrations/supabase/client";
+
 
 export const Route = createFileRoute("/learn")({
   ssr: false,
@@ -301,9 +304,17 @@ function LearnPage() {
     }
   }
 
+  function exportPdf() {
+    if (!lesson) return;
+    toast.info("Choose “Save as PDF” in the print dialog to store the lesson offline.");
+    // Let the toast paint before the modal print dialog blocks the main thread.
+    setTimeout(() => window.print(), 120);
+  }
+
   function updatePage(id: string, patch: Partial<ExtractedPage>) {
     setExtracted((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p)));
   }
+
 
   function useSelectedText() {
     const chosen = extracted.filter((p) => p.selected && p.text.trim());
@@ -627,6 +638,13 @@ function LearnPage() {
                 >
                   New lesson
                 </button>
+                <button
+                  onClick={exportPdf}
+                  className="inline-flex min-h-[40px] items-center gap-2 rounded-md border border-border px-3 text-sm font-semibold text-foreground hover:bg-accent"
+                >
+                  <Download className="h-4 w-4" />
+                  Export PDF
+                </button>
                 {stage === "lesson" && (
                   <button
                     onClick={() => generateQuiz(false)}
@@ -866,6 +884,17 @@ function LearnPage() {
               </div>
             )}
           </section>
+        )}
+
+        {lesson && (
+          <LessonPrintView
+            lesson={lesson}
+            grade={grade}
+            subject={subject}
+            languageLabel={LANGS.find((l) => l.value === language)?.label ?? language}
+            rtl={rtl}
+            pages={extracted.filter((p) => p.selected && p.text.trim())}
+          />
         )}
       </main>
     </div>
