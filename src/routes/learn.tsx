@@ -6,6 +6,7 @@ import {
   BookOpen,
   Check,
   ChevronRight,
+  Download,
   FileText,
   GraduationCap,
   ImagePlus,
@@ -21,8 +22,10 @@ import { toast } from "sonner";
 import { buildLesson, buildQuiz, type Lesson, type QuizQuestion } from "@/lib/learn.functions";
 import { readImage } from "@/lib/vision.functions";
 import { ConceptDiagram } from "@/components/learn/ConceptDiagram";
+import { LessonPrintView } from "@/components/learn/LessonPrintView";
 import { getSpeech } from "@/lib/ttsCache";
 import { supabase } from "@/integrations/supabase/client";
+
 
 export const Route = createFileRoute("/learn")({
   ssr: false,
