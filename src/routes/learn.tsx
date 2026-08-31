@@ -102,6 +102,7 @@ function LearnPage() {
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [quiz, setQuiz] = useState<QuizQuestion[]>([]);
   const [answers, setAnswers] = useState<Record<number, string>>({});
+  const [graded, setGraded] = useState<Record<number, boolean>>({});
   const [scores, setScores] = useState<Record<string, { correct: number; total: number }>>({});
 
   const [loading, setLoading] = useState<null | "lesson" | "quiz" | "ocr" | "pdf">(null);
