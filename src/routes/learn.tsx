@@ -630,6 +630,13 @@ function LearnPage() {
                 >
                   New lesson
                 </button>
+                <button
+                  onClick={exportPdf}
+                  className="inline-flex min-h-[40px] items-center gap-2 rounded-md border border-border px-3 text-sm font-semibold text-foreground hover:bg-accent"
+                >
+                  <Download className="h-4 w-4" />
+                  Export PDF
+                </button>
                 {stage === "lesson" && (
                   <button
                     onClick={() => generateQuiz(false)}
