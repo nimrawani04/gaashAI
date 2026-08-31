@@ -885,6 +885,17 @@ function LearnPage() {
             )}
           </section>
         )}
+
+        {lesson && (
+          <LessonPrintView
+            lesson={lesson}
+            grade={grade}
+            subject={subject}
+            languageLabel={LANGS.find((l) => l.value === language)?.label ?? language}
+            rtl={rtl}
+            pages={extracted.filter((p) => p.selected && p.text.trim())}
+          />
+        )}
       </main>
     </div>
   );
