@@ -127,6 +127,11 @@ function LearnPage() {
     [scores],
   );
 
+  const answeredCount = useMemo(
+    () => quiz.filter((_, i) => (answers[i] ?? "").trim().length > 0).length,
+    [quiz, answers],
+  );
+
   async function persistSession(next: Lesson, quizData: QuizQuestion[] = [], results = {}, weak: string[] = []) {
     try {
       const { data: auth } = await supabase.auth.getUser();
