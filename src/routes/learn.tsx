@@ -890,6 +890,44 @@ function LearnPage() {
                   </ul>
                 </div>
 
+                {quiz.length > 0 && (
+                  <div className="rounded-xl border border-border bg-card p-4">
+                    <h3 className="text-sm font-bold text-foreground">Answer review</h3>
+                    <ul className="mt-3 space-y-3">
+                      {quiz.map((q, i) => {
+                        const ok = graded[i];
+                        const given = (answers[i] ?? "").trim();
+                        return (
+                          <li key={i} className="rounded-lg border border-border p-3">
+                            <div className="flex items-start justify-between gap-2">
+                              <p className="text-sm text-foreground">
+                                {i + 1}. {q.question_en}
+                              </p>
+                              <span
+                                className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${
+                                  ok ? "bg-primary/10 text-primary" : "bg-destructive/10 text-destructive"
+                                }`}
+                              >
+                                {ok ? "Correct" : "Review"}
+                              </span>
+                            </div>
+                            <p className="mt-1 text-xs text-muted-foreground">
+                              Concept: {q.concept} · Your answer: {given || "—"}
+                            </p>
+                            {!ok && (
+                              <p className="mt-1 text-xs text-foreground">
+                                <span className="font-semibold">Correct answer:</span> {q.answer}
+                              </p>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
+
+
+
                 <div className="rounded-xl border border-border bg-card p-4">
                   <h3 className="text-sm font-bold text-foreground">
                     {weakConcepts.length ? "Weak concepts detected" : "No weak concepts — well done"}
