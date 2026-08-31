@@ -795,6 +795,22 @@ function LearnPage() {
 
             {stage === "quiz" && (
               <div className="space-y-3">
+                <div className="rounded-xl border border-border bg-card p-4">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-semibold text-foreground">
+                      {weakConcepts.length ? "Re-test on weak concepts" : "Practice quiz"}
+                    </span>
+                    <span className="text-muted-foreground">
+                      {answeredCount} / {quiz.length} answered
+                    </span>
+                  </div>
+                  <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
+                    <div
+                      className="h-full rounded-full bg-primary transition-all"
+                      style={{ width: `${quiz.length ? (answeredCount / quiz.length) * 100 : 0}%` }}
+                    />
+                  </div>
+                </div>
                 {quiz.map((q, i) => (
                   <div key={i} className="rounded-xl border border-border bg-card p-4">
                     <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
