@@ -200,25 +200,45 @@ function LearnPage() {
     }
   }
 
+  function isCorrect(q: QuizQuestion, given: string) {
+    const g = given.trim().toLowerCase();
+    const expected = q.answer.trim().toLowerCase();
+    if (!g) return false;
+    return g === expected || (expected.length > 3 && (g.includes(expected) || expected.includes(g)));
+  }
+
   function submitQuiz() {
+    const unanswered = quiz.filter((_, i) => !(answers[i] ?? "").trim()).length;
+    if (unanswered === quiz.length) {
+      toast.error("Answer at least one question first.");
+      return;
+    }
+    if (unanswered > 0) {
+      toast.info(`${unanswered} question(s) left blank — counted as incorrect.`);
+    }
+
     const tally: Record<string, { correct: number; total: number }> = {};
+    const marks: Record<number, boolean> = {};
     quiz.forEach((q, i) => {
       const key = q.concept;
       tally[key] ??= { correct: 0, total: 0 };
       tally[key].total += 1;
-      const given = (answers[i] ?? "").trim().toLowerCase();
-      const expected = q.answer.trim().toLowerCase();
-      if (given && (given === expected || (expected.length > 3 && given.includes(expected)))) {
-        tally[key].correct += 1;
-      }
+      const ok = isCorrect(q, answers[i] ?? "");
+      marks[i] = ok;
+      if (ok) tally[key].correct += 1;
     });
+    setGraded(marks);
     setScores(tally);
     setStage("report");
     const weak = Object.entries(tally)
       .filter(([, s]) => s.correct / s.total < 0.5)
       .map(([c]) => c);
+    if (weak.length) {
+      toast.info(`Weak concept(s): ${weak.join(", ")} — re-teaching is ready.`);
+    }
     if (lesson) void persistSession(lesson, quiz, tally, weak);
   }
+
 
   async function listen(id: string, text: string) {
     if (!text.trim()) return;
