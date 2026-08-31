@@ -102,6 +102,7 @@ function LearnPage() {
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [quiz, setQuiz] = useState<QuizQuestion[]>([]);
   const [answers, setAnswers] = useState<Record<number, string>>({});
+  const [graded, setGraded] = useState<Record<number, boolean>>({});
   const [scores, setScores] = useState<Record<string, { correct: number; total: number }>>({});
 
   const [loading, setLoading] = useState<null | "lesson" | "quiz" | "ocr" | "pdf">(null);
@@ -124,6 +125,11 @@ function LearnPage() {
         .filter(([, s]) => s.total > 0 && s.correct / s.total < 0.5)
         .map(([c]) => c),
     [scores],
+  );
+
+  const answeredCount = useMemo(
+    () => quiz.filter((_, i) => (answers[i] ?? "").trim().length > 0).length,
+    [quiz, answers],
   );
 
   async function persistSession(next: Lesson, quizData: QuizQuestion[] = [], results = {}, weak: string[] = []) {
@@ -172,6 +178,7 @@ function LearnPage() {
       setLesson(next);
       setQuiz([]);
       setAnswers({});
+      setGraded({});
       setStage("lesson");
       void persistSession(next);
       toast.success(weak?.length ? "Re-taught with a simpler explanation" : "Lesson ready");
@@ -192,6 +199,7 @@ function LearnPage() {
       });
       setQuiz(questions);
       setAnswers({});
+      setGraded({});
       setStage("quiz");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not build the quiz.");
@@ -200,25 +208,45 @@ function LearnPage() {
     }
   }
 
+  function isCorrect(q: QuizQuestion, given: string) {
+    const g = given.trim().toLowerCase();
+    const expected = q.answer.trim().toLowerCase();
+    if (!g) return false;
+    return g === expected || (expected.length > 3 && (g.includes(expected) || expected.includes(g)));
+  }
+
   function submitQuiz() {
+    const unanswered = quiz.filter((_, i) => !(answers[i] ?? "").trim()).length;
+    if (unanswered === quiz.length) {
+      toast.error("Answer at least one question first.");
+      return;
+    }
+    if (unanswered > 0) {
+      toast.info(`${unanswered} question(s) left blank — counted as incorrect.`);
+    }
+
     const tally: Record<string, { correct: number; total: number }> = {};
+    const marks: Record<number, boolean> = {};
     quiz.forEach((q, i) => {
       const key = q.concept;
       tally[key] ??= { correct: 0, total: 0 };
       tally[key].total += 1;
-      const given = (answers[i] ?? "").trim().toLowerCase();
-      const expected = q.answer.trim().toLowerCase();
-      if (given && (given === expected || (expected.length > 3 && given.includes(expected)))) {
-        tally[key].correct += 1;
-      }
+      const ok = isCorrect(q, answers[i] ?? "");
+      marks[i] = ok;
+      if (ok) tally[key].correct += 1;
     });
+    setGraded(marks);
     setScores(tally);
     setStage("report");
     const weak = Object.entries(tally)
       .filter(([, s]) => s.correct / s.total < 0.5)
       .map(([c]) => c);
+    if (weak.length) {
+      toast.info(`Weak concept(s): ${weak.join(", ")} — re-teaching is ready.`);
+    }
     if (lesson) void persistSession(lesson, quiz, tally, weak);
   }
+
 
   async function listen(id: string, text: string) {
     if (!text.trim()) return;
@@ -772,6 +800,22 @@ function LearnPage() {
 
             {stage === "quiz" && (
               <div className="space-y-3">
+                <div className="rounded-xl border border-border bg-card p-4">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-semibold text-foreground">
+                      {weakConcepts.length ? "Re-test on weak concepts" : "Practice quiz"}
+                    </span>
+                    <span className="text-muted-foreground">
+                      {answeredCount} / {quiz.length} answered
+                    </span>
+                  </div>
+                  <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
+                    <div
+                      className="h-full rounded-full bg-primary transition-all"
+                      style={{ width: `${quiz.length ? (answeredCount / quiz.length) * 100 : 0}%` }}
+                    />
+                  </div>
+                </div>
                 {quiz.map((q, i) => (
                   <div key={i} className="rounded-xl border border-border bg-card p-4">
                     <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -845,6 +889,44 @@ function LearnPage() {
                     })}
                   </ul>
                 </div>
+
+                {quiz.length > 0 && (
+                  <div className="rounded-xl border border-border bg-card p-4">
+                    <h3 className="text-sm font-bold text-foreground">Answer review</h3>
+                    <ul className="mt-3 space-y-3">
+                      {quiz.map((q, i) => {
+                        const ok = graded[i];
+                        const given = (answers[i] ?? "").trim();
+                        return (
+                          <li key={i} className="rounded-lg border border-border p-3">
+                            <div className="flex items-start justify-between gap-2">
+                              <p className="text-sm text-foreground">
+                                {i + 1}. {q.question_en}
+                              </p>
+                              <span
+                                className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${
+                                  ok ? "bg-primary/10 text-primary" : "bg-destructive/10 text-destructive"
+                                }`}
+                              >
+                                {ok ? "Correct" : "Review"}
+                              </span>
+                            </div>
+                            <p className="mt-1 text-xs text-muted-foreground">
+                              Concept: {q.concept} · Your answer: {given || "—"}
+                            </p>
+                            {!ok && (
+                              <p className="mt-1 text-xs text-foreground">
+                                <span className="font-semibold">Correct answer:</span> {q.answer}
+                              </p>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
+
+
 
                 <div className="rounded-xl border border-border bg-card p-4">
                   <h3 className="text-sm font-bold text-foreground">
