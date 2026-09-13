@@ -158,8 +158,8 @@ export default function AuthScreen({ backendAvailable = true }: { backendAvailab
           <ThemeToggle className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
         </div>
         <div className="mb-6 flex flex-col items-center text-center">
-          <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md">
-            <span className="font-nastaliq text-3xl leading-none">ک</span>
+          <div className="mb-3 flex h-16 w-16 items-center justify-center">
+            <img src="/chinar-leaf.svg" alt="Chinar Leaf" className="h-full w-full object-contain drop-shadow-md" />
           </div>
           <h1 className="font-nastaliq text-3xl text-foreground" dir="rtl">
             کٲشُر مددگار
