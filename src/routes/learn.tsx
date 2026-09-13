@@ -84,6 +84,19 @@ type ExtractedPage = { id: string; label: string; text: string; selected: boolea
 type Lang = (typeof LANGS)[number]["value"];
 type Stage = "setup" | "lesson" | "quiz" | "report";
 
+/** A pre-generated lesson + quiz shipped in public/offline-lessons.json. */
+type DemoPack = {
+  id: string;
+  label: string;
+  grade: number;
+  subject: string;
+  language: Lang;
+  source: string;
+  lesson: Lesson;
+  quiz: QuizQuestion[];
+};
+
+
 function isRtl(lang: Lang) {
   return lang === "kashmiri" || lang === "urdu";
 }
@@ -117,7 +130,44 @@ function LearnPage() {
 
   const rtl = isRtl(language);
 
+  const [packs, setPacks] = useState<DemoPack[]>([]);
+
   useEffect(() => () => audioRef.current?.pause(), []);
+
+  // Pre-generated demo lessons ship with the app so /learn works offline.
+  useEffect(() => {
+    let alive = true;
+    fetch("/offline-lessons.json")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((json) => {
+        if (alive && Array.isArray(json?.packs)) setPacks(json.packs as DemoPack[]);
+      })
+      .catch(() => {
+        /* demo packs are optional */
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  function loadPack(pack: DemoPack) {
+    audioRef.current?.pause();
+    setSpeaking(null);
+    setGrade(pack.grade);
+    setSubject(pack.subject);
+    setLanguage(pack.language);
+    setSource(pack.source);
+    setLesson(pack.lesson);
+    setQuiz(pack.quiz);
+    setAnswers({});
+    setGraded({});
+    setScores({});
+    setSessionId(null);
+    setStage("lesson");
+    void persistSession(pack.lesson, pack.quiz);
+    toast.success(`${pack.lesson.title} — ready`);
+  }
+
 
   const weakConcepts = useMemo(
     () =>
@@ -584,6 +634,33 @@ function LearnPage() {
               </div>
             </div>
 
+            {packs.length > 0 && (
+              <div className="rounded-xl border border-border bg-card p-4">
+                <h2 className="mb-1 flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <Sparkles className="h-4 w-4 text-primary" /> Ready-made lessons
+                </h2>
+                <p className="mb-3 text-xs text-muted-foreground">
+                  Fully prepared lesson + quiz. Opens instantly, even with no internet.
+                </p>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {packs.map((p) => (
+                    <button
+                      key={p.id}
+                      onClick={() => loadPack(p)}
+                      className="rounded-lg border border-border p-3 text-left hover:bg-accent"
+                    >
+                      <span className="block text-sm font-semibold text-foreground">{p.lesson.title}</span>
+                      <span className="mt-0.5 block text-xs text-muted-foreground">{p.label}</span>
+                      <span className="mt-1 block text-[11px] text-muted-foreground">
+                        {p.lesson.concepts.length} concepts · {p.quiz.length} questions
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+
             <div className="grid gap-3 rounded-xl border border-border bg-card p-4 sm:grid-cols-3">
               <label className="text-xs font-medium text-muted-foreground">
                 Grade
@@ -675,14 +752,15 @@ function LearnPage() {
                 </button>
                 {stage === "lesson" && (
                   <button
-                    onClick={() => generateQuiz(false)}
+                    onClick={() => (quiz.length ? setStage("quiz") : generateQuiz(false))}
                     disabled={loading === "quiz"}
                     className="inline-flex min-h-[40px] items-center gap-2 rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
                   >
                     {loading === "quiz" ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                    Generate quiz
+                    {quiz.length ? "Start quiz" : "Generate quiz"}
                   </button>
                 )}
+
               </div>
             </div>
 
