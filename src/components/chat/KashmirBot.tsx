@@ -920,7 +920,7 @@ export default function KashmirBot({
               <Menu className="h-5 w-5" />
             </button>
             <div className="hidden h-11 w-11 shrink-0 items-center justify-center sm:flex">
-              <img src="/chinar-leaf.svg" alt="Chinar Leaf" className="h-full w-full object-contain" />
+              <img src="/chinar-leaf.jpg" alt="Chinar Leaf" className="h-full w-full object-contain" />
             </div>
             <div className="min-w-0">
               <h1 className="font-nastaliq truncate text-2xl sm:text-3xl text-foreground leading-normal" dir="rtl">
@@ -994,7 +994,7 @@ export default function KashmirBot({
           {messages.length === 0 && !isThinking ? (
             <div className="flex min-h-[50vh] xs:min-h-[60vh] flex-col items-center justify-center text-center px-4">
               <div className="mb-4 xs:mb-6 flex h-20 w-20 xs:h-24 xs:w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 items-center justify-center">
-                <img src="/chinar-leaf.svg" alt="Chinar Leaf" className="h-full w-full object-contain drop-shadow-lg" />
+                <img src="/chinar-leaf.jpg" alt="Chinar Leaf" className="h-full w-full object-contain drop-shadow-lg" />
               </div>
               <p
                 dir={t.emptyDir}

@@ -159,7 +159,7 @@ export default function AuthScreen({ backendAvailable = true }: { backendAvailab
         </div>
         <div className="mb-6 flex flex-col items-center text-center">
           <div className="mb-3 flex h-16 w-16 items-center justify-center">
-            <img src="/chinar-leaf.svg" alt="Chinar Leaf" className="h-full w-full object-contain drop-shadow-md" />
+            <img src="/chinar-leaf.jpg" alt="Chinar Leaf" className="h-full w-full object-contain drop-shadow-md" />
           </div>
           <h1 className="font-nastaliq text-3xl text-foreground" dir="rtl">
             کٲشُر مددگار
