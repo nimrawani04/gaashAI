@@ -45,7 +45,7 @@ const UI_STRINGS: Record<Lang, {
   emptyDir: "rtl" | "ltr";
   emptyClass: string;
 }> = {
-  ks: { subtitle: "Your Kashmiri Assistant", empty: "سلام! میٚ کیا مدد کٔری آپ کٕس?", placeholder: "اَتہِ لیٚکھِو۔۔۔", send: "بھیجِو", mic: "آواز", langLabel: "کٲشُر", emptyDir: "rtl", emptyClass: "font-nastaliq" },
+  ks: { subtitle: "Your Kashmiri Assistant", empty: "سلام! بہٕ چھُس گاش اے آئی (GaashAI)، تُہُنٛد کٲشُر اے آئی مَدَدگار۔ بہٕ کِتھ کٔنۍ ہٮ۪کہٕ اَز تُہنٛز مَدَد کٔرِتھ؟", placeholder: "کٮ۪نٛہہ تہِ پرژھِو یا پیغام لیٚکھِو، بہٕ چھُس تُہنٛد مدد کَرنہِ خٲطرٕ تیار۔ مےٚ ؤنِو، بہٕ کِتھ کٔنۍ ہیٚکہٕ تۄہہِ مدد کٔرِتھ۔", send: "بھیجِو", mic: "آواز", langLabel: "کٲشُر", emptyDir: "rtl", emptyClass: "font-nastaliq" },
   ur: { subtitle: "آپ کا کشمیری معاون", empty: "سلام! میں آپ کی کیا مدد کر سکتا ہوں؟", placeholder: "یہاں لکھیں...", send: "بھیجیں", mic: "آواز", langLabel: "Urdu", emptyDir: "rtl", emptyClass: "font-nastaliq" },
   en: { subtitle: "Your Kashmiri Assistant", empty: "Hello! How can I help you today?", placeholder: "Type a message...", send: "Send", mic: "Voice", langLabel: "English", emptyDir: "ltr", emptyClass: "" },
 };
