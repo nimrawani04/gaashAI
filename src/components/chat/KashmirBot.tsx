@@ -20,7 +20,7 @@ import { localChatReply } from "@/lib/lexicon";
 // Lovable AI is the only backend — no local fallback Q&A.
 
 type Role = "user" | "assistant";
-type Lang = "ks" | "ur" | "en";
+type Lang = "ks" | "en";
 
 interface Message {
   id: string;
@@ -46,11 +46,10 @@ const UI_STRINGS: Record<Lang, {
   emptyClass: string;
 }> = {
   ks: { subtitle: "Your Kashmiri Assistant", empty: "سلام! بہٕ چھُس گاش اے آئی (GaashAI)، تُہُنٛد کٲشُر اے آئی مَدَدگار۔ بہٕ کِتھ کٔنۍ ہٮ۪کہٕ اَز تُہنٛز مَدَد کٔرِتھ؟", placeholder: "کٮ۪نٛہہ تہِ پرژھِو یا پیغام لیٚکھِو، بہٕ چھُس تُہنٛد مدد کَرنہِ خٲطرٕ تیار۔ مےٚ ؤنِو، بہٕ کِتھ کٔنۍ ہیٚکہٕ تۄہہِ مدد کٔرِتھ۔", send: "بھیجِو", mic: "آواز", langLabel: "کٲشُر", emptyDir: "rtl", emptyClass: "font-nastaliq" },
-  ur: { subtitle: "آپ کا کشمیری معاون", empty: "سلام! میں آپ کی کیا مدد کر سکتا ہوں؟", placeholder: "یہاں لکھیں...", send: "بھیجیں", mic: "آواز", langLabel: "Urdu", emptyDir: "rtl", emptyClass: "font-nastaliq" },
   en: { subtitle: "Your Kashmiri Assistant", empty: "Hello! How can I help you today?", placeholder: "Type a message...", send: "Send", mic: "Voice", langLabel: "English", emptyDir: "ltr", emptyClass: "" },
 };
 
-const LANG_ORDER: Lang[] = ["ks", "ur", "en"];
+const LANG_ORDER: Lang[] = ["ks", "en"];
 
 // TTS helpers live in @/lib/tts (voice loading, chunking, Chrome quirks).
 
@@ -595,9 +594,8 @@ export default function KashmirBot({
     text: string,
     history: { role: Role; content: string }[],
   ): Promise<{ reply: string; usedFallback: boolean }> => {
-    const langMap: Record<Lang, "kashmiri" | "urdu" | "english"> = {
+    const langMap: Record<Lang, "kashmiri" | "english"> = {
       ks: "kashmiri",
-      ur: "urdu",
       en: "english",
     };
     const controller = new AbortController();

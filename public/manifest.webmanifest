@@ -2,7 +2,7 @@
   "id": "/",
   "name": "KashmirBot — کٲشُر مددگار",
   "short_name": "KashmirBot",
-  "description": "A warm Kashmiri, Urdu and English chat assistant for everyday questions.",
+  "description": "A warm Kashmiri and English chat assistant for everyday questions.",
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",

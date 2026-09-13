@@ -14,7 +14,7 @@ const LessonInput = z.object({
   source: z.string().min(10).max(12000),
   grade: z.number().int().min(1).max(12),
   subject: z.string().min(1).max(40),
-  language: z.enum(["kashmiri", "urdu", "hindi", "english"]),
+  language: z.enum(["kashmiri", "english"]),
   /** Concepts the student is weak at — triggers a simpler re-teach. */
   weakConcepts: z.array(z.string().max(120)).max(10).optional(),
 });
@@ -23,7 +23,7 @@ const QuizInput = z.object({
   concepts: z.array(z.string().min(1).max(160)).min(1).max(8),
   grade: z.number().int().min(1).max(12),
   subject: z.string().min(1).max(40),
-  language: z.enum(["kashmiri", "urdu", "hindi", "english"]),
+  language: z.enum(["kashmiri", "english"]),
   perConcept: z.number().int().min(1).max(5).default(3),
   easier: z.boolean().optional(),
 });

@@ -6,9 +6,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "KashmirBot — Your Kashmiri Assistant" },
-      { name: "description", content: "Chat in Kashmiri, Urdu, or English with KashmirBot, a friendly assistant designed for everyday questions." },
+      { name: "description", content: "Chat in Kashmiri or English with KashmirBot, a friendly assistant designed for everyday questions." },
       { property: "og:title", content: "KashmirBot — Your Kashmiri Assistant" },
-      { property: "og:description", content: "A warm, accessible chat assistant that speaks Kashmiri, Urdu, and English." },
+      { property: "og:description", content: "A warm, accessible chat assistant that speaks Kashmiri and English." },
     ],
   }),
   component: AppShell,
