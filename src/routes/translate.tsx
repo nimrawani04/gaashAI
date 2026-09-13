@@ -175,7 +175,7 @@ function TranslatePage() {
       setDirection(dir);
       setText(extracted);
       toast.success(
-        `Detected ${vision.language || (dir === "ks2en" ? "Kashmiri" : "English")} — translating…`,
+        `Detected ${vision.language || (dir === "ks2en" ? "Kashmiri/Urdu" : "English")} — translating…`,
       );
       await handleTranslate({ text: extracted, direction: dir });
     } catch (err) {

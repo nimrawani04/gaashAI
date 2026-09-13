@@ -74,6 +74,8 @@ const TOPICS = [
 const SUBJECTS = ["maths", "science", "social", "language", "general"];
 const LANGS = [
   { value: "kashmiri", label: "Kashmiri (کٲشُر)" },
+  { value: "urdu", label: "Urdu" },
+  { value: "hindi", label: "Hindi" },
   { value: "english", label: "English" },
 ] as const;
 
@@ -96,7 +98,7 @@ type DemoPack = {
 
 
 function isRtl(lang: Lang) {
-  return lang === "kashmiri";
+  return lang === "kashmiri" || lang === "urdu";
 }
 
 function LearnPage() {

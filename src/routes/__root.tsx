@@ -92,7 +92,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { name: "format-detection", content: "telephone=no" },
       { property: "og:title", content: "KashmirBot — Your Kashmiri Assistant" },
-      { property: "og:description", content: "Chat in Kashmiri or English with KashmirBot." },
+      { property: "og:description", content: "Chat in Kashmiri, Urdu, or English with KashmirBot." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

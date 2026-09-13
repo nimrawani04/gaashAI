@@ -50,6 +50,8 @@ export type QuizQuestion = {
 
 const LANG_LABEL: Record<string, string> = {
   kashmiri: "Kashmiri (کٲشُر) in Perso-Arabic Nastaliq script",
+  urdu: "Urdu in Nastaliq script",
+  hindi: "Hindi in Devanagari script",
   english: "simple English",
 };
 
