@@ -84,6 +84,19 @@ type ExtractedPage = { id: string; label: string; text: string; selected: boolea
 type Lang = (typeof LANGS)[number]["value"];
 type Stage = "setup" | "lesson" | "quiz" | "report";
 
+/** A pre-generated lesson + quiz shipped in public/offline-lessons.json. */
+type DemoPack = {
+  id: string;
+  label: string;
+  grade: number;
+  subject: string;
+  language: Lang;
+  source: string;
+  lesson: Lesson;
+  quiz: QuizQuestion[];
+};
+
+
 function isRtl(lang: Lang) {
   return lang === "kashmiri" || lang === "urdu";
 }
@@ -117,7 +130,44 @@ function LearnPage() {
 
   const rtl = isRtl(language);
 
+  const [packs, setPacks] = useState<DemoPack[]>([]);
+
   useEffect(() => () => audioRef.current?.pause(), []);
+
+  // Pre-generated demo lessons ship with the app so /learn works offline.
+  useEffect(() => {
+    let alive = true;
+    fetch("/offline-lessons.json")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((json) => {
+        if (alive && Array.isArray(json?.packs)) setPacks(json.packs as DemoPack[]);
+      })
+      .catch(() => {
+        /* demo packs are optional */
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  function loadPack(pack: DemoPack) {
+    audioRef.current?.pause();
+    setSpeaking(null);
+    setGrade(pack.grade);
+    setSubject(pack.subject);
+    setLanguage(pack.language);
+    setSource(pack.source);
+    setLesson(pack.lesson);
+    setQuiz(pack.quiz);
+    setAnswers({});
+    setGraded({});
+    setScores({});
+    setSessionId(null);
+    setStage("lesson");
+    void persistSession(pack.lesson, pack.quiz);
+    toast.success(`${pack.lesson.title} — ready`);
+  }
+
 
   const weakConcepts = useMemo(
     () =>
