@@ -998,7 +998,7 @@ export default function KashmirBot({
               </div>
               <p
                 dir={t.emptyDir}
-                className={`max-w-md text-xl xs:text-2xl sm:text-3xl md:text-4xl text-foreground ${t.emptyClass}`}
+                className={`max-w-2xl text-xl xs:text-2xl sm:text-3xl text-foreground leading-[2.5] py-2 ${t.emptyClass}`}
               >
                 {t.empty}
               </p>
@@ -1105,7 +1105,7 @@ export default function KashmirBot({
               autoCorrect="on"
               spellCheck={false}
               className={[
-                "min-h-[44px] max-h-32 flex-1 resize-none rounded-[8px] border border-border bg-background px-3 py-2.5 text-base text-foreground shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring",
+                "min-h-[52px] max-h-36 flex-1 resize-none rounded-[12px] border border-border bg-background px-3.5 py-2.5 text-base text-foreground shadow-sm placeholder:text-muted-foreground placeholder:opacity-80 focus:outline-none focus:ring-2 focus:ring-ring",
                 inputIsRTL ? "font-nastaliq" : "",
               ].join(" ")}
             />

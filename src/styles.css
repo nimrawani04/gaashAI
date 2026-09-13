@@ -125,8 +125,18 @@
 
 @utility font-nastaliq {
   font-family: var(--font-nastaliq);
-  line-height: 2.1;
+  line-height: 2.4;
 }
+
+.font-nastaliq {
+  font-family: var(--font-nastaliq);
+  line-height: 2.4 !important;
+}
+
+textarea.font-nastaliq, input.font-nastaliq {
+  line-height: 1.8 !important;
+}
+
 
 @utility typing-dot {
   width: 0.6rem;
