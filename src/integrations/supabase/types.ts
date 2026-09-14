@@ -176,6 +176,7 @@ export type Database = {
           category: string
           content_english: string
           content_kashmiri: string
+          content_urdu: string
           created_at: string
           embedding: string | null
           id: string
@@ -186,6 +187,7 @@ export type Database = {
           category?: string
           content_english?: string
           content_kashmiri?: string
+          content_urdu?: string
           created_at?: string
           embedding?: string | null
           id?: string
@@ -196,6 +198,7 @@ export type Database = {
           category?: string
           content_english?: string
           content_kashmiri?: string
+          content_urdu?: string
           created_at?: string
           embedding?: string | null
           id?: string
@@ -403,6 +406,7 @@ export type Database = {
           category: string
           content_english: string
           content_kashmiri: string
+          content_urdu: string
           id: string
           similarity: number
           title: string
