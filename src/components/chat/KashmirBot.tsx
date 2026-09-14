@@ -413,7 +413,7 @@ export default function KashmirBot({
     if (muted || isThinking) return;
     const last = messages[messages.length - 1];
     if (!last || last.role !== "assistant" || !last.text.trim()) return;
-    const id = setTimeout(() => prefetchSpeech(last.text), 150);
+    const id = setTimeout(() => prefetchSpeech(last.text, speechLangRef.current), 150);
     return () => clearTimeout(id);
   }, [messages, isThinking, muted]);
 
