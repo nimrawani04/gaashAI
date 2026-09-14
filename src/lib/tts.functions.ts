@@ -3,7 +3,14 @@ import { z } from "zod";
 
 const Input = z.object({
   text: z.string().min(1).max(2000),
+  language: z.enum(["kashmiri", "urdu", "english"]).default("kashmiri"),
 });
+
+const READ_PROMPT: Record<string, string> = {
+  kashmiri: "Read this aloud naturally in Kashmiri (koshur), warm and clear:",
+  urdu: "Read this aloud naturally in Urdu, warm and clear:",
+  english: "Read this aloud naturally in English, warm and clear:",
+};
 
 export type TtsResult = {
   /** Base64 audio bytes. */
@@ -21,7 +28,7 @@ export const speakKashmiri = createServerFn({ method: "POST" })
     const apiKey = process.env["LOVABLE_API_KEY"];
     if (!apiKey) throw new Error("Voice output is not configured.");
 
-    const prompt = `Read this aloud naturally in Kashmiri (koshur), warm and clear: ${data.text}`;
+    const prompt = `${READ_PROMPT[data.language] ?? READ_PROMPT.kashmiri} ${data.text}`;
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/audio/speech", {
       method: "POST",
