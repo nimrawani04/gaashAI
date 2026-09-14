@@ -114,10 +114,26 @@ Deno.serve(async (req) => {
 
       if (matches && matches.length > 0) {
         const lines = matches
-          .map((m: { title: string; content_english: string }) => `- ${m.title}: ${m.content_english}`)
+          .map((m: { title: string; content_english: string; content_urdu?: string; content_kashmiri?: string }) => {
+            const native =
+              language === "urdu"
+                ? m.content_urdu
+                : language === "kashmiri"
+                  ? m.content_kashmiri
+                  : "";
+            return native && native.trim()
+              ? `- ${m.title}: ${m.content_english}\n  (${language} wording: ${native})`
+              : `- ${m.title}: ${m.content_english}`;
+          })
           .join("\n");
+        const script =
+          language === "urdu"
+            ? "always respond in Urdu Nastaliq script"
+            : language === "english"
+              ? "always respond in English"
+              : "always respond in Kashmiri Nastaliq script";
         ragContext =
-          `Here is relevant local information to help answer this question accurately:\n${lines}\nUse this information in your reply but always respond in Kashmiri Shahmukhi script.\n\n`;
+          `Here is relevant local information to help answer this question accurately:\n${lines}\nUse this information in your reply but ${script}.\n\n`;
       }
     } catch (e) {
       console.error("RAG lookup failed", e);
