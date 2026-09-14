@@ -3,7 +3,14 @@ import { z } from "zod";
 
 const Input = z.object({
   text: z.string().min(1).max(2000),
+  language: z.enum(["kashmiri", "urdu", "english"]).default("kashmiri"),
 });
+
+const READ_PROMPT: Record<string, string> = {
+  kashmiri: "Read this aloud naturally in Kashmiri (koshur), warm and clear:",
+  urdu: "Read this aloud naturally in Urdu, warm and clear:",
+  english: "Read this aloud naturally in English, warm and clear:",
+};
 
 export type TtsResult = {
   /** Base64 audio bytes. */
