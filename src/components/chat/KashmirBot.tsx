@@ -11,7 +11,7 @@ import FeedbackButtons from "@/components/chat/FeedbackButtons";
 import { speak, stopSpeaking, ttsSupported, getVoices, unlockTts, installTtsUnlock, cleanForSpeech } from "@/lib/tts";
 import { startRecording, blobToBase64, type Recorder } from "@/lib/recorder";
 import { transcribeSpeech } from "@/lib/stt.functions";
-import { getSpeech, prefetchSpeech } from "@/lib/ttsCache";
+import { getSpeech, prefetchSpeech, type SpeechLang } from "@/lib/ttsCache";
 import ChinarLoader from "@/components/ChinarLoader";
 import GuestPrompt from "@/components/GuestPrompt";
 import { bumpGuestUses, guestLimitReached, type GuestFeature } from "@/lib/guest";
