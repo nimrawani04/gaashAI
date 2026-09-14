@@ -180,10 +180,10 @@ Deno.serve(async (req) => {
         }
       }
     } catch (e) {
-      console.error("BPCC lookup failed", e);
+      if ((e as Error)?.message !== "skip-bpcc") console.error("BPCC lookup failed", e);
     }
 
-    const systemPrompt = ragContext + bpccContext + BASE_SYSTEM_PROMPT;
+    const systemPrompt = ragContext + bpccContext + systemFor(language);
 
     const recent = history.slice(-6).map((m) => ({ role: m.role, content: m.content }));
 
