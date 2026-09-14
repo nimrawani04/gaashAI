@@ -28,7 +28,7 @@ export const speakKashmiri = createServerFn({ method: "POST" })
     const apiKey = process.env["LOVABLE_API_KEY"];
     if (!apiKey) throw new Error("Voice output is not configured.");
 
-    const prompt = `Read this aloud naturally in Kashmiri (koshur), warm and clear: ${data.text}`;
+    const prompt = `${READ_PROMPT[data.language] ?? READ_PROMPT.kashmiri} ${data.text}`;
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/audio/speech", {
       method: "POST",
