@@ -74,9 +74,7 @@ const TOPICS = [
 const SUBJECTS = ["maths", "science", "social", "language", "general"];
 const LANGS = [
   { value: "kashmiri", label: "Kashmiri (کٲشُر)" },
-  { value: "urdu", label: "Urdu" },
-  { value: "hindi", label: "Hindi" },
-  { value: "english", label: "English" },
+  { value: "urdu", label: "Urdu (اردو)" },
 ] as const;
 
 type ExtractedPage = { id: string; label: string; text: string; selected: boolean };
