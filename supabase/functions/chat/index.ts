@@ -142,6 +142,7 @@ Deno.serve(async (req) => {
     // ---- BPCC few-shot: closest human-verified EN⇄KS sentence pairs -----
     let bpccContext = "";
     try {
+      if (language !== "kashmiri") throw new Error("skip-bpcc");
       const embRes = await fetch("https://ai.gateway.lovable.dev/v1/embeddings", {
         method: "POST",
         headers: {
