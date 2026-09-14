@@ -324,6 +324,10 @@ export default function KashmirBot({
   const speakRequestRef = useRef(0);
   const [speechRate, setSpeechRate] = useState(1);
   const speechRateRef = useRef(1);
+  /** Voice language follows the chat language, so Urdu replies are read in Urdu. */
+  const speechLangRef = useRef<SpeechLang>("kashmiri");
+  speechLangRef.current =
+    lang === "ur" ? "urdu" : lang === "en" ? "english" : "kashmiri";
 
   const handleRate = useCallback((r: number) => {
     speechRateRef.current = r;
