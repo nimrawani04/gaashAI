@@ -123,6 +123,23 @@
   }
 }
 
+/* ---------- Native app shell (Capacitor) ---------- */
+.is-native body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  overscroll-behavior-y: none;
+}
+
+.is-native * {
+  -webkit-touch-callout: none;
+}
+
+.is-native input,
+.is-native textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
 @utility font-nastaliq {
   font-family: var(--font-nastaliq);
   line-height: 2.4;
