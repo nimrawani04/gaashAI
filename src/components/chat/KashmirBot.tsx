@@ -8,10 +8,9 @@ import type { Session } from "@supabase/supabase-js";
 import { supabase, type ChatSession, type ChatMessageRow } from "@/lib/supabase";
 const SessionsPanel = lazy(() => import("@/components/chat/SessionsPanel"));
 import FeedbackButtons from "@/components/chat/FeedbackButtons";
-import { speak, stopSpeaking, ttsSupported, getVoices, unlockTts, installTtsUnlock, cleanForSpeech } from "@/lib/tts";
+import { cleanForSpeech } from "@/lib/tts";
 import { startRecording, blobToBase64, type Recorder } from "@/lib/recorder";
 import { transcribeSpeech } from "@/lib/stt.functions";
-import { getSpeech, prefetchSpeech, type SpeechLang } from "@/lib/ttsCache";
 import ChinarLoader from "@/components/ChinarLoader";
 import GuestPrompt from "@/components/GuestPrompt";
 import { bumpGuestUses, guestLimitReached, type GuestFeature } from "@/lib/guest";
@@ -94,24 +93,14 @@ function renderMessageContent(text: string) {
   });
 }
 
-const SPEEDS = [0.9, 1, 1.1] as const;
-
 const MessageBubble = memo(function MessageBubble({
   msg,
-  onSpeak,
   userId,
-  speaking,
   lang,
-  rate,
-  onRate,
 }: {
   msg: Message;
-  onSpeak: (text: string, id: string) => void;
   userId: string;
-  speaking: boolean;
   lang: Lang;
-  rate: number;
-  onRate: (r: number) => void;
 }) {
   const dir = msg.isRTL ? "rtl" : "ltr";
   const isUser = msg.role === "user";
@@ -200,21 +189,13 @@ function TypingIndicator() {
 const MessageList = memo(function MessageList({
   messages,
   isThinking,
-  onSpeak,
   userId,
-  speakingId,
   lang,
-  rate,
-  onRate,
 }: {
   messages: Message[];
   isThinking: boolean;
-  onSpeak: (text: string, id: string) => void;
   userId: string;
-  speakingId: string | null;
   lang: Lang;
-  rate: number;
-  onRate: (r: number) => void;
 }) {
   return (
     <>
@@ -222,12 +203,8 @@ const MessageList = memo(function MessageList({
         <MessageBubble
           key={m.id}
           msg={m}
-          onSpeak={onSpeak}
           userId={userId}
-          speaking={speakingId === m.id}
           lang={lang}
-          rate={rate}
-          onRate={onRate}
         />
       ))}
 
@@ -264,8 +241,6 @@ export default function KashmirBot({
   const [input, setInput] = useState("");
   const [isThinking, setIsThinking] = useState(false);
   const [isListening, setIsListening] = useState(false);
-  const [muted, setMuted] = useState(false);
-  const [speakingId, setSpeakingId] = useState<string | null>(null);
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [panelOpen, setPanelOpen] = useState(false);
@@ -276,30 +251,12 @@ export default function KashmirBot({
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isTranscribing, setIsTranscribing] = useState(false);
   const recorderRef = useRef<Recorder | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const mutedRef = useRef(muted);
   const t = UI_STRINGS[lang];
-  const speakingIdRef = useRef<string | null>(null);
-  /** Bumped on every Listen press so stale audio never starts playing. */
-  const speakRequestRef = useRef(0);
-  const [speechRate, setSpeechRate] = useState(1);
-  const speechRateRef = useRef(1);
-  /** Voice language follows the chat language, so Urdu replies are read in Urdu. */
-  const speechLangRef = useRef<SpeechLang>("kashmiri");
-  speechLangRef.current =
-    lang === "ur" ? "urdu" : lang === "en" ? "english" : "kashmiri";
-
-  const handleRate = useCallback((r: number) => {
-    speechRateRef.current = r;
-    setSpeechRate(r);
-    if (audioRef.current) audioRef.current.playbackRate = r;
-  }, []);
 
 
 
-  useEffect(() => { mutedRef.current = muted; }, [muted]);
-  useEffect(() => { speakingIdRef.current = speakingId; }, [speakingId]);
+
   const messagesRef = useRef<Message[]>(messages);
   messagesRef.current = messages;
 
@@ -378,96 +335,9 @@ export default function KashmirBot({
     setLang((l) => LANG_ORDER[(LANG_ORDER.indexOf(l) + 1) % LANG_ORDER.length]);
   }, []);
 
-  const stopAudio = useCallback(() => {
-    // Invalidate any in-flight generation so it can't start after we stop.
-    speakRequestRef.current += 1;
-    const el = audioRef.current;
-    if (el) {
-      el.pause();
-      if (el.src.startsWith("blob:")) URL.revokeObjectURL(el.src);
-      audioRef.current = null;
-    }
-    stopSpeaking();
-    speakingIdRef.current = null;
-  }, []);
 
 
-  const handleSpeak = useCallback(async (text: string, id?: string) => {
-    // Clicking the speaker of the message already being read stops it.
-    if (id && speakingIdRef.current === id) {
-      stopAudio();
-      setSpeakingId(null);
-      return;
-    }
-    // Pressing Listen on another message always stops what is playing first.
-    stopAudio();
-    const target = id ?? "auto";
-    speakRequestRef.current += 1;
-    const requestId = speakRequestRef.current;
-    speakingIdRef.current = target;
-    setSpeakingId(target);
 
-    // Kashmiri voice from the AI backend — the browser has no koshur voice.
-    // Usually already generated by the prefetch below, so this resolves instantly.
-    try {
-      const { audio, mime } = await getSpeech(text, speechLangRef.current);
-      // A newer Listen press (or a stop) happened while this was generating.
-      if (speakRequestRef.current !== requestId) return;
-      const bytes = Uint8Array.from(atob(audio), (c) => c.charCodeAt(0));
-      const url = URL.createObjectURL(new Blob([bytes.buffer as ArrayBuffer], { type: mime }));
-      const el = new Audio(url);
-      el.playbackRate = speechRateRef.current;
-      audioRef.current = el;
-      el.onended = () => {
-        URL.revokeObjectURL(url);
-        if (audioRef.current === el) audioRef.current = null;
-        if (speakRequestRef.current === requestId) setSpeakingId(null);
-      };
-      await el.play();
-
-      return;
-    } catch {
-      if (speakRequestRef.current !== requestId) return;
-      // fall back to the browser voice below
-    }
-
-
-    if (!ttsSupported()) {
-      setSpeakingId(null);
-      toast.error("آپ کا براؤزر آواز کی سہولت نہیں دیتا");
-      return;
-    }
-    // Unlock TTS if this is the first user-triggered speak. The unlock is
-    // awaited inside speak() so we don't race the silent utterance.
-    unlockTts();
-    const result = await speak(text, {
-      onEnd: () => setSpeakingId(null),
-      onError: (reason) => {
-        setSpeakingId(null);
-        if (reason === "unsupported") {
-          toast.error("آپ کا براؤزر آواز کی سہولت نہیں دیتا");
-        } else if (reason === "blocked" || reason === "not-allowed") {
-          toast.error("آواز شروع کرنے کے لیے اسکرین پر ایک بار ٹیپ کریں، پھر اسپیکر دبائیں");
-        } else if (reason === "no-audio") {
-          toast.error("آواز نہیں چلی — سسٹم کی آواز آن ہے یہ چیک کریں");
-        } else if (reason !== "empty") {
-          toast.error("آواز چلانے میں مسئلہ ہوا — دوبارہ کوشش کریں");
-        }
-      },
-    });
-    if (result !== "ok") setSpeakingId(null);
-  }, []);
-
-  const toggleMute = useCallback(() => {
-    setMuted((m) => {
-      const next = !m;
-      if (next) {
-        stopAudio();
-        setSpeakingId(null);
-      }
-      return next;
-    });
-  }, []);
 
   const handleMicClick = async () => {
     if (isTranscribing) return;
@@ -958,12 +828,8 @@ export default function KashmirBot({
             <MessageList
               messages={messages}
               isThinking={isThinking}
-              onSpeak={handleSpeak}
               userId={userId}
-              speakingId={speakingId}
               lang={lang}
-              rate={speechRate}
-              onRate={handleRate}
 
             />
           )}
