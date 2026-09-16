@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider, THEME_INIT_SCRIPT } from "@/lib/theme";
+import { initNative } from "@/lib/native";
 
 function NotFoundComponent() {
   return (
@@ -133,6 +134,10 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  useEffect(() => {
+    void initNative();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
