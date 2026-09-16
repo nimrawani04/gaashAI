@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback, memo, lazy, Suspense } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { readImage } from "@/lib/vision.functions";
-import { Mic, Send, Volume2, VolumeX, LogOut, Menu, HeartHandshake, Paperclip, X, FileText, Loader2, Languages, GraduationCap, Copy, Check } from "lucide-react";
+import { Mic, Send, LogOut, Menu, HeartHandshake, Paperclip, X, FileText, Loader2, Languages, GraduationCap, Copy, Check } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { Session } from "@supabase/supabase-js";
@@ -172,45 +172,6 @@ const MessageBubble = memo(function MessageBubble({
             {copied ? <Check className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" /> : <Copy className="h-4 w-4 shrink-0" aria-hidden="true" />}
             <span>{copied ? "Copied" : "Copy"}</span>
           </button>
-          {!isUser && (
-            <button
-              type="button"
-              onClick={() => onSpeak(msg.text, msg.id)}
-              aria-label={speaking ? "Stop reading aloud" : "Listen to response"}
-              aria-pressed={speaking}
-              className={[
-                "inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-[8px] px-3 text-xs font-medium transition border border-border bg-secondary text-secondary-foreground hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring",
-                speaking ? "text-primary border-primary animate-pulse" : "",
-              ].join(" ")}
-            >
-              <Volume2 className="h-4 w-4 shrink-0" aria-hidden="true" />
-              <span>{speaking ? "Stop" : "Listen"}</span>
-            </button>
-          )}
-          {!isUser && speaking && (
-            <div
-              className="inline-flex items-center gap-1 rounded-[8px] border border-border bg-secondary px-1.5 py-1"
-              role="group"
-              aria-label="Playback speed"
-            >
-              {SPEEDS.map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => onRate(s)}
-                  aria-pressed={rate === s}
-                  className={[
-                    "min-h-[36px] rounded-[6px] px-2 text-xs font-semibold transition focus:outline-none focus:ring-2 focus:ring-ring",
-                    rate === s
-                      ? "bg-primary text-primary-foreground"
-                      : "text-secondary-foreground hover:bg-accent",
-                  ].join(" ")}
-                >
-                  {s.toFixed(1)}x
-                </button>
-              ))}
-            </div>
-          )}
           {!isUser && userId ? <FeedbackButtons messageId={msg.dbId ?? null} userId={userId} /> : null}
 
         </div>
@@ -411,15 +372,6 @@ export default function KashmirBot({
     return () => cancelAnimationFrame(id);
   }, [messageCount, isThinking]);
 
-  // Warm up the voice for the latest assistant reply as soon as it renders,
-  // so pressing Listen starts playback almost immediately.
-  useEffect(() => {
-    if (muted || isThinking) return;
-    const last = messages[messages.length - 1];
-    if (!last || last.role !== "assistant" || !last.text.trim()) return;
-    const id = setTimeout(() => prefetchSpeech(last.text, speechLangRef.current), 150);
-    return () => clearTimeout(id);
-  }, [messages, isThinking, muted]);
 
   const cycleLang = useCallback(() => {
 
@@ -648,7 +600,6 @@ export default function KashmirBot({
         };
         setMessages((m) => [...m, offlineMsg]);
         setIsThinking(false);
-        if (!mutedRef.current) void handleSpeak(offline, offlineMsg.id);
         if (sessionId) {
           const dbId = await persistMessage(sessionId, offlineMsg);
           if (dbId) setMessages((m) => m.map((x) => (x.id === offlineMsg.id ? { ...x, dbId } : x)));
@@ -674,7 +625,6 @@ export default function KashmirBot({
     };
     setMessages((m) => [...m, botMsg]);
     setIsThinking(false);
-    if (!mutedRef.current) void handleSpeak(reply, botMsg.id);
     if (sessionId) {
       const dbId = await persistMessage(sessionId, botMsg);
       if (dbId) {
@@ -964,18 +914,6 @@ export default function KashmirBot({
 
             <ThemeToggle />
 
-            {/* Menu Drawer Toggle / Secondary Actions Menu */}
-            <div className="relative">
-              <button
-                onClick={toggleMute}
-                aria-label={muted ? "Unmute auto-read" : "Mute auto-read"}
-                aria-pressed={muted}
-                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-[8px] border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
-                title={muted ? "Unmute" : "Mute"}
-              >
-                {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-              </button>
-            </div>
 
             <button
               onClick={isGuest ? onExitGuest : handleSignOut}
