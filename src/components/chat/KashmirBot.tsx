@@ -260,16 +260,6 @@ export default function KashmirBot({
   const messagesRef = useRef<Message[]>(messages);
   messagesRef.current = messages;
 
-  // Warm up the voice list + unlock audio on the first user interaction
-  useEffect(() => {
-    if (!ttsSupported()) return;
-    void getVoices();
-    const removeUnlock = installTtsUnlock();
-    return () => {
-      removeUnlock();
-      stopSpeaking();
-    };
-  }, []);
 
   // Load sessions list + most recent session's messages
   const refreshSessions = useCallback(async () => {
