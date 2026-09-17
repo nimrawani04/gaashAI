@@ -874,6 +874,17 @@ function LearnPage() {
                 );
               })}
 
+            {stage === "lesson" && (
+              <LessonChat
+                lesson={lesson}
+                grade={grade}
+                subject={subject}
+                language={language}
+                rtl={rtl}
+              />
+            )}
+
+
             {stage === "quiz" && (
               <div className="space-y-3">
                 <div className="rounded-xl border border-border bg-card p-4">
