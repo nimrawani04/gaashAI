@@ -134,3 +134,48 @@ export const buildQuiz = createServerFn({ method: "POST" })
       answer_target: String(q.answer_target ?? ""),
     }));
   });
+
+const AskInput = z.object({
+  question: z.string().min(1).max(1200),
+  lessonTitle: z.string().max(200).default(""),
+  grade: z.number().int().min(1).max(12),
+  subject: z.string().min(1).max(40),
+  language: z.enum(["kashmiri", "urdu", "hindi", "english"]),
+  /** Concept summaries so the answer stays inside this lesson. */
+  context: z.string().max(8000).default(""),
+  history: z
+    .array(z.object({ role: z.enum(["user", "assistant"]), content: z.string().max(4000) }))
+    .max(12)
+    .default([]),
+});
+
+/** A grounded follow-up answer about the lesson the student is reading. */
+export const askLesson = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => AskInput.parse(input))
+  .handler(async ({ data }): Promise<string> => {
+    const key = process.env["LOVABLE_API_KEY"];
+    if (!key) throw new Error("AI is not configured.");
+
+    const { callAi, fetchGlossary, languageLabel } = await import("@/lib/learn.server");
+    const glossary = await fetchGlossary(data.subject, data.language);
+
+    const system = [
+      `You are a patient Grade ${data.grade} ${data.subject} teacher in Kashmir answering a student's doubt about the lesson "${data.lessonTitle}".`,
+      `Answer in ${languageLabel(data.language)} first, then add one short English line starting with "EN:" so a teacher can follow.`,
+      "Stay inside this lesson's content. If the question goes outside it, answer briefly and bring the student back to the lesson.",
+      "Use short sentences and a local Kashmir example when it helps. Never start with a greeting.",
+      glossary,
+      data.context ? `Lesson content:\n${data.context}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n\n");
+
+    const convo = data.history
+      .map((m) => `${m.role === "user" ? "Student" : "Teacher"}: ${m.content}`)
+      .join("\n");
+    const user = convo ? `${convo}\nStudent: ${data.question}` : data.question;
+
+    const answer = await callAi(system, user, key);
+    if (!answer) throw new Error("No answer came back — try again.");
+    return answer;
+  });
