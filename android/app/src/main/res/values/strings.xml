@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">KashmirBot</string>
+    <string name="title_activity_main">KashmirBot</string>
+    <string name="package_name">app.lovable.f10d8ce1204b4d419dbb3725d39495e3</string>
+    <string name="custom_url_scheme">app.lovable.f10d8ce1204b4d419dbb3725d39495e3</string>
+</resources>
