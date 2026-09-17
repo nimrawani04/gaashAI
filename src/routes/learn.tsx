@@ -23,6 +23,7 @@ import { buildLesson, buildQuiz, type Lesson, type QuizQuestion } from "@/lib/le
 import { readImage } from "@/lib/vision.functions";
 import { ConceptDiagram } from "@/components/learn/ConceptDiagram";
 import { LessonPrintView } from "@/components/learn/LessonPrintView";
+import { LessonChat } from "@/components/learn/LessonChat";
 import { getSpeech } from "@/lib/ttsCache";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -873,6 +874,17 @@ function LearnPage() {
                   </article>
                 );
               })}
+
+            {stage === "lesson" && (
+              <LessonChat
+                lesson={lesson}
+                grade={grade}
+                subject={subject}
+                language={language}
+                rtl={rtl}
+              />
+            )}
+
 
             {stage === "quiz" && (
               <div className="space-y-3">
