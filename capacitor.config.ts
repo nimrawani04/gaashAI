@@ -11,12 +11,15 @@ const config: CapacitorConfig = {
   appName: "KashmirBot",
   webDir: "dist/client",
   server: {
-    url: "https://gaash-ai.lovable.app",
+    // Use the immutable production hostname. Some Android emulator DNS
+    // configurations fail to resolve renamed *.lovable.app aliases.
+    url: "https://project--f10d8ce1-204b-4d41-9dbb-3725d39495e3.lovable.app",
     cleartext: false,
     androidScheme: "https",
     // Sign-in and the backend live on other hosts; without these the WebView
     // blocks the redirect and the app looks frozen on a blank screen.
     allowNavigation: [
+      "project--f10d8ce1-204b-4d41-9dbb-3725d39495e3.lovable.app",
       "gaash-ai.lovable.app",
       "*.lovable.app",
       "*.supabase.co",
