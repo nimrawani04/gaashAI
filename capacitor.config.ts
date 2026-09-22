@@ -13,9 +13,20 @@ const config: CapacitorConfig = {
   server: {
     url: "https://gaash-ai.lovable.app",
     cleartext: false,
+    androidScheme: "https",
+    // Sign-in and the backend live on other hosts; without these the WebView
+    // blocks the redirect and the app looks frozen on a blank screen.
+    allowNavigation: [
+      "gaash-ai.lovable.app",
+      "*.lovable.app",
+      "*.supabase.co",
+      "accounts.google.com",
+      "*.googleusercontent.com",
+    ],
   },
   android: {
     allowMixedContent: false,
+    webContentsDebuggingEnabled: true,
   },
   ios: {
     contentInset: "always",
