@@ -156,15 +156,24 @@ export const askLesson = createServerFn({ method: "POST" })
     const key = process.env["LOVABLE_API_KEY"];
     if (!key) throw new Error("AI is not configured.");
 
-    const { callAi, fetchGlossary, languageLabel } = await import("@/lib/learn.server");
-    const glossary = await fetchGlossary(data.subject, data.language);
+    const { callAi, fetchGlossary, fetchKnowledge, languageLabel } = await import(
+      "@/lib/learn.server"
+    );
+    const [glossary, knowledge] = await Promise.all([
+      fetchGlossary(data.subject, data.language),
+      fetchKnowledge(data.question, data.language),
+    ]);
 
     const system = [
       `You are a patient Grade ${data.grade} ${data.subject} teacher in Kashmir answering a student's doubt about the lesson "${data.lessonTitle}".`,
       `Answer in ${languageLabel(data.language)} first, then add one short English line starting with "EN:" so a teacher can follow.`,
+      data.language === "urdu"
+        ? "Write the Urdu part in natural, fluent Urdu Nastaliq script — never transliterate Urdu in English letters and never answer only in English."
+        : "",
       "Stay inside this lesson's content. If the question goes outside it, answer briefly and bring the student back to the lesson.",
       "Use short sentences and a local Kashmir example when it helps. Never start with a greeting.",
       glossary,
+      knowledge,
       data.context ? `Lesson content:\n${data.context}` : "",
     ]
       .filter(Boolean)
