@@ -98,6 +98,54 @@ export async function fetchGlossary(subject: string, lang: string): Promise<stri
   return `Verified glossary (use these exact target-language terms, never transliterate English):\n${lines.join("\n")}`;
 }
 
+const STOP = new Set([
+  "what","why","how","the","and","for","this","that","with","from","does","are","is","of","in","on","to","a","an","it","me","please","explain","tell","about","kya","kyun","kaise",
+]);
+
+/**
+ * Searches the Kashmiri/Urdu knowledge base for entries related to a lesson
+ * question, so in-lesson answers are grounded in verified local content
+ * (including the Urdu wording) instead of a bare translation.
+ */
+export async function fetchKnowledge(question: string, lang: string): Promise<string> {
+  const db = serverSupabase();
+  if (!db) return "";
+
+  const terms = question
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .split(/\s+/)
+    .filter((w) => w.length > 2 && !STOP.has(w))
+    .slice(0, 6);
+  if (!terms.length) return "";
+
+  const filter = terms
+    .flatMap((t) => [`title.ilike.%${t}%`, `content_english.ilike.%${t}%`])
+    .join(",");
+
+  try {
+    const { data } = await db
+      .from("knowledge_base")
+      .select("title, content_english, content_urdu, content_kashmiri")
+      .or(filter)
+      .limit(5);
+    if (!data?.length) return "";
+
+    const nativeCol = lang === "urdu" ? "content_urdu" : "content_kashmiri";
+    const lines = data.map((r: Record<string, string>) => {
+      const native = (r[nativeCol] ?? "").trim();
+      const en = (r.content_english ?? "").slice(0, 600);
+      return native
+        ? `- ${r.title}: ${en}\n  (${lang} wording: ${native.slice(0, 600)})`
+        : `- ${r.title}: ${en}`;
+    });
+    return `Verified local knowledge base entries related to the student's question. Prefer this wording — especially the ${lang} wording — over your own phrasing:\n${lines.join("\n")}`;
+  } catch {
+    return "";
+  }
+}
+
+
 /** Curated local/cultural examples the model must choose from instead of inventing. */
 export async function fetchLocalExamples(subject: string, topic: string): Promise<string> {
   const db = serverSupabase();
