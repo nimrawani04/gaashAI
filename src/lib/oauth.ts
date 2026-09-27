@@ -52,8 +52,45 @@ export function takePostAuthPath(): string {
 
 export type GoogleSignInResult = { error?: Error; redirected?: boolean };
 
+/** Custom URL scheme the Android/iOS app registers to receive the session. */
+export const NATIVE_RETURN_URL = "app.kashmirbot://auth-callback";
+const NATIVE_FLAG = "native_return";
+
+export function isNativeApp(): boolean {
+  if (typeof window === "undefined") return false;
+  const cap = (window as unknown as { Capacitor?: { isNativePlatform?: () => boolean } })
+    .Capacitor;
+  return !!cap?.isNativePlatform?.();
+}
+
+/** True when this browser tab was opened by the phone app to sign in. */
+export function isNativeReturnPending(): boolean {
+  try {
+    return sessionStorage.getItem(NATIVE_FLAG) === "1";
+  } catch {
+    return false;
+  }
+}
+
+export function clearNativeReturn() {
+  try {
+    sessionStorage.removeItem(NATIVE_FLAG);
+  } catch {
+    /* ignore */
+  }
+}
+
 export async function signInWithGoogle(nextPath = "/"): Promise<GoogleSignInResult> {
   rememberPostAuthPath(nextPath);
+
+  // Google blocks sign-in inside app WebViews and they can't see the phone's
+  // Google accounts. Open the real system browser (Chrome) instead; it hands
+  // the session back to the app through the custom URL scheme.
+  if (isNativeApp()) {
+    const { Browser } = await import("@capacitor/browser");
+    await Browser.open({ url: `${CANONICAL_APP_ORIGIN}/?${GOOGLE_AUTOSTART_PARAM}=1&native=1` });
+    return { redirected: true };
+  }
 
   if (!hasManagedOAuthBroker()) {
     // This deployment cannot serve the broker route — continue on the app's
@@ -76,6 +113,14 @@ export function shouldAutostartGoogle(): boolean {
 export function clearGoogleAutostart() {
   if (typeof window === "undefined") return;
   const url = new URL(window.location.href);
+  if (url.searchParams.get("native") === "1") {
+    try {
+      sessionStorage.setItem(NATIVE_FLAG, "1");
+    } catch {
+      /* ignore */
+    }
+  }
   url.searchParams.delete(GOOGLE_AUTOSTART_PARAM);
+  url.searchParams.delete("native");
   window.history.replaceState({}, "", url.pathname + url.search + url.hash);
 }

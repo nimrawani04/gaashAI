@@ -182,8 +182,8 @@ function AuthPage() {
     <main className="flex min-h-screen items-center justify-center bg-background px-3 xs:px-4 sm:px-6 py-6 xs:py-8 sm:py-10">
       <Card className="w-full max-w-[340px] xs:max-w-sm sm:max-w-md">
         <CardHeader className="space-y-1 text-center px-4 xs:px-6 pt-4 xs:pt-6">
-          <div className="mx-auto mb-3 xs:mb-4 flex h-10 w-10 xs:h-12 xs:w-12 sm:h-14 sm:w-14 items-center justify-center rounded-2xl bg-primary text-xl xs:text-2xl sm:text-3xl text-primary-foreground shadow-sm">
-            🤖
+          <div className="mx-auto mb-3 xs:mb-4 flex h-10 w-10 xs:h-12 xs:w-12 sm:h-14 sm:w-14 items-center justify-center overflow-hidden rounded-2xl shadow-sm">
+            <img src="/chinar-leaf.jpg" alt="KashmirBot chinar logo" className="h-full w-full object-contain" />
           </div>
           <CardTitle className="text-xl xs:text-2xl sm:text-3xl font-semibold tracking-tight">
             {mode === "signin" ? "Welcome back" : "Create your account"}
