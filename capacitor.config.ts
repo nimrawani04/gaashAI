@@ -13,7 +13,7 @@ const config: CapacitorConfig = {
   server: {
     // Use the immutable production hostname. Some Android emulator DNS
     // configurations fail to resolve renamed *.lovable.app aliases.
-    url: "https://project--f10d8ce1-204b-4d41-9dbb-3725d39495e3.lovable.app",
+    url: "https://gaash-ai.lovable.app",
     cleartext: false,
     androidScheme: "https",
     // Sign-in and the backend live on other hosts; without these the WebView
