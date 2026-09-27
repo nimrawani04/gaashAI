@@ -1,7 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { getSupabaseClient } from "@/integrations/supabase/client";
-import { takePostAuthPath } from "@/lib/oauth";
+import {
+  clearNativeReturn,
+  isNativeReturnPending,
+  NATIVE_RETURN_URL,
+  takePostAuthPath,
+} from "@/lib/oauth";
 import ChinarLoader from "@/components/ChinarLoader";
 
 export const Route = createFileRoute("/oauth-callback")({
@@ -24,8 +29,19 @@ function OAuthCallback() {
   useEffect(() => {
     let cancelled = false;
     const client = getSupabaseClient();
-    const finish = () => {
+    const finish = (session?: { access_token: string; refresh_token: string } | null) => {
       if (cancelled) return;
+      if (session && isNativeReturnPending()) {
+        // Hand the session back to the phone app, which opened this browser.
+        clearNativeReturn();
+        const hash = new URLSearchParams({
+          access_token: session.access_token,
+          refresh_token: session.refresh_token,
+        }).toString();
+        setMessage("Returning to KashmirBot…");
+        window.location.replace(`${NATIVE_RETURN_URL}#${hash}`);
+        return;
+      }
       window.location.replace(takePostAuthPath());
     };
 
@@ -39,7 +55,7 @@ function OAuthCallback() {
     let tries = 0;
     const tick = async () => {
       const { data } = await client.auth.getSession();
-      if (data.session || tries++ > 20) return finish();
+      if (data.session || tries++ > 20) return finish(data.session);
       if (tries === 10) setMessage("Almost there…");
       setTimeout(tick, 250);
     };

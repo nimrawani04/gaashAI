@@ -43,8 +43,10 @@ const config: CapacitorConfig = {
       backgroundColor: "#0f5132",
     },
     SplashScreen: {
+      // Hide the static launch image immediately so the app opens straight
+      // into the animated chinar ⇄ bot startup screen.
       launchAutoHide: true,
-      launchShowDuration: 1200,
+      launchShowDuration: 0,
       backgroundColor: "#0f5132",
       androidSplashResourceName: "splash",
       androidScaleType: "CENTER_CROP",

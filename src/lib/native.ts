@@ -28,5 +28,28 @@ export async function initNative(): Promise<void> {
     /* keyboard plugin is optional */
   }
 
+  // Receive the Google session back from the system browser.
+  try {
+    const { App } = await import("@capacitor/app");
+    App.addListener("appUrlOpen", async ({ url }) => {
+      if (!url.startsWith("app.kashmirbot://")) return;
+      const params = new URLSearchParams(url.split("#")[1] ?? "");
+      const access_token = params.get("access_token");
+      const refresh_token = params.get("refresh_token");
+      try {
+        const { Browser } = await import("@capacitor/browser");
+        await Browser.close();
+      } catch {
+        /* already closed */
+      }
+      if (!access_token || !refresh_token) return;
+      const { supabase } = await import("@/integrations/supabase/client");
+      await supabase.auth.setSession({ access_token, refresh_token });
+      window.location.replace("/");
+    });
+  } catch {
+    /* app plugin is optional */
+  }
+
   document.documentElement.classList.add("is-native");
 }
