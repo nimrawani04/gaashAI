@@ -1,4 +1,4 @@
-import { memo, type AnimationEventHandler } from "react";
+import { memo } from "react";
 
 /**
  * Chinar leaf <-> AI bot morphing loader.
@@ -15,7 +15,7 @@ export const ChinarLoader = memo(function ChinarLoader({
   onCycleComplete?: () => void;
   brand?: boolean;
 }) {
-  const handleLeafIteration: AnimationEventHandler<SVGSVGElement> | undefined = onCycleComplete
+  const handleLeafIteration = onCycleComplete
     ? (event) => {
         if (event.animationName === "chinar-leaf-cycle") onCycleComplete();
       }
@@ -34,7 +34,7 @@ export const ChinarLoader = memo(function ChinarLoader({
           src="/app-icon-512.png"
           alt=""
           className="chinar-morph-leaf absolute inset-0 h-full w-full rounded-[22%] object-contain"
-          onAnimationIteration={handleLeafIteration as unknown as React.AnimationEventHandler<HTMLImageElement>}
+          onAnimationIteration={handleLeafIteration}
         />
       ) : <svg
         viewBox="0 0 48 48"
