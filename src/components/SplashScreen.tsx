@@ -32,7 +32,7 @@ export default function SplashScreen({ onDone }: { onDone: () => void }) {
       <div className="splash-glow pointer-events-none absolute inset-0" aria-hidden="true" />
       <div className="relative flex flex-col items-center gap-5 text-center">
         <div className="splash-mark text-primary">
-          <ChinarLoader size={96} onCycleComplete={handleCycleComplete} />
+          <ChinarLoader size={96} brand onCycleComplete={handleCycleComplete} />
         </div>
         <div className="splash-title flex flex-col items-center gap-1">
           <h1 className="font-nastaliq text-3xl text-foreground sm:text-4xl">کٲشُر مددگار</h1>
