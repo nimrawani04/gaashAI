@@ -16,7 +16,7 @@ export const ChinarLoader = memo(function ChinarLoader({
   brand?: boolean;
 }) {
   const handleLeafIteration = onCycleComplete
-    ? (event) => {
+    ? (event: { animationName: string }) => {
         if (event.animationName === "chinar-leaf-cycle") onCycleComplete();
       }
     : undefined;
