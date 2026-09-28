@@ -3,6 +3,7 @@ import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import ThemeToggle from "@/components/ThemeToggle";
 import { clearGoogleAutostart, shouldAutostartGoogle, signInWithGoogle } from "@/lib/oauth";
+import ChinarLoader from "@/components/ChinarLoader";
 
 type Mode = "signin" | "signup";
 type Method = "email" | "phone";
@@ -159,7 +160,7 @@ export default function AuthScreen({ backendAvailable = true }: { backendAvailab
         </div>
         <div className="mb-6 flex flex-col items-center text-center">
           <div className="mb-3 flex h-16 w-16 items-center justify-center">
-            <img src="/chinar-leaf.jpg" alt="Chinar Leaf" className="h-full w-full object-contain drop-shadow-md" />
+            <ChinarLoader size={64} brand />
           </div>
           <h1 className="font-nastaliq text-3xl text-foreground" dir="rtl">
             کٲشُر مددگار
