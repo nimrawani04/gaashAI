@@ -9,6 +9,7 @@ import {
   Download,
   FileText,
   GraduationCap,
+  Circle,
   ImagePlus,
   Loader2,
   RefreshCw,
@@ -26,6 +27,8 @@ import { LessonPrintView } from "@/components/learn/LessonPrintView";
 import { LessonChat } from "@/components/learn/LessonChat";
 import { getSpeech } from "@/lib/ttsCache";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { readLessonProgress, saveLessonCompletion, type LessonProgress } from "@/lib/lesson-progress";
 
 
 export const Route = createFileRoute("/learn")({
@@ -130,8 +133,12 @@ function LearnPage() {
   const rtl = isRtl(language);
 
   const [packs, setPacks] = useState<DemoPack[]>([]);
+  const [progress, setProgress] = useState<LessonProgress>({});
+  const [activePackId, setActivePackId] = useState<string | null>(null);
+  const [progressLanguage, setProgressLanguage] = useState<Lang>("kashmiri");
 
   useEffect(() => () => audioRef.current?.pause(), []);
+  useEffect(() => setProgress(readLessonProgress()), []);
 
   // Pre-generated demo lessons ship with the app so /learn works offline.
   useEffect(() => {
@@ -162,6 +169,8 @@ function LearnPage() {
     setGraded({});
     setScores({});
     setSessionId(null);
+    setActivePackId(pack.id);
+    setProgressLanguage(pack.language);
     setStage("lesson");
     void persistSession(pack.lesson, pack.quiz);
     toast.success(`${pack.lesson.title} — ready`);
@@ -225,6 +234,7 @@ function LearnPage() {
         data: { source: source.trim(), grade, subject, language, weakConcepts: weak },
       });
       setLesson(next);
+      if (!weak?.length) setActivePackId(null);
       setQuiz([]);
       setAnswers({});
       setGraded({});
@@ -287,6 +297,9 @@ function LearnPage() {
     setGraded(marks);
     setScores(tally);
     setStage("report");
+    if (activePackId) {
+      setProgress((previous) => saveLessonCompletion(previous, activePackId, Object.values(marks).filter(Boolean).length, quiz.length));
+    }
     const weak = Object.entries(tally)
       .filter(([, s]) => s.correct / s.total < 0.5)
       .map(([c]) => c);
@@ -437,6 +450,9 @@ function LearnPage() {
 
   const activeStep =
     stage === "setup" ? 0 : stage === "lesson" ? 4 : stage === "quiz" ? 6 : 8;
+  const visiblePacks = packs.filter((pack) => pack.language === progressLanguage);
+  const completedCount = visiblePacks.filter((pack) => Boolean(progress[pack.id])).length;
+  const nextPack = visiblePacks.find((pack) => !progress[pack.id]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -634,29 +650,51 @@ function LearnPage() {
             </div>
 
             {packs.length > 0 && (
-              <div className="rounded-xl border border-border bg-card p-4">
-                <h2 className="mb-1 flex items-center gap-2 text-sm font-semibold text-foreground">
-                  <Sparkles className="h-4 w-4 text-primary" /> Ready-made lessons
-                </h2>
-                <p className="mb-3 text-xs text-muted-foreground">
-                  Fully prepared lesson + quiz. Opens instantly, even with no internet.
-                </p>
-                <div className="grid gap-2 sm:grid-cols-2">
-                  {packs.map((p) => (
-                    <button
-                      key={p.id}
-                      onClick={() => loadPack(p)}
-                      className="rounded-lg border border-border p-3 text-left hover:bg-accent"
-                    >
-                      <span className="block text-sm font-semibold text-foreground">{p.lesson.title}</span>
-                      <span className="mt-0.5 block text-xs text-muted-foreground">{p.label}</span>
-                      <span className="mt-1 block text-[11px] text-muted-foreground">
-                        {p.lesson.concepts.length} concepts · {p.quiz.length} questions
-                      </span>
-                    </button>
-                  ))}
+              <section aria-label="Lesson progress" className="space-y-4 border-y border-border py-5">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h2 className="flex items-center gap-2 text-base font-semibold text-foreground">
+                      <BookOpen className="h-5 w-5 text-primary" /> Lesson progress
+                    </h2>
+                    <p className="text-sm text-muted-foreground">{completedCount} of {visiblePacks.length} completed · {progressLanguage === "urdu" ? "Urdu" : "Kashmiri"}</p>
+                  </div>
+                  <div className="flex rounded-md border border-border p-1" role="group" aria-label="Lesson language">
+                    {LANGS.map((lang) => (
+                      <Button key={lang.value} variant={progressLanguage === lang.value ? "secondary" : "ghost"} size="sm" aria-pressed={progressLanguage === lang.value} onClick={() => setProgressLanguage(lang.value)}>
+                        {lang.value === "urdu" ? "Urdu" : "Kashmiri"}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+                <div role="progressbar" aria-label={`${progressLanguage} lessons completed`} aria-valuemin={0} aria-valuemax={visiblePacks.length} aria-valuenow={completedCount} className="h-2 overflow-hidden rounded-full bg-muted">
+                  <div className="h-full bg-primary transition-[width]" style={{ width: `${visiblePacks.length ? (completedCount / visiblePacks.length) * 100 : 0}%` }} />
+                </div>
+                {nextPack ? (
+                  <p className="text-sm text-foreground"><span className="font-semibold">Up next:</span> {nextPack.lesson.title}</p>
+                ) : (
+                  <p className="text-sm text-primary">All {progressLanguage === "urdu" ? "Urdu" : "Kashmiri"} lessons completed</p>
+                )}
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {visiblePacks.map((pack) => {
+                    const completion = progress[pack.id];
+                    return (
+                      <Button
+                        key={pack.id}
+                        variant="outline"
+                        onClick={() => loadPack(pack)}
+                        className="h-auto min-h-20 w-full justify-start whitespace-normal p-3 text-left"
+                      >
+                        {completion ? <Check className="shrink-0 text-primary" /> : <Circle className="shrink-0 text-muted-foreground" />}
+                        <span className="min-w-0 flex-1">
+                          <span className="block font-semibold text-foreground">{pack.lesson.title}</span>
+                          <span className="block text-xs text-muted-foreground">{completion ? `Completed · ${completion.correct}/${completion.total} correct` : nextPack?.id === pack.id ? "Up next" : "Not started"} · Grade {pack.grade}</span>
+                        </span>
+                        <ChevronRight className="shrink-0 text-muted-foreground" />
+                      </Button>
+                    );
+                  })}
+                </div>
+              </section>
             )}
 
 
@@ -740,7 +778,7 @@ function LearnPage() {
                   onClick={() => setStage("setup")}
                   className="min-h-[40px] rounded-md border border-border px-3 text-sm text-foreground hover:bg-accent"
                 >
-                  New lesson
+                    New lesson
                 </button>
                 <button
                   onClick={exportPdf}
@@ -953,6 +991,11 @@ function LearnPage() {
 
             {stage === "report" && (
               <div className="space-y-3">
+                {activePackId && (
+                  <div role="status" className="flex items-center gap-2 border-b border-border pb-3 text-sm font-semibold text-primary">
+                    <Check className="h-4 w-4" /> Lesson completed · {Object.values(graded).filter(Boolean).length} of {quiz.length} correct
+                  </div>
+                )}
                 <div className="rounded-xl border border-border bg-card p-4">
                   <h3 className="text-sm font-bold text-foreground">Concept mastery</h3>
                   <ul className="mt-3 space-y-3">
