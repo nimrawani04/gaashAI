@@ -160,7 +160,7 @@ export default function AuthScreen({ backendAvailable = true }: { backendAvailab
         </div>
         <div className="mb-6 flex flex-col items-center text-center">
           <div className="mb-3 flex h-16 w-16 items-center justify-center">
-            <ChinarLoader size={64} brand />
+            <ChinarLoader size={64} />
           </div>
           <h1 className="font-nastaliq text-3xl text-foreground" dir="rtl">
             کٲشُر مددگار
