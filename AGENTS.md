@@ -9,5 +9,5 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Keep the animated phone startup and sign-in mark tied to the existing app icon artwork so the native icon and in-app branding match.
+- Use the original standalone SVG chinar leaf-to-bot animation on phone startup and sign-in, not the app-icon artwork, to preserve the preferred transition.
 - Track ready-made lesson quiz completion in device storage by language and lesson ID so progress remains available on the phone without connectivity.

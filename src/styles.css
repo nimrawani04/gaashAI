@@ -209,10 +209,6 @@ textarea.font-nastaliq, input.font-nastaliq {
   animation: chinar-bot-cycle 3.2s ease-in-out infinite;
 }
 
-.chinar-morph-bot:nth-last-child(2) {
-  animation: chinar-bot-cycle 3.2s ease-in-out infinite;
-}
-
 .chinar-bot-eye {
   animation: chinar-blink 3.2s ease-in-out infinite;
   transform-origin: 50% 54%;
