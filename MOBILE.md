@@ -10,14 +10,15 @@ Version `1.0.0` (build 1).
 
 - `resources/icon.png`, `resources/splash.png`, `resources/splash-dark.png` —
   the editable source artwork (deep green + gold chinar leaf).
-- `android/` — a complete Android Studio project, icons and splash included.
-- `ios/` — a complete Xcode project, icons and splash included.
+- `android/` — an Android Studio project with a leaf-only home icon and a static leaf launch image; the live app then plays the original SVG leaf-to-bot animation.
+- `ios/` — an Xcode project with the same leaf-only icon and original SVG startup animation after launch.
+- Completed Urdu and Kashmiri ready-made lesson quizzes are stored on-device and remain visible after restarting the app. They are not shared across devices.
 
 ## One-time setup on your computer
 
 1. Export this project to GitHub, then clone it.
 2. `npm install`
-3. `npm run build`
+3. `npm run build` (Capacitor also needs this to create its local web assets; the app itself loads the published site.)
 4. `npx cap sync`
 
 ## Build the installable files
@@ -33,11 +34,11 @@ Version `1.0.0` (build 1).
 
 **iPhone (Mac with Xcode only)**
 
-1. `npx cap open ios`
-2. Pick your Apple Developer team under Signing & Capabilities.
-3. Product → Archive → Distribute App → App Store Connect (or TestFlight for
-   testers). Apple does not allow direct download links; iPhone installs go
-   through TestFlight or the App Store.
+1. On a Mac with Xcode and an Apple Developer account, publish the latest website, then run `npm install`, `npm run build`, `npx cap sync ios`, and `npx cap open ios`.
+2. In Xcode select the **App** target → **Signing & Capabilities** → your team; verify the bundle identifier, version and signing certificate. Connect your iPhone or select **Any iOS Device (arm64)** as the destination.
+3. Choose **Product → Archive**. When Organizer opens, select the new archive and choose **Distribute App**.
+4. For your own enrolled iPhone choose **Ad Hoc** (register its device ID in your Apple Developer account) or **Development**, then **Export** to create a signed `.ipa`. Install with Apple Configurator on your Mac; distribution certificates and provisioning profiles are required. For other testers choose **App Store Connect → Upload**, then invite them via TestFlight. An unsigned archive or `.ipa` cannot be installed on an iPhone.
+5. Xcode archive/build and signing cannot run in this Linux workspace; the Xcode project is prepared here but the installable file must be created on a Mac.
 
 ## Changing the artwork later
 

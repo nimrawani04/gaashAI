@@ -43,9 +43,9 @@ const config: CapacitorConfig = {
       backgroundColor: "#0f5132",
     },
     SplashScreen: {
-      // Hide the static launch image immediately so the app opens straight
-      // into the animated chinar ⇄ bot startup screen.
-      launchAutoHide: true,
+      // The web startup screen hides the native launch image after its first
+      // paint, revealing the original standalone SVG leaf-to-bot animation.
+      launchAutoHide: false,
       launchShowDuration: 0,
       backgroundColor: "#0f5132",
       androidSplashResourceName: "splash",

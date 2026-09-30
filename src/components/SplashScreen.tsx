@@ -15,6 +15,19 @@ export default function SplashScreen({ onDone }: { onDone: () => void }) {
     if (motionQuery.matches) onDone();
   }, [onDone]);
 
+  useEffect(() => {
+    // Hold the static system launch screen until the original SVG animation
+    // is painted. This prevents an empty WebView flash on slower phones.
+    let frame = requestAnimationFrame(() => {
+      frame = requestAnimationFrame(() => {
+        void import("@capacitor/splash-screen")
+          .then(({ SplashScreen: NativeSplash }) => NativeSplash.hide())
+          .catch(() => { /* No native splash in the browser. */ });
+      });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
   const handleCycleComplete = useCallback(() => {
     completedCyclesRef.current += 1;
     if (completedCyclesRef.current === REQUIRED_CYCLES) onDone();
