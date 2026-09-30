@@ -8,7 +8,14 @@ import BpccPanel from "@/components/admin/BpccPanel";
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
-  head: () => ({ meta: [{ title: "KashmirBot — Admin" }] }),
+  head: () => ({ meta: [
+    { title: "Knowledge review — KashmirBot" },
+    { name: "description", content: "Review KashmirBot knowledge entries and community contributions." },
+    { property: "og:title", content: "Knowledge review — KashmirBot" },
+    { property: "og:description", content: "Review KashmirBot knowledge entries and community contributions." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: AdminPage,
 });
 
