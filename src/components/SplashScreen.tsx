@@ -12,7 +12,23 @@ export default function SplashScreen({ onDone }: { onDone: () => void }) {
 
   useEffect(() => {
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (motionQuery.matches) onDone();
+    // Hold the static system launch screen until the original SVG animation
+    // is painted. This prevents an empty WebView flash on slower phones.
+    if (motionQuery.matches) {
+      void import("@capacitor/splash-screen")
+        .then(({ SplashScreen: NativeSplash }) => NativeSplash.hide())
+        .catch(() => { /* No native splash in the browser. */ })
+        .finally(onDone);
+      return;
+    }
+    let frame = requestAnimationFrame(() => {
+      frame = requestAnimationFrame(() => {
+        void import("@capacitor/splash-screen")
+          .then(({ SplashScreen: NativeSplash }) => NativeSplash.hide())
+          .catch(() => { /* No native splash in the browser. */ });
+      });
+    });
+    return () => cancelAnimationFrame(frame);
   }, [onDone]);
 
   const handleCycleComplete = useCallback(() => {

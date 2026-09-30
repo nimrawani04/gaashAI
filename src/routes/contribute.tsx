@@ -12,6 +12,10 @@ export const Route = createFileRoute("/contribute")({
         content:
           "Help build the Kashmiri language dataset by contributing sentences and meanings.",
       },
+      { property: "og:title", content: "Contribute Kashmiri sentences — KashmirBot" },
+      { property: "og:description", content: "Help build the Kashmiri language dataset by contributing sentences and meanings." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: ContributePage,

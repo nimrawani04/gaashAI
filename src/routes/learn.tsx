@@ -28,7 +28,7 @@ import { LessonChat } from "@/components/learn/LessonChat";
 import { getSpeech } from "@/lib/ttsCache";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { readLessonProgress, saveLessonCompletion, type LessonProgress } from "@/lib/lesson-progress";
+import { loadLessonProgress, saveLessonCompletion, type LessonProgress } from "@/lib/lesson-progress";
 
 
 export const Route = createFileRoute("/learn")({
@@ -138,7 +138,13 @@ function LearnPage() {
   const [progressLanguage, setProgressLanguage] = useState<Lang>("kashmiri");
 
   useEffect(() => () => audioRef.current?.pause(), []);
-  useEffect(() => setProgress(readLessonProgress()), []);
+  useEffect(() => {
+    let active = true;
+    void loadLessonProgress().then((saved) => {
+      if (active) setProgress((current) => ({ ...saved, ...current }));
+    });
+    return () => { active = false; };
+  }, []);
 
   // Pre-generated demo lessons ship with the app so /learn works offline.
   useEffect(() => {

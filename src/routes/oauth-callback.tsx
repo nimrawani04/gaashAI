@@ -18,6 +18,8 @@ export const Route = createFileRoute("/oauth-callback")({
       { name: "robots", content: "noindex" },
       { property: "og:title", content: "Signing you in — KashmirBot" },
       { property: "og:description", content: "Completing your KashmirBot sign-in securely." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: OAuthCallback,
