@@ -37,7 +37,47 @@ export const buildLesson = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => LessonInput.parse(input))
   .handler(async ({ data }): Promise<Lesson> => {
     const key = process.env["LOVABLE_API_KEY"];
-    if (!key) throw new Error("AI is not configured.");
+
+    // Offline fallback when AI is not configured or for re-teaching weak concepts
+    if (!key) {
+      if (data.weakConcepts?.length) {
+        return {
+          title: `Re-teaching: ${data.weakConcepts.join(", ")}`,
+          objective: `Step-by-step simplified review of weak concepts: ${data.weakConcepts.join(", ")}.`,
+          prerequisites: ["Review of previous quiz questions"],
+          difficulty: "easy",
+          concepts: data.weakConcepts.map((c) => ({
+            name_en: c,
+            name_target: `${c} (آسان وَضاحَت)`,
+            simplified_en: `Let's break down ${c} into simpler pieces. Focus on the core meaning and think of everyday life in Kashmir.`,
+            explanation_target: `${c} چھُ اکھ اَہَم نُکتہٕ۔ اَتھ اَصٕل پٲٹھؠ سَمجھنہِ خٲطرٕ صوچِو یِم بُنیادی حِصہٕ۔`,
+            example_title: `${c} - Kashmir Example`,
+            example_en: `Think of everyday life in Kashmir: ${c} works just like sharing Kangri warmth or dividing bread equally.`,
+            example_target: `کٔشیٖرِ مَنٛز کُنہِ چیٖزُک نَمونہٕ صوچِو: یہِ نُکتہٕ چھُ بالکل آسانی سٟتؠ سَمجھ یِوان۔`,
+            diagram: null,
+          })),
+        };
+      }
+
+      return {
+        title: `Grade ${data.grade} ${data.subject} Lesson`,
+        objective: `Understand key concepts from ${data.source.slice(0, 60)}...`,
+        prerequisites: ["General grade-level basics"],
+        difficulty: "medium",
+        concepts: [
+          {
+            name_en: "Core Concept",
+            name_target: "بُنیادی نُکتہٕ",
+            simplified_en: data.source.slice(0, 300),
+            explanation_target: "یہِ چھُ پَنَن مَنٛز اکھ اَہَم سَبَق۔ غور سٟتؠ پَرِو۔",
+            example_title: "Local Kashmiri Context",
+            example_en: "Understanding this concept helps in our daily surroundings in Kashmir.",
+            example_target: "کٔشیٖرِ مَنٛز پننِس ماحولَس مَنٛز اَتھ نُکتَس پیٹھ غور کٔرِو۔",
+            diagram: null,
+          },
+        ],
+      };
+    }
 
     const { callAi, parseJson, fetchGlossary, fetchLocalExamples, languageLabel } = await import(
       "@/lib/learn.server"
@@ -102,7 +142,35 @@ export const buildQuiz = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => QuizInput.parse(input))
   .handler(async ({ data }): Promise<QuizQuestion[]> => {
     const key = process.env["LOVABLE_API_KEY"];
-    if (!key) throw new Error("AI is not configured.");
+
+    // Offline fallback for quiz questions
+    if (!key) {
+      return data.concepts.flatMap((concept) => [
+        {
+          concept,
+          type: "mcq" as const,
+          question_en: `What is the main idea behind ${concept}?`,
+          question_target: `${concept} مُتعلِق کُس بَیان سارِوٕے کھۄتہٕ صٔحیح چھُ؟`,
+          options: [
+            `Key rule and definition of ${concept}`,
+            `An incorrect description of ${concept}`,
+            `An unrelated idea`,
+            `None of the above`,
+          ],
+          answer: `Key rule and definition of ${concept}`,
+          answer_target: `${concept} ہُنٛد بُنیادی اَصُول`,
+        },
+        {
+          concept,
+          type: "short" as const,
+          question_en: `Explain ${concept} briefly in one sentence.`,
+          question_target: `اِکِس جُملَس مَنٛز بَتٲوِو، ${concept} ہُند اصل مَطلَب کیا چھُ؟`,
+          options: [],
+          answer: concept,
+          answer_target: concept,
+        },
+      ]);
+    }
 
     const { callAi, parseJson, fetchLocalExamples, languageLabel } = await import(
       "@/lib/learn.server"

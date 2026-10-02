@@ -1,1 +1,2427 @@
-{"version":1790081575633,"packs":[{"id":"fractions-g5-ks","label":"Fractions · Grade 5 · Kashmiri","grade":5,"subject":"maths","language":"kashmiri","source":"Grade lesson on fractions: numerator, denominator, equivalent fractions and comparing fractions.","lesson":{"title":"Fractions (ہِصہٕ)","objective":"To help students understand parts of a whole, identify top and bottom numbers, and compare different sizes of shares.","prerequisites":["Basic division","Understanding equal sharing","Multiplication tables"],"difficulty":"medium","concepts":[{"name_en":"Numerator","name_target":"شُمار کَرن وول (Numerator)","simplified_en":"The numerator is the top number in a fraction. It tells us how many equal parts we have taken or eaten.","explanation_target":"کُنہِ چیٖزُک کژ حِصہٕ اَسہِ ہیتہِ، تَتھ چھُ شُمار کَرن وول ونان۔ یہِ چھُ لکیرِ پیٹھ کَنہِ آسان۔","deep_dive_en":"","formula":"","application_target":"","example_title":"Saffron Bun (Tsochwor)","example_en":"If you cut a tsochwor into 4 pieces and eat 1, the numerator is 1.","example_target":"اگر تُہہِ اکھ ژۄچوَر ژورَن برابر حِصَن مَنٛز کاٹِیو تہٕ اکھ حِصہٕ کھیو، تیلی چھُ ١ شُمار کَرن وول۔","diagram":null},{"name_en":"Denominator","name_target":"نِسبَت (Denominator)","simplified_en":"The denominator is the bottom number. It shows the total number of equal parts the whole thing was divided into.","explanation_target":"کُنہِ چیٖزَس کئتؠ کُل بَرابَر حِصہٕ کَرنہٕ آمٔتؠ چھِ، تَتھ چھُ نِسبَت ونان۔ یہِ چھُ لکیرِ بون کَنہِ آسان۔","deep_dive_en":"","formula":"","application_target":"","example_title":"Apple Slices","example_en":"If a Kashmiri apple is cut into 8 equal slices, the denominator is 8.","example_target":"اگر اکھ کٲشُر ژوٗنٛٹھ چھُ اَٹھَن برابر قاشَن مَنٛز کٹنہٕ آمُت، تیلی چھُ ٨ نِسبَت۔","diagram":{"kind":"parts","title_en":"Parts of a Fraction","title_target":"کٔسِر ہِنٛدِ حِصہٕ","nodes":[{"label_en":"Numerator","label_target":"شُمار کَرن وول","note_target":"ہیتمِت حِصہٕ"},{"label_en":"Fraction Bar","label_target":"کٔسِر لکیر","note_target":"درمیانی لکیر"},{"label_en":"Denominator","label_target":"نِسبَت","note_target":"کُل حِصہٕ"}]}},{"name_en":"Equivalent Fractions","name_target":"بَرابَر کٔسِر (Equivalent Fractions)","simplified_en":"These are different fractions that show the same amount. They look different but represent the same value.","explanation_target":"یہِ چھِ تِم کٔسِر یِم وُچھنہِ مَنٛز مُختَلِف چھِ آسان مَگَر اَصٕلَس مَنٛز چھِ اکھ بَرابَر۔","deep_dive_en":"","formula":"","application_target":"","example_title":"Kangri Coal","example_en":"Filling half a kangri is the same as filling two quarters of it.","example_target":"کَنٛگِیر آدٕ بَرنہِ یِیہِ یا ژورَن مَنٛزہ کِنہِ زٕ حِصہٕ، مِقدار چھُ بَرابَر۔","diagram":null},{"name_en":"Comparing Fractions","name_target":"کٔسِر موازنہٕ کَرُن","simplified_en":"We compare fractions to see which one is bigger. If the bottom numbers are same, the bigger top number wins.","explanation_target":"ییلہِ اَسہِ وُچھُن آسِہ کُس کٔسِر چھِ بَڈ، تَتھ چھُ موازنہٕ ونان۔","deep_dive_en":"","formula":"","application_target":"","example_title":"Walnut Kernel","example_en":"Eating 3 pieces out of 4 is more than eating 1 piece out of 4.","example_target":"ژورَن مَنٛزہ ترییہ دونٹھ گُجی کھؠن چھُ ژورَن مَنٛزہ اکھ کھؠنہِ کھوتہٕ زیادٕ۔","diagram":null}]},"quiz":[{"concept":"Numerator","type":"fill","question_en":"In the fraction 3/7, the number 3 is called the _______.","question_target":"کٔسِر 3/7 مَنٛز، نَمبَر 3 چھُ _______ وَننہٕ یِوان۔","options":[],"answer":"Numerator","answer_target":"شُمار کُنِندہ"},{"concept":"Numerator","type":"numeric","question_en":"If a Kashmiri baker divides a 'Girda' into 8 equal parts and gives 5 parts to a customer, what is the numerator of the fraction representing the parts given?","question_target":"اَگر اکھ کٲشُر کاندر اکھ گِردٕ 8 بَرابَر حِصَن مَنٛز تَقسِیم چھُ کَران تہٕ 5 حِصہٕ چھُ گاہَکَس دِوان، تِتھہِ پٲٹھؠ بَنَن وٲلِہ کٔسِرِ ہُنٛد شُمار کُنِندہ کیا چھُ؟","options":[],"answer":"5","answer_target":"5"},{"concept":"Numerator","type":"mcq","question_en":"Which number represents the numerator in 4/9?","question_target":"کٔسِر 4/9 مَنٛز کُس نَمبَر شُمار کُنِندہ چھُ؟","options":["4","9","13","5"],"answer":"4","answer_target":"4"},{"concept":"Denominator","type":"short","question_en":"What does the denominator of a fraction represent?","question_target":"کٔسِرِ ہُنٛد نَصب نُما (Denominator) کیا چھُ ہاوان؟","options":[],"answer":"Total number of equal parts","answer_target":"کُل بَرابَر حِصہٕ"},{"concept":"Denominator","type":"mcq","question_en":"In the fraction 5/12, which number is the denominator?","question_target":"کٔسِر 5/12 مَنٛز کُس نَمبَر نَصب نُما چھُ؟","options":["5","17","12","7"],"answer":"12","answer_target":"12"},{"concept":"Denominator","type":"numeric","question_en":"A boatman in Dal Lake has 10 oars, but 3 are broken. In the fraction 3/10, what is the denominator?","question_target":"ڈَل جھیلَس مَنٛز اِکِس مٲنٛجِس نِش چھِ 10 چپہٕ، مَگَر 3 چھِ پھُٹمٕتؠ۔ کٔسِر 3/10 مَنٛز نَصب نُما کیا چھُ؟","options":[],"answer":"10","answer_target":"10"},{"concept":"Equivalent Fractions","type":"mcq","question_en":"Which fraction is equivalent to 1/2?","question_target":"کٔسِر 1/2 ہِنٛدِ بَرابَر (Equivalent) کُس کٔسِر چھِ؟","options":["2/4","1/3","2/3","1/4"],"answer":"2/4","answer_target":"2/4"},{"concept":"Equivalent Fractions","type":"fill","question_en":"To find an equivalent fraction of 2/3, we can multiply both the numerator and denominator by _____.","question_target":"کٔسِر 2/3 ہِنٛدِ بَرابَر کٔسِر لَبنہٕ خٲطرٕ پَزِ اَسہِ شُمار کُنِندہ تہٕ نَصب نُما کِس اَکوی نَمبَرَس سٟتؠ _____ کَرُن۔","options":[],"answer":"the same number","answer_target":"اَکوی نَمبَرَس سٟتؠ ضَرَب"},{"concept":"Equivalent Fractions","type":"numeric","question_en":"If a saffron farmer divides his field into 4 parts and uses 2, and another farmer divides his field into 8 parts, how many parts must the second farmer use to have an equivalent fraction?","question_target":"اَگر کۄنگ زَمِیندار پَنُن کِھت 4 حِصَن مَنٛز تَقسِیم چھُ کَران تہٕ 2 حِصہٕ اِستِمال چھُ کَران، تہٕ بیاکھ زَمِیندار چھُ پَنُن کِھت 8 حِصَن مَنٛز تَقسِیم کَران، تَمِس کٔتؠ حِصہٕ پَزَن اِستِمال کَرنِہ تاکہِ کٔسِر بَرابَر بَنے؟","options":[],"answer":"4","answer_target":"4"},{"concept":"Comparing Fractions","type":"mcq","question_en":"Which fraction is greater: 3/5 or 1/5?","question_target":"یِمَن مَنٛز کُس کٔسِر چھِ بَڈِ: 3/5 کِنہ 1/5؟","options":["3/5","1/5","Both are equal","None"],"answer":"3/5","answer_target":"3/5"},{"concept":"Comparing Fractions","type":"short","question_en":"Is 1/4 smaller than 3/4?","question_target":"کیا 1/4 چھِ 3/4 کھۄتہٕ لۄکِٹ؟","options":[],"answer":"Yes","answer_target":"أہان"},{"concept":"Comparing Fractions","type":"mcq","question_en":"In a village in Gulmarg, two children have Shawls. Asif has 2/3 of a Shawl woven, and Bilal has 1/3 woven. Who has completed more work?","question_target":"گُلَمَرگ کِس اِکِس گامَس مَنٛز، دۄن شُرؠن نِش چھِ شال۔ عاصِفَن چھُ 2/3 شال وۄونمُت تہٕ بِلالَن چھُ 1/3 وۄونمُت۔ کٔمِس چھُ زِیادٕ کٲم کٔرمٕژ؟","options":["Asif","Bilal","Both equal","None"],"answer":"Asif","answer_target":"عاصِف"}]},{"id":"water-cycle-g5-ks","label":"Water cycle · Grade 5 · Kashmiri","grade":5,"subject":"science","language":"kashmiri","source":"Grade lesson on the water cycle: evaporation, condensation, precipitation and collection.","lesson":{"title":"Water Cycle: The Journey of Water","objective":"Students will understand how water moves from the ground to the sky and back using local examples.","prerequisites":["Water changes from liquid to gas when heated","Rain comes from clouds"],"difficulty":"medium","concepts":[{"name_en":"Evaporation","name_target":"باف بَنُن (Evaporation)","simplified_en":"The sun heats up water in lakes and rivers. This water turns into invisible gas called water vapor and goes up into the air.","explanation_target":"آفتابُک گرمی چِھ ڈل جھیلُک آب گرم کران۔ یہ آب چھُ باف بَنِتھ کَنہِ نَبَس کُن کھسان۔","deep_dive_en":"","formula":"","application_target":"","example_title":"Wet clothes drying","example_en":"When we hang wet clothes under the sun, the water turns into vapor and the clothes dry up.","example_target":"ییلہِ اَسہِ نَبَس تَل نَم کَمبل یا پلو تراوان چھُ، تِمن منزہ چھُ آب باف بَنِتھ نؠبَر نیران۔","diagram":null},{"name_en":"Condensation","name_target":"اوبُر بَنُن (Condensation)","simplified_en":"High up in the sky, the air is cold. The water vapor cools down and turns back into tiny water droplets, forming clouds.","explanation_target":"نَبَس منز چھِ ترٛیشر آسان۔ ییلہِ یہ آبُک باف تھود گژھان چھُ، یہ چھُ اوبُر بَناوَن۔","deep_dive_en":"","formula":"","application_target":"","example_title":"Cold glass of water","example_en":"On a hot day, you see tiny water drops on the outside of a cold glass of sharbat.","example_target":"ییلہِ اَسہِ شربتک گلاس تھدِ آبہ سٟتؠ بَر چھُ، گلاسَس نؠبر چِھ آبہِ پؠشاپ دِکھان۔","diagram":{"kind":"flow","title_en":"Making a Cloud","title_target":"اوبُر کِتھ کَن چھُ بَنان","nodes":[{"label_en":"Water Vapor","label_target":"آبہِ باف","note_target":"تھود گژھُن"},{"label_en":"Tiny Drops","label_target":"آبہِ پؠشاپ","note_target":"جَمَع گژھُن"},{"label_en":"Clouds","label_target":"اوبُر","note_target":"آسمانَس منز"}]}},{"name_en":"Precipitation","name_target":"رُود تہِ شِین (Precipitation)","simplified_en":"When clouds become too heavy with water, the water falls back to earth. This can be rain or snow.","explanation_target":"ییلہِ اوبُر واریاہ گۄب گژھان چھُ، آب چھُ رُود یا شِین بَنِتھ زمینَس پؠٹھ پؠوان۔","deep_dive_en":"","formula":"","application_target":"","example_title":"Winter in Kashmir","example_en":"In winter, water vapor turns into white snow that covers our Chinar trees.","example_target":"وَنـدَس منز چھُ نَبہ پیٹھہ شِین پؠوان یُس بومبَن تہِ بونؠن پؠٹھ جَمَع گژھان چھُ۔","diagram":null},{"name_en":"Collection","name_target":"آب جَمَع گژھُن (Collection)","simplified_en":"The fallen rain and melted snow flow down from mountains. They gather back in lakes and rivers.","explanation_target":"رُود تہِ شینُک آب چھُ پہاڑو پیٹھہ وسان تہِ دوبار ہ ڈل جھیل تہِ وؠتھ منز جَمَع گژھان۔","deep_dive_en":"","formula":"","application_target":"","example_title":"Dal Lake","example_en":"Rainwater from the Zabarwan hills flows down and fills the Dal Lake.","example_target":"زَبَروَن پہاڑو پیٹھہ یُس رُود چھُ وَسان، تَمِہ سٟتؠ چھُ ڈل جھیل بَران۔","diagram":null}]},"quiz":[{"concept":"Evaporation","type":"mcq","question_en":"What happens to water when it is heated by the sun?","question_target":"آفتابُک گرمی ییٚلہِ آبس لگان چھُ، تیٚلہِ کیاہ چھُ گژھان؟","options":["بخارات بنن (Evaporation)","جمُن (Freezing)","پھٔلُن (Melting)","کُنٛڈنسیشن (Condensation)"],"answer":"بخارات بنن (Evaporation)","answer_target":"بخارات بنن (Evaporation)"},{"concept":"Evaporation","type":"short","question_en":"Zooni washed her Pheran and hung it outside in the sun. After two hours, it was dry. Where did the water go?","question_target":"زوٗنِہ ہن چھُکھ پَنُن پھیرَن تہٕ تھووُن آفتابَس مَنٛز سُکناونہِ خٲطرٕ۔ زَن گھنٹَن پَتہٕ اوس یہِ سُکمت۔ آب کۄت گۆو؟","options":[],"answer":"The water turned into water vapor due to evaporation.","answer_target":"آب بَنٛیوو بھاپ یا بخارات یتھ اؠواپوریشن چھِ وَنان۔"},{"concept":"Evaporation","type":"fill","question_en":"The process of changing liquid water into gas is called _______.","question_target":"آبس گیس مَنٛز بدلنہٕ کِس عملس چھِ _______ وَنان۔","options":[],"answer":"Evaporation","answer_target":"اؠواپوریشن (Evaporation)"},{"concept":"Condensation","type":"mcq","question_en":"Which of these is an example of condensation?","question_target":"یِمَن مَنٛز کُس چھُ کُنٛڈنسیشنُک مِثال؟","options":["دٔرؠیاوس مَنٛز آب سُکن","گلاسس نیبَر کَنہِ آب کیہ قطرہ بنن","بَرف گَلُن","وۄشُن آب بَنُن"],"answer":"گلاسس نیبَر کَنہِ آب کیہ قطرہ بنن","answer_target":"گلاسس نیبَر کَنہِ آب کیہ قطرہ بنن"},{"concept":"Condensation","type":"short","question_en":"Why do we see tiny water droplets on the grass in a Kashmiri morning (Dew)?","question_target":"کٲشِرِ صۆبحس مَنٛز کِیاہ چھِ گاسَس پیٹھ شَبنَم کِس صوٗرتَس مَنٛز آب کِہ قطرہ لَبنہٕ یِوان؟","options":[],"answer":"Water vapor in the air cools down and turns back into liquid water.","answer_target":"ہواہس مَنٛز موجود بخارات چھِ تھوڈا گژھِتھ واپس آب بَنان۔"},{"concept":"Condensation","type":"fill","question_en":"Cloud formation is a result of _______.","question_target":"اوبُر بَنُن چھُ _______ کِنؠ گژھان۔","options":[],"answer":"Condensation","answer_target":"کُنٛڈنسیشن (Condensation)"},{"concept":"Precipitation","type":"mcq","question_en":"Which of the following is NOT a form of precipitation?","question_target":"یِمَن مَنٛز کُس چھُ پریسپیٹیشنُک قِسم نِہ؟","options":["رُود (Rain)","شِین (Snow)","دُہ (Smoke)","ہالہٕ (Hail)"],"answer":"دُہ (Smoke)","answer_target":"دُہ (Smoke)"},{"concept":"Precipitation","type":"numeric","question_en":"If it snows 5 inches in Srinagar and 7 inches in Gulmarg, what is the total precipitation in inches?","question_target":"اگر سِری نگرس مَنٛز ۵ اِنچ شِین پیو تہٕ گُلمرگس مَنٛز ۷ اِنچ، کُل کِیژاہ شِین پیو؟","options":[],"answer":"12","answer_target":"۱۲"},{"concept":"Precipitation","type":"short","question_en":"What do we call the water falling from clouds in the form of rain or snow?","question_target":"اوبُر مَنٛز رُود یا شِینہِ کِس صوٗرتَس مَنٛز آب وسنَس کیاہ چھِ وَنان؟","options":[],"answer":"Precipitation","answer_target":"پریسپیٹیشن (Precipitation)"},{"concept":"Collection","type":"fill","question_en":"The Dal Lake in Srinagar is a big example of _______ in the water cycle.","question_target":"سِری نگرُک ڈَل جھیل چھُ واٹر سائیکل کِس _______ عملہِ ہُنٛد اکھ بوڈ مِثال۔","options":[],"answer":"Collection","answer_target":"کلیکشن (Collection)"},{"concept":"Collection","type":"mcq","question_en":"Where does most of the rainwater eventually collect?","question_target":"رُودُک زیادتَر آب کَتہِ چھُ جمع گژھان؟","options":["آسمانس مَنٛز","سَمَندَرن تہٕ جھیلَن مَنٛز","پھیرنَس مَنٛز","دُہس مَنٛز"],"answer":"سَمَندَرن تہٕ جھیلَن مَنٛز","answer_target":"سَمَندَرن تہٕ جھیلَن مَنٛز"},{"concept":"Collection","type":"short","question_en":"What happens to the snow on mountains when it melts in spring?","question_target":"سونٛتھ کِس موسمَس مَنٛز ییٚلہِ پہاڑَن پیٹھ شِین گَلان چھُ، تیٚلہِ کیاہ چھُ گژھان؟","options":[],"answer":"It flows down into rivers and lakes as collection.","answer_target":"یہِ چھُ کولَن تہٕ جھیلَن مَنٛز پکان تہٕ اکھ جاے جمع گژھان۔"}]},{"id":"photosynthesis-g8-ks","label":"Photosynthesis · Grade 8 · Kashmiri","grade":8,"subject":"science","language":"kashmiri","source":"Grade lesson on photosynthesis: how green leaves make food using sunlight, water and carbon dioxide.","lesson":{"title":"Photosynthesis: How Plants Make Food","objective":"Students will explain how green plants convert sunlight, water, and air into energy-rich food and oxygen.","prerequisites":["Parts of a plant","Basic understanding of gases (oxygen and carbon dioxide)","Concept of energy from the sun"],"difficulty":"medium","concepts":[{"name_en":"Chlorophyll","name_target":"کَلوروفِل (Chlorophyll)","simplified_en":"Chlorophyll is a special green pigment found inside leaves. It acts like a solar panel that catches energy from the sun. Without this green color, a plant cannot capture sunlight to make its food. This is why most leaves look green to our eyes. It is the most important tool a plant has for survival.","explanation_target":"کَلوروفِل چھُ اَکھ سَبز رَنٛگ یُس پَننَن مَنٛز آسان چھُ۔ یہِ چھُ آفتابُک گاش جَذَب کَرنس مَنٛز مَدَد کَران۔ اَتھ بَغیر ہیکہِ نَہ کُلِ پانہِ غِذا بَنٲوِتھ۔","deep_dive_en":"Chlorophyll is located in the chloroplasts of plant cells. It absorbs light primarily in the blue and red spectrums while reflecting green light. It triggers the chemical reaction by energizing electrons.","formula":"C55H72O5N4Mg","application_target":"کُلین ہُنٛد سَبز رَنٛگ چھُ اَمِچ نِشانی زِ یہِ چھُ غِذا بَناوَن۔","example_title":"Chinar Leaves","example_en":"In summer, the leaves of a Chinar tree are deep green because they are full of chlorophyll to make food. In autumn, the chlorophyll breaks down, and the leaves turn orange or red.","example_target":"بوٗنی ہِنٛد پَن چھِ ہاَرودَس مَنٛز کَلوروفِل کَم گَژھنہِ کِنؠ نِیول رَنٛگ تَرک کَران تہِ موج اِتھ گَژھان۔","diagram":null},{"name_en":"Stomata","name_target":"سُٹومیٹا (Stomata)","simplified_en":"Stomata are tiny, microscopic holes usually found on the underside of leaves. Think of them as the plant's tiny noses or windows. They open to let carbon dioxide in and oxygen out. They also help the plant 'breathe' and release extra water vapor. Because they are so small, we cannot see them without a microscope.","explanation_target":"سُٹومیٹا چھِ پَننَن ہِنٛدِ بۄنِمِہ طَرفہٕ لۄکٹی لۄکٹی سوراخ۔ یِم چھِ کُلِس ہَوا اَندر نِنہِ تہِ نؠبَر کَڈنہِ مَنٛز مَدَد کَران۔","deep_dive_en":"Stomata are pores guarded by two specialized cells called guard cells. These cells regulate the opening and closing of the pore to balance gas exchange and prevent excessive water loss through transpiration.","formula":null,"application_target":"ییلہِ اَسؠ پَننَن پیٹھ دُود صٲف کَرو، تَمِہ سٟتؠ چھِ سُٹومیٹا کھُلن تہِ کُلِ ہیکہِ اَصل پٲٹھؠ ساہ ہیتھ۔","example_title":"Dusty Apple Leaves","example_en":"If apple orchard leaves are covered in heavy dust from a nearby road, the stomata get blocked. The tree struggles to breathe and grow because it cannot get enough carbon dioxide.","example_target":"سُنٛٹِہ مَنٛز ییلہِ ژوٗنٛٹھ کُلین ہِنٛدَن پَننَن پیٹھ دُود جَمَع گَژھان چھُ، تَمِہ سٟتؠ چھِ یِم لۄکٹی سوراخ بَنٛد گَژھان۔","diagram":{"kind":"parts","title_en":"Leaf Gas Exchange","title_target":"پَنَس مَنٛز ہَواہُک تَبادلہٕ","nodes":[{"label_en":"Sunlight","label_target":"آفتابُک گاش","note_target":"طاقَت چھُ دِوان"},{"label_en":"Carbon Dioxide","label_target":"کاربَن ڈایاکسایِڈ","note_target":"نَو ہَوا اَندر"},{"label_en":"Oxygen","label_target":"آکسیجَن","note_target":"صٲف ہَوا نؠبَر"}]}},{"name_en":"Photosynthesis Process","name_target":"فوٹوسِنتھِسِس (Photosynthesis)","simplified_en":"Photosynthesis is the process where plants make their own food. The plant takes water from the roots and carbon dioxide from the air. Using sunlight trapped by chlorophyll, it turns these into sugar (glucose) for energy. As a result, it releases oxygen back into the air for us to breathe. It is like a kitchen inside the leaf.","explanation_target":"یہِ چھُ پَنَن مَنٛز غِذا بَناوَنُک طَریقہٕ۔ کُلِ چھِ آفتاب، آب تہِ ہَوا اِستِعمال کَرِتھ پَنہِ خٲطرہِ غِذا بَناوَن۔","deep_dive_en":"The process occurs in two stages: Light-dependent reactions (trapping energy) and the Calvin Cycle (light-independent reactions fixing carbon into glucose). The chemical energy is stored in the bonds of sugar molecules.","formula":"6CO2 + 6H2O + Light → C6H12O6 + 6O2","application_target":"اَتھ عَملِہ سٟتؠ چھُ اَسہِ خٲطرہِ آکسیجَن بَنان۔","example_title":"Vegetable Garden","example_en":"A Haakh (Collard Greens) plant in a sunny spot in a Kashmiri kitchen garden grows faster than one in deep shade. This is because the sunny plant can do more photosynthesis and make more food.","example_target":"دٔجی مَنٛز ہاکھ تِتھؠ جایِہ اَصٕل پٲٹھؠ بَڈان یِتہِ آفتابُک گاش اَصٕل پٲٹھؠ پیوان آسہِ۔","diagram":{"kind":"flow","title_en":"The Food Factory","title_target":"غِذا بَناوَنُک کارخانہِ","nodes":[{"label_en":"Roots: Water","label_target":"مُجِہ: آب","note_target":"زٔمیٖن پیٹھہِ"},{"label_en":"Leaf: Cooking","label_target":"پَن: پَکاوُن","note_target":"گاش اِستِعمال کَرِتھ"},{"label_en":"Sugar: Food","label_target":"غِذا: طاقَت","note_target":"کُلِ خٲطرہِ"}]}}]},"quiz":[{"concept":"Chlorophyll","type":"mcq","question_en":"Which pigment gives leaves their green color?","question_target":"کُس پِگمینٹ چھُ پَنن ہَیوٗن سَبز رَنٛگ دِوان؟","options":["Hemoglobin","Chlorophyll","Melanin","Xanthophyll"],"answer":"Chlorophyll","answer_target":"کلوروفِل"},{"concept":"Chlorophyll","type":"fill","question_en":"Chlorophyll is present in special structures of the cell called ______.","question_target":"کلوروفِل چھُ سٮ۪ل کین خاص حِصن مَنٛز آسان یِمن ______ وَنان چھِ۔","options":[],"answer":"Chloroplasts","answer_target":"کلوروسپلاسٹ"},{"concept":"Chlorophyll","type":"short","question_en":"What is the primary role of chlorophyll during food synthesis?","question_target":"غزا بَناوَنہِ وِزِ کیا چھُ کلوروفِلُک اَہَم کام؟","options":[],"answer":"To trap solar energy","answer_target":"آفتابٕچ تَوانٲیی جَذب کَرُن"},{"concept":"Stomata","type":"fill","question_en":"Small pores on the surface of leaves used for gas exchange are called ______.","question_target":"پَنن ہنٛدِس طَرحَس پٮ۪ٹھ لۄکٕٹؠ مۄکٕل جاے یِم گیس بَدلاونَس مَنٛز مَدَد کَرن چھِ، تِمن چھُ ______ وَنان۔","options":[],"answer":"Stomata","answer_target":"سٹومیٹا"},{"concept":"Stomata","type":"short","question_en":"In the saffron fields of Pampore, a plant closes its stomata during a hot dry day. Why does it do this?","question_target":"پامپورِکؠن کُنٛگہِ واریَن مَنٛز چھُ اکھ کُنٛگہِ کُلؠ گَرَم دوہَس مَنٛز پنٕنؠ سٹومیٹا بَند کَران۔ سُہ کِیاہ مۆکھ کَران چھُ یِتھ پٲٹھؠ؟","options":[],"answer":"To prevent water loss","answer_target":"آب بَچاوَنہِ خٲطرٕ"},{"concept":"Stomata","type":"mcq","question_en":"Which cells regulate the opening and closing of stomata?","question_target":"کُس سٮ۪ل چھُ سٹومیٹا یِہ کھُلُن تہٕ بَند گَسُن کَنٹرول کَران؟","options":["Root cells","Guard cells","Xylem cells","Epidermal cells"],"answer":"Guard cells","answer_target":"گارڈ سٮ۪ل"},{"concept":"Photosynthesis Process","type":"numeric","question_en":"How many molecules of Carbon Dioxide are typically needed to produce one molecule of glucose?","question_target":"گلوکوزُک اکھ مالیکیول بَناوَنہِ خٲطرٕ کٲتیا کاربن ڈائی آکسائیڈ مالیکیول ضۆروٗری چھِ؟","options":[],"answer":"6","answer_target":"۶"},{"concept":"Photosynthesis Process","type":"mcq","question_en":"What are the end products of photosynthesis?","question_target":"فوٹوسِنتھِسِس عَمَل پَتہٕ کیا چھُ بَنان؟","options":["Oxygen and Glucose","Carbon Dioxide and Water","Nitrogen and Sugar","Oxygen and Methane"],"answer":"Oxygen and Glucose","answer_target":"آکسیجَن تہٕ گلوکوز"},{"concept":"Photosynthesis Process","type":"short","question_en":"A Chinar tree in Srinagar uses sunlight, water, and gas from the air to grow. Write the basic word equation for this process.","question_target":"سِریٖنَگَرُک اکھ بوٗنؠ کُلؠ چھُ آفتابٕچ تَوانٲیی، آب تہٕ ہَوا مَنٛز مۆجوٗد گیس اِستعمال کَرِتھ بَڈان۔ اَتھ عَمَل خٲطرٕ لٮ۪کھِو اکھ لَفزی مَصاوات (equation)۔","options":[],"answer":"Carbon Dioxide + Water -> Glucose + Oxygen","answer_target":"کاربن ڈائی آکسائیڈ + آب -> گلوکوز + آکسیجَن"}]},{"id":"environment-g6-ur","label":"Our environment · Grade 6 · Urdu","grade":6,"subject":"social","language":"urdu","source":"Grade lesson on our environment: land, water, plants, animals and how people depend on them.","lesson":{"title":"Hamara Mahol (Our Environment)","objective":"Students will understand the main parts of our environment and how humans rely on nature to live.","prerequisites":["Basic knowledge of living and non-living things","Awareness of their surroundings"],"difficulty":"easy","concepts":[{"name_en":"Environment","name_target":"ماحول","simplified_en":"The environment is everything that surrounds us. It includes the land, water, air, plants, and animals around us.","explanation_target":"ماحول سے مراد وہ تمام چیزیں ہیں جو ہمارے ارد گرد موجود ہیں۔ اس میں زمین، پانی، ہوا، پودے اور جانور شامل ہیں۔","deep_dive_en":"","formula":"","application_target":"","example_title":"Local Surroundings","example_en":"The mountains, the Jehlum river, and the chinar trees are all parts of our environment in Kashmir.","example_target":"کشمیر میں پہاڑ، دریاۓ جہلم اور چنار کے درخت ہمارے ماحول کا حصہ ہیں۔","diagram":{"kind":"parts","title_en":"Parts of Environment","title_target":"ماحول کے حصے","nodes":[{"label_en":"Land","label_target":"زمین","note_target":"جہاں ہم رہتے ہیں"},{"label_en":"Water","label_target":"پانی","note_target":"پینے کے لیے"},{"label_en":"Plants","label_target":"پودے","note_target":"آکسیجن اور غذا"},{"label_en":"Animals","label_target":"جانور","note_target":"دودھ اور اون"}]}},{"name_en":"Natural Resources","name_target":"قدرتی وسائل","simplified_en":"These are things from nature that people use to survive. We get food, water, and materials from the earth.","explanation_target":"قدرتی وسائل وہ چیزیں ہیں جو ہمیں قدرت سے ملتی ہیں اور ہم زندہ رہنے کے لیے انہیں استعمال کرتے ہیں۔","deep_dive_en":"","formula":"","application_target":"","example_title":"Apple Orchards","example_en":"We use the soil and water to grow apples, which provide food and money for our families.","example_target":"ہم سیب اگانے کے لیے مٹی اور پانی کا استعمال کرتے ہیں، جو ہمیں غذا اور روزگار دیتے ہیں۔","diagram":{"kind":"parts","title_en":"Types of Natural Resources","title_target":"قدرتی وسائل کی اقسام","nodes":[{"label_en":"Water","label_target":"پانی","note_target":"دریا اور چشمے"},{"label_en":"Forest","label_target":"جنگل","note_target":"لکڑی اور سایہ"},{"label_en":"Soil","label_target":"مٹی","note_target":"کھیتی باڑی"},{"label_en":"Air","label_target":"ہوا","note_target":"سانس کے لیے"}]}},{"name_en":"Human Dependence","name_target":"انسانوں کا انحصار","simplified_en":"Humans cannot live without nature. We depend on plants for oxygen and animals for things like milk and wool.","explanation_target":"انسانوں کا گزارہ قدرت کے بغیر ناممکن ہے۔ ہم آکسیجن کے لیے پودوں اور دودھ کے لیے جانوروں پر منحصر ہیں۔","deep_dive_en":"","formula":"","application_target":"","example_title":"The Kangri and Pheran","example_en":"We use wood from trees and wool from sheep to stay warm during the cold Kashmiri winter.","example_target":"سردیوں میں گرم رہنے کے لیے ہم درختوں کی لکڑی اور بھیڑوں کی اون کا استعمال کرتے ہیں۔","diagram":{"kind":"flow","title_en":"How People Depend on Nature","title_target":"انسان قدرت پر کیسے انحصار کرتا ہے","nodes":[{"label_en":"Nature gives","label_target":"قدرت دیتی ہے","note_target":"پانی، مٹی، ہوا"},{"label_en":"People use","label_target":"انسان استعمال کرتا ہے","note_target":"کھیتی اور گھر"},{"label_en":"Waste returns","label_target":"فضلہ واپس جاتا ہے","note_target":"کچرا اور دھواں"},{"label_en":"Care needed","label_target":"حفاظت ضروری ہے","note_target":"صفائی اور درخت"}]}}]},"quiz":[{"concept":"Environment","type":"mcq","question_en":"Which of the following includes both living and non-living things surrounding an organism?","question_target":"مندرجہ ذیل میں سے کون سا جاندار اور غیر جاندار چیزوں پر مشتمل ہے جو کسی جاندار کے گرد موجود ہوتی ہیں؟","options":["Environment (ماحول)","Forest (جنگل)","Weather (موسم)","Soil (مٹی)"],"answer":"Environment (ماحول)","answer_target":"Environment (ماحول)"},{"concept":"Environment","type":"fill","question_en":"The ______ environment consists of air, water, land, and sunlight.","question_target":"______ ماحول ہوا، پانی، زمین اور سورج کی روشنی پر مشتمل ہوتا ہے۔","options":[],"answer":"Physical","answer_target":"طبعی"},{"concept":"Environment","type":"short","question_en":"In a village in Kashmir, people noticed that the melting of glaciers is changing the local temperature. Is this a change in the physical or social environment?","question_target":"کشمیر کے ایک گاؤں میں لوگوں نے دیکھا کہ گلیشیئرز کے پگھلنے سے مقامی درجہ حرارت بدل رہا ہے۔ کیا یہ طبعی ماحول میں تبدیلی ہے یا سماجی ماحول میں؟","options":[],"answer":"Physical environment","answer_target":"طبعی ماحول"},{"concept":"Natural Resources","type":"mcq","question_en":"Which of these is a non-renewable natural resource?","question_target":"ان میں سے کون سا غیر تجدیدی قدرتی ذریعہ ہے؟","options":["Solar Energy (شمسی توانائی)","Coal (کوئلہ)","Wind (ہوا)","Water (پانی)"],"answer":"Coal (کوئلہ)","answer_target":"Coal (کوئلہ)"},{"concept":"Natural Resources","type":"numeric","question_en":"If Kashmir has 5 main rivers flowing through a district and 2 of them dry up, how many active river resources are left?","question_target":"اگر کشمیر کے ایک ضلع سے 5 اہم دریا بہتے ہیں اور ان میں سے 2 خشک ہو جائیں، تو کتنے فعال دریا باقی رہ جائیں گے؟","options":[],"answer":"3","answer_target":"3"},{"concept":"Natural Resources","type":"fill","question_en":"Resources that are provided by nature without human intervention are called _______.","question_target":"وہ وسائل جو انسانی مداخلت کے بغیر فطرت کی طرف سے فراہم کیے جاتے ہیں، _______ کہلاتے ہیں۔","options":[],"answer":"Natural Resources","answer_target":"قدرتی وسائل"},{"concept":"Human Dependence","type":"short","question_en":"How do humans depend on plants for survival?","question_target":"انسان اپنی بقا کے لیے پودوں پر کس طرح انحصار کرتے ہیں؟","options":[],"answer":"Food and Oxygen","answer_target":"خوراک اور آکسیجن"},{"concept":"Human Dependence","type":"mcq","question_en":"Which human activity depends directly on fertile soil and water?","question_target":"کون سی انسانی سرگرمی کا براہ راست انحصار زرخیز مٹی اور پانی پر ہے؟","options":["Mining (کان کنی)","Agriculture (زراعت)","Driving (ڈرائیونگ)","Teaching (تدریس)"],"answer":"Agriculture (زراعت)","answer_target":"Agriculture (زراعت)"},{"concept":"Human Dependence","type":"short","question_en":"A craftsman in Srinagar uses wood from Deodar trees to make famous Kashmiri furniture. Explain his dependence on natural resources.","question_target":"سرینگر کا ایک کاریگر مشہور کشمیری فرنیچر بنانے کے لیے دیودار کے درختوں کی لکڑی استعمال کرتا ہے۔ قدرتی وسائل پر اس کے انحصار کی وضاحت کریں۔","options":[],"answer":"He depends on forests for raw material (wood) for his livelihood.","answer_target":"وہ اپنے روزگار کے لیے خام مال (لکڑی) کے لیے جنگلات پر انحصار کرتا ہے۔"}]}]}
+{
+  "version": 1790942263928,
+  "packs": [
+    {
+      "id": "fractions-1-ks",
+      "trackId": "fractions",
+      "trackTitle": "Fractions (ہِصہٕ)",
+      "trackOrder": 1,
+      "totalInTrack": 6,
+      "nextLessonId": "fractions-2-ks",
+      "label": "Fractions · Part 1: What is a Fraction?",
+      "grade": 5,
+      "subject": "maths",
+      "language": "kashmiri",
+      "source": "Grade lesson on fractions: parts of a whole, numerator and denominator.",
+      "lesson": {
+        "title": "1. Understanding Fractions (حِصہٕ کیاہ چھُ؟)",
+        "objective": "To help students understand parts of a whole, identify top and bottom numbers, and read simple fractions.",
+        "prerequisites": [
+          "Equal sharing",
+          "Basic counting",
+          "Division concept"
+        ],
+        "difficulty": "easy",
+        "concepts": [
+          {
+            "name_en": "Numerator",
+            "name_target": "شُمار کَرن وول (Numerator)",
+            "simplified_en": "The numerator is the top number in a fraction. It tells us how many equal pieces we have taken, eaten, or shaded.",
+            "explanation_target": "کُنہِ چیٖزُک کژ حِصہٕ اَسہِ ہیتہِ یا کھیو، تَتھ چھُ شُمار کَرن وول ونان۔ یہِ چھُ لکیرِ پیٹھ کَنہِ آسان۔",
+            "example_title": "Saffron Bun (Tsochwor)",
+            "example_en": "If you divide a Kashmiri Tsochwor into 4 equal slices and give 1 slice to a friend, 1 is the numerator.",
+            "example_target": "اگر تُہہِ اکھ ژۄچوَر ژورَن برابر حِصَن مَنٛز کاٹِیو تہٕ اکھ حِصہٕ دوستَس دِیو، تیلی چھُ ۱ شُمار کَرن وول۔",
+            "diagram": null
+          },
+          {
+            "name_en": "Denominator",
+            "name_target": "نِسبَت (Denominator)",
+            "simplified_en": "The denominator is the bottom number. It shows the total number of equal parts the whole thing was cut into.",
+            "explanation_target": "کُنہِ چیٖزَس کئتؠ کُل بَرابَر حِصہٕ کَرنہٕ آمٔتؠ چھِ، تَتھ چھُ نِسبَت ونان۔ یہِ چھُ لکیرِ بون کَنہِ آسان۔",
+            "example_title": "Apple Slices",
+            "example_en": "If a sweet Kashmiri apple is cut into 8 equal slices, the total number 8 is the denominator.",
+            "example_target": "اگر اکھ کٲشُر ژوٗنٛٹھ چھُ اَٹھَن برابر قاشَن مَنٛز کٹنہٕ آمُت، تیلی چھُ ۸ نِسبَت۔",
+            "diagram": {
+              "kind": "parts",
+              "title_en": "Parts of a Fraction",
+              "title_target": "کٔسِر ہِنٛدِ حِصہٕ",
+              "nodes": [
+                {
+                  "label_en": "Numerator",
+                  "label_target": "شُمار کَرن وول",
+                  "note_target": "ہیتمِت حِصہٕ (Top)"
+                },
+                {
+                  "label_en": "Fraction Line",
+                  "label_target": "کٔسِر لکیر",
+                  "note_target": "درمیانی لکیر"
+                },
+                {
+                  "label_en": "Denominator",
+                  "label_target": "نِسبَت",
+                  "note_target": "کُل بَرابَر حِصہٕ (Bottom)"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Numerator",
+          "type": "mcq",
+          "question_en": "In the fraction 3/7, which number is the numerator?",
+          "question_target": "کٔسِر 3/7 مَنٛز، کُس نَمبَر شُمار کُنِندہ (Numerator) چھُ؟",
+          "options": [
+            "3",
+            "7",
+            "10",
+            "4"
+          ],
+          "answer": "3",
+          "answer_target": "3"
+        },
+        {
+          "concept": "Denominator",
+          "type": "mcq",
+          "question_en": "In the fraction 5/12, what does 12 represent?",
+          "question_target": "کٔسِر 5/12 مَنٛز نَمبَر 12 کیا ہاوان چھُ؟",
+          "options": [
+            "Denominator (نصب نما)",
+            "Numerator (شمار کنندہ)",
+            "Whole number",
+            "Remainder"
+          ],
+          "answer": "Denominator (نصب نما)",
+          "answer_target": "Denominator (نصب نما)"
+        },
+        {
+          "concept": "Numerator",
+          "type": "numeric",
+          "question_en": "A baker divides a Girda into 8 slices. You eat 5 slices. What is the numerator of eaten slices?",
+          "question_target": "کاندرَن کٔرؠ اکھ گِردٕ ۸ حِصَن مَنٛز تَقسِیم۔ تُہؠ کھؠو ۵ حِصہٕ۔ کھؠمِژ کٔسِرِ ہُنٛد شُمار کُنِندہ کیا چھُ؟",
+          "options": [],
+          "answer": "5",
+          "answer_target": "5"
+        }
+      ]
+    },
+    {
+      "id": "fractions-2-ks",
+      "trackId": "fractions",
+      "trackTitle": "Fractions (ہِصہٕ)",
+      "trackOrder": 2,
+      "totalInTrack": 6,
+      "nextLessonId": "fractions-3-ks",
+      "label": "Fractions · Part 2: Proper & Improper Fractions",
+      "grade": 5,
+      "subject": "maths",
+      "language": "kashmiri",
+      "source": "Grade lesson on proper and improper fractions: numerator less than denominator vs greater than denominator.",
+      "lesson": {
+        "title": "2. Proper & Improper Fractions (صحیح تہٕ غٲر صحیح کٔسِر)",
+        "objective": "To distinguish between proper fractions (less than 1 whole) and improper fractions (1 or greater than 1).",
+        "prerequisites": [
+          "Understanding numerator and denominator"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Proper Fractions",
+            "name_target": "صحیح کٔسِر (Proper Fractions)",
+            "simplified_en": "A proper fraction is less than 1 whole. The top number (numerator) is smaller than the bottom number (denominator).",
+            "explanation_target": "صحیح کٔسِر چھِ اِکِس کھۄتہٕ لۄکِٹ آسان۔ اَتھ مَنٛز چھُ شُمار کَرن وول نِسبَت کھۄتہٕ لۄکُٹ آسان، مِثال: ۳/۴۔",
+            "example_title": "Sharing Girda",
+            "example_en": "If you have 1 Girda and eat 3 pieces out of 4, you ate 3/4 of a Girda (less than a whole Girda).",
+            "example_target": "اگر تُہہِ اِکِس گِردَس مَنٛزہ ۴ حِصَن مَنٛزہ ۳ حِصہٕ کھیو، یہِ چھُ ۱ کھۄتہٕ لۄکُٹ، یعنی صحیح کٔسِر۔",
+            "diagram": null
+          },
+          {
+            "name_en": "Improper Fractions",
+            "name_target": "غٲر صحیح کٔسِر (Improper Fractions)",
+            "simplified_en": "An improper fraction is equal to or greater than 1 whole. The top number is bigger than or equal to the bottom number, like 5/4 or 7/3.",
+            "explanation_target": "غٲر صحیح کٔسِر چھِ ۱ یا ۱ کھۄتہٕ بَڈ آسان۔ شُمار کَرن وول چھُ نِسبَت کِس بَرابَر یا اَتھ کھۄتہٕ بوڈ آسان، مِثال: ۵/۴۔",
+            "example_title": "Extra Girda Slices",
+            "example_en": "If each Girda has 4 slices, and your family eats 5 slices in total, you ate 5/4 Girdas (more than one whole bread).",
+            "example_target": "اگر پرؠتھ گِردَس مَنٛز ۴ قاشہٕ چھِ، تہٕ گَرَس مَنٛز کھؠو ۵ قاشہٕ، تیلی کھؠو تُہؠ ۵/۴ (اکھ پورٕ گِردٕ تہٕ بیاکھ قاش)۔",
+            "diagram": {
+              "kind": "parts",
+              "title_en": "Proper vs Improper",
+              "title_target": "صحیح بَقابِل غٲر صحیح",
+              "nodes": [
+                {
+                  "label_en": "Proper Fraction",
+                  "label_target": "صحیح کٔسِر (3/4)",
+                  "note_target": "Top < Bottom (< 1)"
+                },
+                {
+                  "label_en": "Whole (1)",
+                  "label_target": "پورٕ اکھ (4/4)",
+                  "note_target": "Top = Bottom (= 1)"
+                },
+                {
+                  "label_en": "Improper Fraction",
+                  "label_target": "غٲر صحیح (5/4)",
+                  "note_target": "Top > Bottom (> 1)"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Proper Fractions",
+          "type": "mcq",
+          "question_en": "Which of the following is a proper fraction?",
+          "question_target": "یِمَن مَنٛز کُس اکھ صحیح کٔسِر (Proper Fraction) چھِ؟",
+          "options": [
+            "2/5",
+            "7/4",
+            "9/2",
+            "5/5"
+          ],
+          "answer": "2/5",
+          "answer_target": "2/5"
+        },
+        {
+          "concept": "Improper Fractions",
+          "type": "mcq",
+          "question_en": "Which of the following is an improper fraction?",
+          "question_target": "یِمَن مَنٛز کُس اکھ غٲر صحیح کٔسِر (Improper Fraction) چھِ؟",
+          "options": [
+            "9/4",
+            "1/3",
+            "3/8",
+            "2/7"
+          ],
+          "answer": "9/4",
+          "answer_target": "9/4"
+        },
+        {
+          "concept": "Improper Fractions",
+          "type": "short",
+          "question_en": "Is 4/4 considered an improper fraction?",
+          "question_target": "کیا 4/4 چھِ غٲر صحیح کٔسِر مَنٛز گِننہٕ یِوان؟",
+          "options": [],
+          "answer": "Yes",
+          "answer_target": "أہان (Yes)"
+        }
+      ]
+    },
+    {
+      "id": "fractions-3-ks",
+      "trackId": "fractions",
+      "trackTitle": "Fractions (ہِصہٕ)",
+      "trackOrder": 3,
+      "totalInTrack": 6,
+      "nextLessonId": "fractions-4-ks",
+      "label": "Fractions · Part 3: Mixed Fractions",
+      "grade": 5,
+      "subject": "maths",
+      "language": "kashmiri",
+      "source": "Grade lesson on mixed numbers and converting improper fractions to mixed fractions.",
+      "lesson": {
+        "title": "3. Mixed Fractions (مِکلٕتھ کٔسِر - Mixed Numbers)",
+        "objective": "To understand mixed numbers (a whole number combined with a fraction) and convert improper fractions into mixed numbers.",
+        "prerequisites": [
+          "Proper and improper fractions",
+          "Basic division with remainder"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "What is a Mixed Number?",
+            "name_target": "مِکلٕتھ کٔسِر کیاہ چھِ؟",
+            "simplified_en": "A mixed number combines a whole number and a proper fraction together. For example, 1 1/2 means one full item plus half of another.",
+            "explanation_target": "مِکلٕتھ کٔسِر مَنٛز چھُ اکھ پورٕ نَمبَر تہٕ اکھ صحیح کٔسِر رَلِتھ آسان، مِثال: ۱ ۱/۲ (اکھ پورٕ تہٕ آدٕ)۔",
+            "example_title": "Kahwa Samovars",
+            "example_en": "At a Kashmiri wedding, boiling 2 and a half samovars of sweet Kahwa is written as 2 1/2 samovars.",
+            "example_target": "خانٛدرَس مَنٛز زٕ پورٕ سَماوار تہٕ اکھ آدٕ سَماوار قَہوہ رَنُن چھُ ۲ ۱/۲ لؠکھنہٕ یِوان۔",
+            "diagram": null
+          },
+          {
+            "name_en": "Converting Improper to Mixed",
+            "name_target": "غٲر صحیح کٔسِر مِکلٕتھ کٔسِرِ مَنٛز بَدلاوُن",
+            "simplified_en": "Divide the numerator by the denominator. The quotient becomes the whole number, the remainder becomes the new numerator, and denominator stays the same.",
+            "explanation_target": "شُمار کُنِندَس کٔرِو نَصب نُما سٟتؠ تَقسِیم۔ حاصِلِ قِسمَت بَنے پورٕ نَمبَر، تہٕ باقٕیہ بَنے نَو شُمار کُنِندہ۔ مِثال: ۵/۴ = ۱ ۱/۴۔",
+            "example_title": "Sharing 7 Half-Apples",
+            "example_en": "If you have 7 half-apples (7/2), you have 3 whole apples and 1 half-apple left over: 3 1/2 apples.",
+            "example_target": "اگر تُہہِ نِش چھِ ۷ آدٕ ژوٗنٛٹھ (۷/۲)، تِم بَنَن ۳ پورٕ ژوٗنٛٹھ تہٕ اکھ آدٕ ژوٗنٛٹھ: ۳ ۱/۲۔",
+            "diagram": {
+              "kind": "flow",
+              "title_en": "Converting 7/2 to 3 1/2",
+              "title_target": "7/2 تبدِیل ۳ ۱/۲",
+              "nodes": [
+                {
+                  "label_en": "Improper (7/2)",
+                  "label_target": "غٲر صحیح کٔسِر (7/2)",
+                  "note_target": "7 ÷ 2"
+                },
+                {
+                  "label_en": "Quotient = 3",
+                  "label_target": "پورٕ نَمبَر = ۳",
+                  "note_target": "Whole part"
+                },
+                {
+                  "label_en": "Remainder = 1",
+                  "label_target": "باقٕیہ = ۱",
+                  "note_target": "New numerator (1/2)"
+                },
+                {
+                  "label_en": "Mixed Number",
+                  "label_target": "مِکلٕتھ نَمبَر (3 1/2)",
+                  "note_target": "۳ پورٕ تہٕ ۱/۲"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "What is a Mixed Number?",
+          "type": "mcq",
+          "question_en": "Which of the following is a mixed fraction?",
+          "question_target": "یِمَن مَنٛز کُس مِکلٕتھ کٔسِر (Mixed Fraction) چھِ؟",
+          "options": [
+            "2 1/3",
+            "7/3",
+            "4/5",
+            "9/2"
+          ],
+          "answer": "2 1/3",
+          "answer_target": "2 1/3"
+        },
+        {
+          "concept": "Converting Improper to Mixed",
+          "type": "mcq",
+          "question_en": "What is 5/2 written as a mixed number?",
+          "question_target": "کٔسِر 5/2 مِکلٕتھ کٔسِرِ مَنٛز کِتھ کَن لؠکھنہٕ یِیہِ؟",
+          "options": [
+            "2 1/2",
+            "1 1/2",
+            "3 1/2",
+            "2 2/3"
+          ],
+          "answer": "2 1/2",
+          "answer_target": "2 1/2"
+        }
+      ]
+    },
+    {
+      "id": "fractions-4-ks",
+      "trackId": "fractions",
+      "trackTitle": "Fractions (ہِصہٕ)",
+      "trackOrder": 4,
+      "totalInTrack": 6,
+      "nextLessonId": "fractions-5-ks",
+      "label": "Fractions · Part 4: Equivalent Fractions",
+      "grade": 5,
+      "subject": "maths",
+      "language": "kashmiri",
+      "source": "Grade lesson on equivalent fractions: multiplying or dividing numerator and denominator by the same number.",
+      "lesson": {
+        "title": "4. Equivalent Fractions (بَرابَر کٔسِر)",
+        "objective": "To find equivalent fractions by multiplying or dividing numerator and denominator by the same non-zero number.",
+        "prerequisites": [
+          "Multiplication tables",
+          "Understanding fractions"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Equivalent Fractions",
+            "name_target": "بَرابَر کٔسِر (Equivalent Fractions)",
+            "simplified_en": "Equivalent fractions look different but represent the exact same amount or value, such as 1/2 = 2/4 = 4/8.",
+            "explanation_target": "یہِ چھِ تِم کٔسِر یِم وُچھنہِ مَنٛز مُختَلِف چھِ آسان مَگَر اَصٕلَس مَنٛز چھِ اکھ بَرابَر قِیمَت تھاوان۔",
+            "example_title": "Kangri Charcoal",
+            "example_en": "Filling half of a kangri (1/2) holds the exact same coal as filling two quarters of it (2/4).",
+            "example_target": "کَنٛگِیر آدٕ (۱/۲) بَرنہِ یِیہِ یا ژورَن مَنٛزہ زٕ حِصہٕ (۲/۴)، مِقدار چھُ بَرابَر۔",
+            "diagram": null
+          },
+          {
+            "name_en": "Finding Equivalent Fractions",
+            "name_target": "بَرابَر کٔسِر لَبُن",
+            "simplified_en": "To find an equivalent fraction, multiply or divide BOTH the numerator and denominator by the same number.",
+            "explanation_target": "بَرابَر کٔسِر بَناوَنہِ خٲطرٕ پَزِ شُمار کُنِندہ تہٕ نَصب نُما دۄشوٕنی اَکوی نَمبَرَس سٟتؠ ضَرَب یا تَقسِیم کَرُن۔",
+            "example_title": "Dividing Saffron Fields",
+            "example_en": "A saffron farmer dividing his field into 2 parts and working on 1 part is doing the same work as dividing into 4 parts and working on 2.",
+            "example_target": "کۄنٛگ کِھت دۄن حِصَن مَنٛز ۱ حِصہٕ یا ژورَن مَنٛز ۲ حِصہٕ کٲم کَرُن چھُ ۱/۲ = ۲/۴ بَرابَر۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Equivalent Fractions",
+          "type": "mcq",
+          "question_en": "Which fraction is equivalent to 1/3?",
+          "question_target": "کٔسِر 1/3 ہِنٛدِ بَرابَر (Equivalent) کُس کٔسِر چھِ؟",
+          "options": [
+            "2/6",
+            "2/5",
+            "3/6",
+            "1/6"
+          ],
+          "answer": "2/6",
+          "answer_target": "2/6"
+        },
+        {
+          "concept": "Equivalent Fractions",
+          "type": "numeric",
+          "question_en": "Fill in the blank: 3/4 = ?/8",
+          "question_target": "خٲلی جاے بٔرِو: 3/4 = ?/8",
+          "options": [],
+          "answer": "6",
+          "answer_target": "6"
+        }
+      ]
+    },
+    {
+      "id": "fractions-5-ks",
+      "trackId": "fractions",
+      "trackTitle": "Fractions (ہِصہٕ)",
+      "trackOrder": 5,
+      "totalInTrack": 6,
+      "nextLessonId": "fractions-6-ks",
+      "label": "Fractions · Part 5: Comparing & Adding Like Fractions",
+      "grade": 5,
+      "subject": "maths",
+      "language": "kashmiri",
+      "source": "Grade lesson on comparing fractions with like denominators and adding like fractions.",
+      "lesson": {
+        "title": "5. Comparing & Adding Like Fractions (کٔسِر موازنہٕ تہٕ جمع)",
+        "objective": "To compare fractions with the same denominator and add them by keeping the denominator same and adding numerators.",
+        "prerequisites": [
+          "Understanding fractions",
+          "Basic addition"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Comparing Like Fractions",
+            "name_target": "اَکوی نَصب نُما وٲلؠ کٔسِرَن ہُنٛد موازنہٕ",
+            "simplified_en": "When the bottom numbers are the same, just look at the top numbers. The bigger top number is the bigger fraction: 5/8 > 3/8.",
+            "explanation_target": "ییلہِ بۄنِم نَمبَر (نَصب نُما) اَکوی آسَن، بوڈ شُمار کُنِندہ بَناوان چھُ بوڈ کٔسِر۔ مِثال: ۵/۸ چھُ ۳/۸ کھۄتہٕ بوڈ۔",
+            "example_title": "Shawl Weaving",
+            "example_en": "If Asif has woven 5/8 of a Pashmina shawl and Bilal has woven 3/8, Asif has woven more.",
+            "example_target": "اگر عاصِفَن پَشمِینہِ شالُک ۵/۸ وۄو تہٕ بِلالَن ۳/۸، عاصِفَن چھُ زِیادٕ وۄنمُت۔",
+            "diagram": null
+          },
+          {
+            "name_en": "Adding Like Fractions",
+            "name_target": "اَکوی نَصب نُما وٲلؠ کٔسِر جمع کَرُن",
+            "simplified_en": "To add fractions with the same denominator, add the numerators together and keep the denominator unchanged: 1/5 + 2/5 = 3/5.",
+            "explanation_target": "ییلہِ نَصب نُما بَرابَر آسَن، صِرِف شُمار کُنِندہ کٔرِو جمع، نَصب نُما چھُ سُہوی روزان۔ ۱/۵ + ۲/۵ = ۳/۵۔",
+            "example_title": "Drinking Kahwa",
+            "example_en": "If you drink 1/4 pot of Kahwa in the morning and 2/4 in the afternoon, you drank 3/4 pot in total.",
+            "example_target": "صۆبحَس ۱/۴ پیا پیو تہٕ دَپھَرَس ۲/۴، کُل پیو تُہؠ ۱/۴ + ۲/۴ = ۳/۴۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Comparing Like Fractions",
+          "type": "mcq",
+          "question_en": "Which fraction is greater: 4/7 or 2/7?",
+          "question_target": "کُس کٔسِر چھِ بَڈ: 4/7 کِنہ 2/7؟",
+          "options": [
+            "4/7",
+            "2/7",
+            "Both are equal",
+            "Cannot be determined"
+          ],
+          "answer": "4/7",
+          "answer_target": "4/7"
+        },
+        {
+          "concept": "Adding Like Fractions",
+          "type": "mcq",
+          "question_en": "What is 2/9 + 4/9?",
+          "question_target": "2/9 + 4/9 کیا بَنییہِ؟",
+          "options": [
+            "6/9",
+            "6/18",
+            "8/9",
+            "2/9"
+          ],
+          "answer": "6/9",
+          "answer_target": "6/9"
+        }
+      ]
+    },
+    {
+      "id": "fractions-6-ks",
+      "trackId": "fractions",
+      "trackTitle": "Fractions (ہِصہٕ)",
+      "trackOrder": 6,
+      "totalInTrack": 6,
+      "nextLessonId": null,
+      "label": "Fractions · Part 6: Word Problems & Real Life",
+      "grade": 5,
+      "subject": "maths",
+      "language": "kashmiri",
+      "source": "Grade lesson on real-life fraction word problems in Kashmiri contexts.",
+      "lesson": {
+        "title": "6. Kashmiri Fraction Word Problems (عملی کٔسِر)",
+        "objective": "To solve real-world daily life word problems involving fractions in Kashmiri settings.",
+        "prerequisites": [
+          "Understanding all fraction types",
+          "Addition and subtraction of fractions"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Word Problems with Parts of a Whole",
+            "name_target": "روزمرہ زِندگی مَنٛز کٔسِر ہِنٛزِ عملی مَسلہٕ",
+            "simplified_en": "In real life, we use fractions when sharing food, measuring ingredients, and dividing tasks.",
+            "explanation_target": "روزمرہ زِندگی مَنٛز چھِ اَسؠ کھیَن پؠن، باگاوَن، تہٕ کٲم تَقسِیم کَرنَس مَنٛز کٔسِر اِستِعمال کَران۔",
+            "example_title": "Walnut Kernels Sharing",
+            "example_en": "Grandfather brings 12 walnuts. He gives 1/4 to Zooni. Zooni gets 3 walnuts (12 divided by 4).",
+            "example_target": "بوڈٕ بابَن ہیتہِ ۱۲ دونٛٹھ۔ زوٗنِہ ہَس دِتُن ۱/۴، تَمِس مِلے ۳ دونٛٹھ۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Word Problems with Parts of a Whole",
+          "type": "numeric",
+          "question_en": "A box has 16 Kashmiri apples. You give 1/4 of them to your neighbor. How many apples did you give?",
+          "question_target": "اِکِس پیٹی مَنٛز چھِ ۱۶ ژوٗنٛٹھ۔ تُہؠ دِیو ۱/۴ ہمسایَس۔ کٔتؠ ژوٗنٛٹھ دِتو؟",
+          "options": [],
+          "answer": "4",
+          "answer_target": "4"
+        },
+        {
+          "concept": "Word Problems with Parts of a Whole",
+          "type": "numeric",
+          "question_en": "A baker bakes 20 Tsochwors. He sells 3/4 of them in the morning. How many Tsochwors were sold?",
+          "question_target": "کاندرَن بَنٲوؠ ۲۰ ژۄچوَر۔ صۆبحَس کٔنؠ تَمؠ ۳/۴۔ کٔتؠ ژۄچوَر کٔنؠ تَمؠ؟",
+          "options": [],
+          "answer": "15",
+          "answer_target": "15"
+        }
+      ]
+    },
+    {
+      "id": "water-cycle-1-ks",
+      "trackId": "water-cycle",
+      "trackTitle": "Water Cycle (آبُک چَکَر)",
+      "trackOrder": 1,
+      "totalInTrack": 5,
+      "nextLessonId": "water-cycle-2-ks",
+      "label": "Water cycle · Part 1: Journey of Water",
+      "grade": 5,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on the water cycle: continuous journey of water on Earth.",
+      "lesson": {
+        "title": "1. The Water Cycle: The Journey of Water (آبُک چَکَر)",
+        "objective": "To understand that water moves constantly between the ground and sky in a repeating cycle.",
+        "prerequisites": [
+          "Water exists as liquid, ice and steam"
+        ],
+        "difficulty": "easy",
+        "concepts": [
+          {
+            "name_en": "The Continuous Water Cycle",
+            "name_target": "آبُک لَگاتار چَکَر",
+            "simplified_en": "The water cycle is the endless journey of water from Earth's surface to the atmosphere and back again. The water you drink today was once rain falling on ancient mountains.",
+            "explanation_target": "آبُک چَکَر چھُ آبُک زٔمیٖنہِ پیٹھہٕ نَبَس کُن تہٕ نَبہٕ پیٹھہٕ واپس زٔمیٖنَس پؠٹھ اکھ لَگاتار سَفَر۔",
+            "example_title": "Dal Lake Water",
+            "example_en": "Water in Dal Lake travels up to the sky as vapor, forms clouds, and returns as snow on the peaks of Zabarwan.",
+            "example_target": "ڈَل جھیلُک آب چھُ باف بَنِتھ نَبَس کھَسان، اوبُر بَناوَن، تہٕ شِین بَنِتھ زَبَروَن پہاڑن پیٹھ واپس وَسان۔",
+            "diagram": {
+              "kind": "cycle",
+              "title_en": "Water Cycle",
+              "title_target": "آبُک چَکَر",
+              "nodes": [
+                {
+                  "label_en": "Evaporation",
+                  "label_target": "باف بَنُن",
+                  "note_target": "آفتابُک تَپِش"
+                },
+                {
+                  "label_en": "Condensation",
+                  "label_target": "اوبُر بَنُن",
+                  "note_target": "نَبَس مَنٛز"
+                },
+                {
+                  "label_en": "Precipitation",
+                  "label_target": "رُود تہِ شِین",
+                  "note_target": "وسُن"
+                },
+                {
+                  "label_en": "Collection",
+                  "label_target": "جَمَع گژھُن",
+                  "note_target": "جھیل تہٕ دٔرؠیاو"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "The Continuous Water Cycle",
+          "type": "mcq",
+          "question_en": "Where does the energy that drives the water cycle come from?",
+          "question_target": "واٹر سائیکل چَلاوَن وٲلؠ تَوانٲیی کَتہِ پیٹھہٕ یِوان چھِ؟",
+          "options": [
+            "The Sun (آفتاب)",
+            "The Moon (زوٗن)",
+            "The Wind (ہَوا)",
+            "The Mountains (پہاڑ)"
+          ],
+          "answer": "The Sun (آفتاب)",
+          "answer_target": "The Sun (آفتاب)"
+        }
+      ]
+    },
+    {
+      "id": "water-cycle-2-ks",
+      "trackId": "water-cycle",
+      "trackTitle": "Water Cycle (آبُک چَکَر)",
+      "trackOrder": 2,
+      "totalInTrack": 5,
+      "nextLessonId": "water-cycle-3-ks",
+      "label": "Water cycle · Part 2: Evaporation",
+      "grade": 5,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on evaporation: heat changing liquid water into water vapor.",
+      "lesson": {
+        "title": "2. Evaporation (باف بَنُن - Evaporation)",
+        "objective": "To learn how sunlight heats water and converts it from liquid to invisible water vapor.",
+        "prerequisites": [
+          "Water changes into steam when heated"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Evaporation Process",
+            "name_target": "باف بَنُن (Evaporation)",
+            "simplified_en": "When the sun warms up water in rivers and lakes, it turns into an invisible gas called water vapor that rises up into the sky.",
+            "explanation_target": "آفتابُک گرمی چھِ آبَس تَتھاوَن تہٕ یہِ چھُ بے نِشان گیس (باف) بَنِتھ نَبَس کُن کھَسان۔",
+            "example_title": "Drying Pherans",
+            "example_en": "When you wash a wet Pheran and hang it under the sun, the water evaporates into the air and the cloth dries.",
+            "example_target": "ییلہِ اَسؠ آفتابَس تَل نَم پھیرَن ترٛاوان چھِ، تَمِہ مَنٛزُک آب چھُ باف بَنِتھ نؠبَر نیران۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Evaporation Process",
+          "type": "mcq",
+          "question_en": "What happens to liquid water during evaporation?",
+          "question_target": "ایواپوریشن مَنٛز آبَس کیاہ چھُ گژھان؟",
+          "options": [
+            "It turns into water vapor (gas)",
+            "It freezes into ice",
+            "It changes into snow",
+            "It stays the same"
+          ],
+          "answer": "It turns into water vapor (gas)",
+          "answer_target": "It turns into water vapor (gas)"
+        }
+      ]
+    },
+    {
+      "id": "water-cycle-3-ks",
+      "trackId": "water-cycle",
+      "trackTitle": "Water Cycle (آبُک چَکَر)",
+      "trackOrder": 3,
+      "totalInTrack": 5,
+      "nextLessonId": "water-cycle-4-ks",
+      "label": "Water cycle · Part 3: Condensation & Clouds",
+      "grade": 5,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on condensation: cool air turning water vapor into water droplets forming clouds.",
+      "lesson": {
+        "title": "3. Condensation & Clouds (اوبُر بَنُن - Condensation)",
+        "objective": "To explain how rising water vapor cools and condenses into cloud droplets and dew.",
+        "prerequisites": [
+          "Evaporation",
+          "Cooling causes condensation"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Condensation",
+            "name_target": "کُنٛڈنسیشن تہٕ اوبُر بَنُن",
+            "simplified_en": "High up in the sky the air is cold. The invisible water vapor cools down and turns back into tiny water droplets, creating clouds.",
+            "explanation_target": "نَبَس مَنٛز چھِ ترٛیشر (سَردی) آسان۔ ییلہِ آبُک باف تھود گژھان چھُ، سُہ چھُ شَبنَم تہٕ اوبُر بَناوَن۔",
+            "example_title": "Cold Glass of Sharbat",
+            "example_en": "On a warm Kashmiri afternoon, a cold glass of Babribyol sharbat forms tiny water droplets on the outside.",
+            "example_target": "شَربَت کِس تھدِ گلاسَس نؠبَر کَنہِ یِم آبٕچ قَطرٕ بَنان چھِ، سُہ چھُ کُنٛڈنسیشنُک مِثال۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Condensation",
+          "type": "fill",
+          "question_en": "Clouds are formed due to the process of _______.",
+          "question_target": "اوبُر چھُ _______ عَمَل کِنؠ بَنان۔",
+          "options": [],
+          "answer": "Condensation",
+          "answer_target": "Condensation (کُنٛڈنسیشن)"
+        }
+      ]
+    },
+    {
+      "id": "water-cycle-4-ks",
+      "trackId": "water-cycle",
+      "trackTitle": "Water Cycle (آبُک چَکَر)",
+      "trackOrder": 4,
+      "totalInTrack": 5,
+      "nextLessonId": "water-cycle-5-ks",
+      "label": "Water cycle · Part 4: Precipitation (Rain & Snow)",
+      "grade": 5,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on precipitation: rain, snow, sleet and hail.",
+      "lesson": {
+        "title": "4. Precipitation: Rain & Snow (رُود تہِ شِین)",
+        "objective": "To understand different forms of precipitation when cloud water droplets become heavy.",
+        "prerequisites": [
+          "Cloud formation"
+        ],
+        "difficulty": "easy",
+        "concepts": [
+          {
+            "name_en": "Precipitation",
+            "name_target": "رُود تہِ شِین (Precipitation)",
+            "simplified_en": "When clouds become too heavy with water droplets, the water falls back to the Earth as rain or, in cold winter, as snow.",
+            "explanation_target": "ییٚلہِ اوبُر واریاہ گۄب گژھان چھُ، آب چھُ رُود یا شِین بَنِتھ زمینَس پؠٹھ پؠوان۔",
+            "example_title": "Winter in Gulmarg",
+            "example_en": "In the chill of Kashmiri winter, water vapor precipitates as white snowflakes blanketing Gulmarg and Pahalgam.",
+            "example_target": "وَنٛدَس مَنٛز چھُ نَبہٕ پیٹھہٕ شِین پؠوان یُس گُلمَرگ تہٕ پَہَلگامَس سَفید چادَر چَڑھاوَن چھُ۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Precipitation",
+          "type": "mcq",
+          "question_en": "Which of the following is NOT a form of precipitation?",
+          "question_target": "یِمَن مَنٛز کُس پریسپیٹیشنُک قِسم نَہ چھُ؟",
+          "options": [
+            "Smoke (دُہ)",
+            "Rain (رُود)",
+            "Snow (شِین)",
+            "Hail (ہالہٕ)"
+          ],
+          "answer": "Smoke (دُہ)",
+          "answer_target": "Smoke (دُہ)"
+        }
+      ]
+    },
+    {
+      "id": "water-cycle-5-ks",
+      "trackId": "water-cycle",
+      "trackTitle": "Water Cycle (آبُک چَکَر)",
+      "trackOrder": 5,
+      "totalInTrack": 5,
+      "nextLessonId": null,
+      "label": "Water cycle · Part 5: Collection & Glaciers",
+      "grade": 5,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on water collection, rivers and glaciers of Kashmir.",
+      "lesson": {
+        "title": "5. Collection & Kashmir's Glaciers (آب جَمَع گژھُن تہٕ گلیشِیَر)",
+        "objective": "To understand how melted snow and rainwater gather in rivers, streams, and lakes.",
+        "prerequisites": [
+          "Precipitation",
+          "Rivers flow downhill"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Collection and Glaciers",
+            "name_target": "آب جَمَع گژھُن تہٕ کٲشِرؠ گلیشِیَر",
+            "simplified_en": "Fallen snow packs onto mountains as glaciers. In spring, melted water flows down into streams like the Lidder and into River Jhelum.",
+            "explanation_target": "پہاڑَن پؠٹھ چھُ شِین گلیشِیَر بَناوَن۔ سونٛتھ کِس موسمَس مَنٛز گَلِتھ آب لِدَر کولِ تہٕ وؠتھ (جہلم) مَنٛز وَسان چھُ۔",
+            "example_title": "Dal Lake and Jhelum",
+            "example_en": "Rainwater and melted snow from the Pir Panjal range collect in the Dal Lake and flow down the Jhelum to feed our valley.",
+            "example_target": "پِیر پَنٛجال پہاڑو پیٹھہٕ یُس آب وسان چھُ، تَمِہ سٟتؠ چھُ ڈَل جھیل بَران تہٕ وؠتھ پَکان۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Collection and Glaciers",
+          "type": "mcq",
+          "question_en": "Where does most of the rainwater and melted snow eventually collect?",
+          "question_target": "رُود تہٕ گَلمُت شِین کَتہِ جَمَع گژھان چھُ؟",
+          "options": [
+            "Lakes and Rivers (جھیل تہٕ دٔرؠیاو)",
+            "In the clouds",
+            "In space",
+            "Under buildings"
+          ],
+          "answer": "Lakes and Rivers (جھیل تہٕ دٔرؠیاو)",
+          "answer_target": "Lakes and Rivers (جھیل تہٕ دٔرؠیاو)"
+        }
+      ]
+    },
+    {
+      "id": "atoms-1-ks",
+      "trackId": "atoms",
+      "trackTitle": "Atoms & Molecules (ایٹَم تہٕ مالیکیول)",
+      "trackOrder": 1,
+      "totalInTrack": 5,
+      "nextLessonId": "atoms-2-ks",
+      "label": "Atoms · Part 1: What is an Atom?",
+      "grade": 8,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on atoms: the fundamental building block of all matter.",
+      "lesson": {
+        "title": "1. What is an Atom? (ایٹَم کیاہ چھُ؟)",
+        "objective": "To define the atom as the basic unit of matter and understand its microscopic scale.",
+        "prerequisites": [
+          "States of matter",
+          "Concept of particles"
+        ],
+        "difficulty": "easy",
+        "concepts": [
+          {
+            "name_en": "The Atom",
+            "name_target": "ایٹَم - مادٕ ہُند بُنیادی ذَرٕ",
+            "simplified_en": "An atom is the smallest building block of all matter. Everything around you, including trees, copper pots, and air, is made of atoms.",
+            "explanation_target": "ایٹَم چھُ کُنہِ چیٖزُک سارِوٕے کھۄتہٕ لۄکُٹ ذَرٕ۔ کائناتَس مَنٛز پرؠتھ چیٖز چھُ ایٹَمَن ہُنٛد بَنومُت۔",
+            "example_title": "Kangri Willow Twigs",
+            "example_en": "Just as a Kangri is woven from thousands of tiny willow twigs, every object is built from billions of tiny atoms.",
+            "example_target": "جِتھ کَن اکھ کَنٛگِیر پۄتھَن ہِنٛدؠن لۄکٹؠن شَہَن سٟتؠ وۄنِتھ بَنان چھِ، تِتھ کَن چھُ پرؠتھ چیٖز ارباں ایٹَمَن ہُنٛد بَنومُت۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "The Atom",
+          "type": "mcq",
+          "question_en": "What is the smallest basic unit of an element?",
+          "question_target": "کُنہِ عُنصُرُک سارِوٕے کھۄتہٕ لۄکُٹ بُنیادی ذَرٕ کیا چھُ؟",
+          "options": [
+            "Atom (ایٹم)",
+            "Cell (سیل)",
+            "Molecule (مالیکیول)",
+            "Tissue (ٹشو)"
+          ],
+          "answer": "Atom (ایٹم)",
+          "answer_target": "Atom (ایٹم)"
+        }
+      ]
+    },
+    {
+      "id": "atoms-2-ks",
+      "trackId": "atoms",
+      "trackTitle": "Atoms & Molecules (ایٹَم تہٕ مالیکیول)",
+      "trackOrder": 2,
+      "totalInTrack": 5,
+      "nextLessonId": "atoms-3-ks",
+      "label": "Atoms · Part 2: Protons & Neutrons in the Nucleus",
+      "grade": 8,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on the atomic nucleus, protons and neutrons.",
+      "lesson": {
+        "title": "2. The Nucleus: Protons & Neutrons (نیوکلِیَس)",
+        "objective": "To describe the central nucleus containing positively charged protons and neutral neutrons.",
+        "prerequisites": [
+          "Basic understanding of an atom"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Atomic Nucleus",
+            "name_target": "نیوکلِیَس: پروٹان تہٕ نیوٹران",
+            "simplified_en": "At the very center of an atom lies the dense nucleus. It houses positively charged protons and uncharged neutrons.",
+            "explanation_target": "ایٹَم کِس بیٖچِس مَنٛز چھُ اکھ گۄب مَرکَز یَتھ نیوکلِیَس وَنان چھِ۔ اَتھ مَنٛز چھِ پروٹان تہٕ نیوٹران آسان۔",
+            "example_title": "Walnut Core",
+            "example_en": "Think of a Kashmiri walnut: the dense inner core inside the shell is like the nucleus of an atom.",
+            "example_target": "اکھ کٲشُر دونٛٹھ صوچِو: اَمِچ گُجی بیٖچِس مَنٛز بَنٛد چھِ، تِتھ کَن چھُ پروٹان تہٕ نیوٹران نیوکلِیَسَس مَنٛز آسان۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Atomic Nucleus",
+          "type": "mcq",
+          "question_en": "Which subatomic particle carries a positive charge?",
+          "question_target": "کُس ذَرٕ مُثبَت (Positive) چارج تھاوان چھُ؟",
+          "options": [
+            "Proton (پروٹان)",
+            "Electron (الیکٹران)",
+            "Neutron (نیوٹران)",
+            "Photon"
+          ],
+          "answer": "Proton (پروٹان)",
+          "answer_target": "Proton (پروٹان)"
+        }
+      ]
+    },
+    {
+      "id": "atoms-3-ks",
+      "trackId": "atoms",
+      "trackTitle": "Atoms & Molecules (ایٹَم تہٕ مالیکیول)",
+      "trackOrder": 3,
+      "totalInTrack": 5,
+      "nextLessonId": "atoms-4-ks",
+      "label": "Atoms · Part 3: Electrons and Shells",
+      "grade": 8,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on electrons, negative charge and electron shells.",
+      "lesson": {
+        "title": "3. Electrons and Shells (الؠکٹران تہٕ مَدار)",
+        "objective": "To learn how negatively charged electrons orbit the nucleus in energy levels.",
+        "prerequisites": [
+          "Protons and neutrons"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Electrons and Shells",
+            "name_target": "الؠکٹران تہٕ اَمِک مَدار (Orbits)",
+            "simplified_en": "Electrons are lightweight, negatively charged particles revolving around the nucleus at lightning speed.",
+            "explanation_target": "الؠکٹران چھِ لۄکٹی مَنفی چارج تھَوَن وٲلؠ ذَرٕ یِم نیوکلِیَس کِس گِرد تیٖزی سٟتؠ چَکَر کَٹان چھِ۔",
+            "example_title": "Honeybees around Saffron",
+            "example_en": "Picture honeybees buzzing rapidly around a fragrant saffron flower in Pampore. The flower is the nucleus, and the bees are electrons.",
+            "example_target": "پامپور کِس کۄنٛگَس گِرد چَکَر کَٹَن وٲلِہ پۆمبُر صوچِو، پۆمبُر چھِ الؠکٹرانَن ہِش چَکَر کاٹان۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Electrons and Shells",
+          "type": "mcq",
+          "question_en": "What charge does an electron carry?",
+          "question_target": "الؠکٹرانَس پؠٹھ کُس چارج آسان چھُ؟",
+          "options": [
+            "Negative (-)",
+            "Positive (+)",
+            "No charge (0)",
+            "Neutral"
+          ],
+          "answer": "Negative (-)",
+          "answer_target": "Negative (-)"
+        }
+      ]
+    },
+    {
+      "id": "atoms-4-ks",
+      "trackId": "atoms",
+      "trackTitle": "Atoms & Molecules (ایٹَم تہٕ مالیکیول)",
+      "trackOrder": 4,
+      "totalInTrack": 5,
+      "nextLessonId": "atoms-5-ks",
+      "label": "Atoms · Part 4: Elements & Periodic Table",
+      "grade": 8,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on chemical elements and atomic numbers.",
+      "lesson": {
+        "title": "4. Elements & Periodic Table (عناصِر)",
+        "objective": "To understand that each element has a unique number of protons and chemical properties.",
+        "prerequisites": [
+          "Atomic structure"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Chemical Elements",
+            "name_target": "عناصِر تہٕ ایٹَمی نَمبَر",
+            "simplified_en": "An element is made of only one kind of atom. Copper, oxygen, and gold are all different elements with different numbers of protons.",
+            "explanation_target": "عُنصُر مَنٛز چھِ صِرِف اَکوی قِسمُک ایٹَم آسان، مِثال: تام (Copper) یا سۄن (Gold)۔",
+            "example_title": "Copper Samovar",
+            "example_en": "A Kashmiri copper smith hammers a Samovar made of billions of pure copper (Cu) atoms.",
+            "example_target": "کٲشُر کَنٛڈِل کار یُس تامُک ساموار ٹھوکان چھُ، سُہ چھُ تام کؠن پیوٗر ایٹَمَن ہُنٛد بَنومُت۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Chemical Elements",
+          "type": "mcq",
+          "question_en": "Which element is commonly used to make traditional Kashmiri Samovars?",
+          "question_target": "کٲشِرؠ رِوایَتی ساموار بَناوَنہِ خٲطرٕ کُس عُنصُر اِستِعمال گژھان چھُ؟",
+          "options": [
+            "Copper (تام)",
+            "Plastic",
+            "Wood",
+            "Glass"
+          ],
+          "answer": "Copper (تام)",
+          "answer_target": "Copper (تام)"
+        }
+      ]
+    },
+    {
+      "id": "atoms-5-ks",
+      "trackId": "atoms",
+      "trackTitle": "Atoms & Molecules (ایٹَم تہٕ مالیکیول)",
+      "trackOrder": 5,
+      "totalInTrack": 5,
+      "nextLessonId": null,
+      "label": "Atoms · Part 5: Chemical Bonds & Molecules",
+      "grade": 8,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on molecules and chemical bonds.",
+      "lesson": {
+        "title": "5. Chemical Bonds & Molecules (مالیکیول تہٕ بانٛڈ)",
+        "objective": "To understand how atoms share or exchange electrons to form molecules like water and salt.",
+        "prerequisites": [
+          "Atoms and electrons"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Molecules and Bonds",
+            "name_target": "مالیکیول تہٕ کیمیٲیی بانٛڈ",
+            "simplified_en": "When two or more atoms join and bond together, they form a molecule. Two hydrogen atoms and one oxygen atom form a water molecule (H2O).",
+            "explanation_target": "ییلہِ زٕ یا زِیادٕ ایٹَم اکھ بَنٛدھَن (Bond) بَناوَن چھِ، تَتھ مالیکیول وَنان چھِ۔ مِثال: آب (H2O)۔",
+            "example_title": "Noon Chai Salt (NaCl)",
+            "example_en": "The salt in Kashmiri Noon Chai is made of sodium and chlorine atoms holding hands to form sodium chloride molecules.",
+            "example_target": "نُوٗن چاے مَنٛز یُس نُوٗن (NaCl) چھُ، سُہ چھُ سوڈِیَم تہٕ کلورِین کین ایٹَمَن ہُنٛد رَلِتھ مالیکیول۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Molecules and Bonds",
+          "type": "mcq",
+          "question_en": "How many hydrogen atoms are present in one water molecule (H2O)?",
+          "question_target": "آب کِس اِکِس مالیکیول (H2O) مَنٛز کٔتؠ ہائیڈروجن ایٹَم آسان چھِ؟",
+          "options": [
+            "2",
+            "1",
+            "3",
+            "4"
+          ],
+          "answer": "2",
+          "answer_target": "2"
+        }
+      ]
+    },
+    {
+      "id": "photosynthesis-1-ks",
+      "trackId": "photosynthesis",
+      "trackTitle": "Photosynthesis (فوٹوسِنتھِسِس)",
+      "trackOrder": 1,
+      "totalInTrack": 5,
+      "nextLessonId": "photosynthesis-2-ks",
+      "label": "Photosynthesis · Part 1: How Plants Make Food",
+      "grade": 8,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on photosynthesis: how green leaves make food using sunlight, water and carbon dioxide.",
+      "lesson": {
+        "title": "1. How Plants Make Food (غِذا بَناوُن)",
+        "objective": "To learn the overall process where green plants turn sunlight, water and air into food.",
+        "prerequisites": [
+          "Parts of a plant"
+        ],
+        "difficulty": "easy",
+        "concepts": [
+          {
+            "name_en": "Photosynthesis Overview",
+            "name_target": "فوٹوسِنتھِسِس کیاہ چھُ؟",
+            "simplified_en": "Photosynthesis is the process plants use to make their own food. Leaves act like solar kitchens.",
+            "explanation_target": "یہِ چھُ پَنَن مَنٛز غِذا بَناوَنُک طَریقہٕ۔ کُلِ چھِ آفتاب، آب تہِ ہَوا اِستِعمال کَرِتھ غِذا بَناوَن۔",
+            "example_title": "Haakh Plant",
+            "example_en": "A Kashmiri Haakh plant in a sunny kitchen garden grows faster because it makes more food with sunlight.",
+            "example_target": "دٔجی مَنٛز ہاکھ تِتھؠ جایِہ اَصٕل بَڈان یِتہِ آفتابُک گاش اَصٕل پٲٹھؠ پیوان آسہِ۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Photosynthesis Overview",
+          "type": "mcq",
+          "question_en": "What energy source do green leaves use to produce food?",
+          "question_target": "سَبز پَن غِذا بَناوَنہِ خٲطرٕ کُس طاقَت اِستِعمال کَران چھِ؟",
+          "options": [
+            "Sunlight (آفتابُک گاش)",
+            "Moonlight",
+            "Wind",
+            "Artificial light only"
+          ],
+          "answer": "Sunlight (آفتابُک گاش)",
+          "answer_target": "Sunlight (آفتابُک گاش)"
+        }
+      ]
+    },
+    {
+      "id": "photosynthesis-2-ks",
+      "trackId": "photosynthesis",
+      "trackTitle": "Photosynthesis (فوٹوسِنتھِسِس)",
+      "trackOrder": 2,
+      "totalInTrack": 5,
+      "nextLessonId": "photosynthesis-3-ks",
+      "label": "Photosynthesis · Part 2: Chlorophyll",
+      "grade": 8,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on chlorophyll: the green solar pigment.",
+      "lesson": {
+        "title": "2. Chlorophyll: The Green Pigment (کَلوروفِل)",
+        "objective": "To understand chlorophyll's role in absorbing light energy in plant cells.",
+        "prerequisites": [
+          "Plant cells"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Chlorophyll",
+            "name_target": "کَلوروفِل (Chlorophyll)",
+            "simplified_en": "Chlorophyll is the special green pigment inside leaves that captures energy from sunlight.",
+            "explanation_target": "کَلوروفِل چھُ اَکھ سَبز رَنٛگ یُس پَننَن مَنٛز آسان چھُ تہٕ آفتابُک گاش جَذَب کَرنس مَنٛز مَدَد کَران۔",
+            "example_title": "Chinar Leaves in Autumn",
+            "example_en": "In autumn (Harud), chlorophyll breaks down, turning the Chinar leaves from deep green to bright orange and red.",
+            "example_target": "بوٗنی ہِنٛد پَن چھِ ہاَرودَس مَنٛز کَلوروفِل کَم گَژھنہِ کِنؠ نِیول رَنٛگ تَرک کَران تہٕ موج گَژھان۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Chlorophyll",
+          "type": "mcq",
+          "question_en": "Which pigment gives leaves their green color?",
+          "question_target": "کُس پِگمینٹ پَننَن سَبز رَنٛگ دِوان چھُ؟",
+          "options": [
+            "Chlorophyll (کلوروفل)",
+            "Melanin",
+            "Hemoglobin",
+            "Carotene"
+          ],
+          "answer": "Chlorophyll (کلوروفل)",
+          "answer_target": "Chlorophyll (کلوروفل)"
+        }
+      ]
+    },
+    {
+      "id": "photosynthesis-3-ks",
+      "trackId": "photosynthesis",
+      "trackTitle": "Photosynthesis (فوٹوسِنتھِسِس)",
+      "trackOrder": 3,
+      "totalInTrack": 5,
+      "nextLessonId": "photosynthesis-4-ks",
+      "label": "Photosynthesis · Part 3: Stomata & Gas Exchange",
+      "grade": 8,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on stomata and gas exchange.",
+      "lesson": {
+        "title": "3. Stomata: Leaf Pores (سُٹومیٹا)",
+        "objective": "To learn how leaves take in carbon dioxide and release oxygen through microscopic pores.",
+        "prerequisites": [
+          "Gases in air"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Stomata",
+            "name_target": "سُٹومیٹا (Stomata)",
+            "simplified_en": "Stomata are tiny microscopic pores on the underside of leaves that breathe in carbon dioxide and release oxygen.",
+            "explanation_target": "سُٹومیٹا چھِ پَننَن ہِنٛدِ بۄنِمِہ طَرفہٕ لۄکٹی سوراخ یِم کُلِس ہَوا اَندر نِنہِ تہِ نؠبَر کَڈنہِ مَنٛز مَدَد کَران۔",
+            "example_title": "Dust on Apple Leaves",
+            "example_en": "Dust on apple orchard leaves near the road blocks stomata, making it hard for the tree to breathe.",
+            "example_target": "ژوٗنٛٹھ کُلین ہِنٛدَن پَننَن پیٹھ دُود جَمَع گَژھنہِ سٟتؠ چھِ یِم لۄکٹی سوراخ بَنٛد گَژھان۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Stomata",
+          "type": "mcq",
+          "question_en": "What gas enters the plant through the stomata for photosynthesis?",
+          "question_target": "فوٹوسِنتھِسِس خٲطرٕ کُس گیس سُٹومیٹا ذٔریعہٕ پَنَس اَندر گژھان چھُ؟",
+          "options": [
+            "Carbon Dioxide (کاربن ڈائی آکسائیڈ)",
+            "Oxygen",
+            "Nitrogen",
+            "Hydrogen"
+          ],
+          "answer": "Carbon Dioxide (کاربن ڈائی آکسائیڈ)",
+          "answer_target": "Carbon Dioxide (کاربن ڈائی آکسائیڈ)"
+        }
+      ]
+    },
+    {
+      "id": "photosynthesis-4-ks",
+      "trackId": "photosynthesis",
+      "trackTitle": "Photosynthesis (فوٹوسِنتھِسِس)",
+      "trackOrder": 4,
+      "totalInTrack": 5,
+      "nextLessonId": "photosynthesis-5-ks",
+      "label": "Photosynthesis · Part 4: Water & Glucose",
+      "grade": 8,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on roots absorbing water and production of glucose.",
+      "lesson": {
+        "title": "4. Water Transport & Glucose (آب تہٕ گلوکوز)",
+        "objective": "To trace water transport from roots and examine glucose formation as chemical energy.",
+        "prerequisites": [
+          "Roots function",
+          "Photosynthesis basics"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Water and Glucose",
+            "name_target": "آبُک بَہاو تہٕ گلوکوز بَنُن",
+            "simplified_en": "Roots draw water from the soil up through veins into the leaves. There, sunlight fuses water and carbon dioxide into sugar (glucose).",
+            "explanation_target": "مُجِہ چھِ زٔمیٖنہِ پیٹھہٕ آب کَڈِتھ پَنَن کُن سوزان، جَتھ گاش آب تہٕ ہَوا رَلٲوِتھ کھؠن (گلوکوز) بَناوَن چھُ۔",
+            "example_title": "Sweet Kashmiri Apples",
+            "example_en": "The sweet sugar inside delicious Kashmiri apples was manufactured by leaves using sunlight and water.",
+            "example_target": "ژوٗنٛٹھَن مَنٛز یُس مۆدُر رَس چھُ، سُہ چھُ پَنَن ہُنٛد بَنومُت گلوکوز۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Water and Glucose",
+          "type": "mcq",
+          "question_en": "What is the food/sugar produced by photosynthesis called?",
+          "question_target": "فوٹوسِنتھِسِس عَمَل مَنٛز پَنَن ہُنٛد بَنیومُت کھؠن کیا چھُ؟",
+          "options": [
+            "Glucose (گلوکوز)",
+            "Protein",
+            "Starch only",
+            "Salt"
+          ],
+          "answer": "Glucose (گلوکوز)",
+          "answer_target": "Glucose (گلوکوز)"
+        }
+      ]
+    },
+    {
+      "id": "photosynthesis-5-ks",
+      "trackId": "photosynthesis",
+      "trackTitle": "Photosynthesis (فوٹوسِنتھِسِس)",
+      "trackOrder": 5,
+      "totalInTrack": 5,
+      "nextLessonId": null,
+      "label": "Photosynthesis · Part 5: The Oxygen Cycle",
+      "grade": 8,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on the oxygen byproduct and planetary oxygen cycle.",
+      "lesson": {
+        "title": "5. Oxygen: The Life-Giving Byproduct (آکسیجَن)",
+        "objective": "To appreciate how photosynthesis supplies all oxygen on Earth for humans and animals to breathe.",
+        "prerequisites": [
+          "Photosynthesis reaction"
+        ],
+        "difficulty": "easy",
+        "concepts": [
+          {
+            "name_en": "Oxygen Cycle",
+            "name_target": "آکسیجَن تہٕ زِندگی ہُنٛد سَہارا",
+            "simplified_en": "As plants make food, they release clean oxygen back into the atmosphere for humans and animals to breathe.",
+            "explanation_target": "غِذا بَناوَنہِ پَتہٕ چھِ کُلِ نؠبَر صٲف آکسیجَن ترٛاوان یَتھ سٟتؠ اَسؠ پرؠتھ لَمحہٕ ساہ ہؠوان چھِ۔",
+            "example_title": "Dachigam Forests",
+            "example_en": "The pine and chinar forests in Dachigam produce fresh, crisp mountain oxygen that keeps Srinagar's air pure.",
+            "example_target": "داچی گام کؠن جَنٛگلَن مَنٛز کُلِ چھِ تازٕ آکسیجَن پٲدا کَران یُس کٔشیٖرِ ہِنٛز ہَوا صٲف تھاوان چھُ۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Oxygen Cycle",
+          "type": "mcq",
+          "question_en": "What gas is released into the air as a byproduct of photosynthesis?",
+          "question_target": "فوٹوسِنتھِسِس عَمَل مَنٛز نؠبَر کُس صٲف گیس کَڈنہٕ یِوان چھُ؟",
+          "options": [
+            "Oxygen (آکسیجن)",
+            "Carbon Dioxide",
+            "Methane",
+            "Smoke"
+          ],
+          "answer": "Oxygen (آکسیجن)",
+          "answer_target": "Oxygen (آکسیجن)"
+        }
+      ]
+    },
+    {
+      "id": "environment-1-ur",
+      "trackId": "environment",
+      "trackTitle": "Hamara Mahol (ہمارا ماحول)",
+      "trackOrder": 1,
+      "totalInTrack": 4,
+      "nextLessonId": "environment-2-ur",
+      "label": "Environment · Part 1: What is Environment?",
+      "grade": 6,
+      "subject": "social",
+      "language": "urdu",
+      "source": "Grade lesson on environment: land, water, plants, animals.",
+      "lesson": {
+        "title": "1. What is our Environment? (ماحول کیا ہے؟)",
+        "objective": "To define the environment and identify its living and non-living components.",
+        "prerequisites": [
+          "Surroundings awareness"
+        ],
+        "difficulty": "easy",
+        "concepts": [
+          {
+            "name_en": "Environment",
+            "name_target": "ماحول",
+            "simplified_en": "The environment is everything that surrounds us: the land, air, water, plants, and animals.",
+            "explanation_target": "ماحول سے مراد وہ تمام چیزیں ہیں جو ہمارے ارد گرد موجود ہیں جیسے زمین، پانی، ہوا اور جاندار۔",
+            "example_title": "Kashmir Surroundings",
+            "example_en": "The Pir Panjal mountains, the Dal Lake, and Chinar trees form our environment in Kashmir.",
+            "example_target": "کشمیر میں پہاڑ، جھیل ڈل اور چنار کے درخت ہمارے ماحول کا حصہ ہیں۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Environment",
+          "type": "mcq",
+          "question_en": "What comprises our environment?",
+          "question_target": "ہمارے ماحول میں کون سی چیزیں شامل ہیں؟",
+          "options": [
+            "Both living and non-living things (جاندار اور بے جان دونوں)",
+            "Only buildings",
+            "Only air",
+            "Only plants"
+          ],
+          "answer": "Both living and non-living things (جاندار اور بے جان دونوں)",
+          "answer_target": "Both living and non-living things (جاندار اور بے جان دونوں)"
+        }
+      ]
+    },
+    {
+      "id": "environment-2-ur",
+      "trackId": "environment",
+      "trackTitle": "Hamara Mahol (ہمارا ماحول)",
+      "trackOrder": 2,
+      "totalInTrack": 4,
+      "nextLessonId": "environment-3-ur",
+      "label": "Environment · Part 2: Natural Resources",
+      "grade": 6,
+      "subject": "social",
+      "language": "urdu",
+      "source": "Grade lesson on natural resources: water, soil, forests, air.",
+      "lesson": {
+        "title": "2. Natural Resources (قدرتی وسائل)",
+        "objective": "To identify renewable natural resources provided by nature.",
+        "prerequisites": [
+          "Environment basics"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Natural Resources",
+            "name_target": "قدرتی وسائل",
+            "simplified_en": "Natural resources are gifts from nature that humans use to live, including fresh water, fertile soil, and forests.",
+            "explanation_target": "قدرتی وسائل وہ نعمتیں ہیں جو قدرت نے انسان کو زندہ رہنے کے لیے دی ہیں جیسے پانی، مٹی اور جنگلات۔",
+            "example_title": "Apple Orchards",
+            "example_en": "We use the rich Kashmiri soil and mountain water to grow world-famous apples.",
+            "example_target": "ہم کشمیر کی زرخیز مٹی اور چشموں کا پانی سیب اگانے کے لیے استعمال کرتے ہیں۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Natural Resources",
+          "type": "mcq",
+          "question_en": "Which of these is a vital natural resource for life?",
+          "question_target": "ان میں سے کون سا زندگی کے لیے اہم قدرتی ذریعہ ہے؟",
+          "options": [
+            "Fresh Water (تازہ پانی)",
+            "Plastic bottles",
+            "Concrete roads",
+            "Cars"
+          ],
+          "answer": "Fresh Water (تازہ پانی)",
+          "answer_target": "Fresh Water (تازہ پانی)"
+        }
+      ]
+    },
+    {
+      "id": "environment-3-ur",
+      "trackId": "environment",
+      "trackTitle": "Hamara Mahol (ہمارا ماحول)",
+      "trackOrder": 3,
+      "totalInTrack": 4,
+      "nextLessonId": "environment-4-ur",
+      "label": "Environment · Part 3: Human Dependence",
+      "grade": 6,
+      "subject": "social",
+      "language": "urdu",
+      "source": "Grade lesson on human dependence on nature.",
+      "lesson": {
+        "title": "3. Human Dependence on Nature (انسانوں کا انحصار)",
+        "objective": "To understand how human survival depends directly on plants, animals, and clean climate.",
+        "prerequisites": [
+          "Natural resources"
+        ],
+        "difficulty": "easy",
+        "concepts": [
+          {
+            "name_en": "Human Dependence",
+            "name_target": "انسان کا قدرت پر انحصار",
+            "simplified_en": "Humans cannot survive without nature. Plants provide our food and oxygen, while animals give wool and milk.",
+            "explanation_target": "انسان کا گزارہ قدرت کے بغیر ناممکن ہے۔ پودے ہمیں آکسیجن اور خوراک دیتے ہیں، اور بھیڑیں اون۔",
+            "example_title": "The Kangri and Pheran",
+            "example_en": "In cold Kashmiri winters, we use wool from sheep for Pherans and willow wood for Kangris to keep warm.",
+            "example_target": "سردیوں میں ہم بھیڑوں کی اون سے گرم پھیرن اور بید کی لکڑی سے کانگڑی بناتے ہیں۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Human Dependence",
+          "type": "mcq",
+          "question_en": "How do humans directly depend on plants?",
+          "question_target": "انسان پودوں پر کس طرح منحصر ہیں؟",
+          "options": [
+            "For food and oxygen (خوراک اور آکسیجن کے لیے)",
+            "For plastic",
+            "For petrol",
+            "For electricity only"
+          ],
+          "answer": "For food and oxygen (خوراک اور آکسیجن کے لیے)",
+          "answer_target": "For food and oxygen (خوراک اور آکسیجن کے لیے)"
+        }
+      ]
+    },
+    {
+      "id": "environment-4-ur",
+      "trackId": "environment",
+      "trackTitle": "Hamara Mahol (ہمارا ماحول)",
+      "trackOrder": 4,
+      "totalInTrack": 4,
+      "nextLessonId": null,
+      "label": "Environment · Part 4: Protecting Our Nature",
+      "grade": 6,
+      "subject": "social",
+      "language": "urdu",
+      "source": "Grade lesson on conservation and protecting the environment.",
+      "lesson": {
+        "title": "4. Protecting Our Environment (ماحول کا تحفظ)",
+        "objective": "To understand why conserving forests, water bodies, and reducing waste is essential.",
+        "prerequisites": [
+          "Human dependence"
+        ],
+        "difficulty": "easy",
+        "concepts": [
+          {
+            "name_en": "Conservation",
+            "name_target": "ماحول کا تحفظ اور صفائی",
+            "simplified_en": "Protecting our environment means keeping our rivers clean, planting trees, and avoiding plastic waste.",
+            "explanation_target": "اپنے ماحول کی حفاظت کا مطلب ہے ندی نالوں کو صاف رکھنا، شجرکاری کرنا، اور کچرا نہ پھیلانا۔",
+            "example_title": "Saving Dal Lake",
+            "example_en": "Keeping Dal Lake free of plastic and waste ensures clean water for future generations of Kashmir.",
+            "example_target": "ڈل جھیل کو پلاسٹک اور گندگی سے پاک رکھنا ہماری خوبصورتی اور صحت کی ضمانت ہے۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Conservation",
+          "type": "mcq",
+          "question_en": "What is an effective way to protect our environment?",
+          "question_target": "ماحول کو بچانے کا بہترین طریقہ کیا ہے؟",
+          "options": [
+            "Planting trees and avoiding plastic (درخت لگانا اور پلاسٹک سے بچنا)",
+            "Throwing waste in rivers",
+            "Cutting forests",
+            "Burning leaves"
+          ],
+          "answer": "Planting trees and avoiding plastic (درخت لگانا اور پلاسٹک سے بچنا)",
+          "answer_target": "Planting trees and avoiding plastic (درخت لگانا اور پلاسٹک سے بچنا)"
+        }
+      ]
+    },
+    {
+      "id": "multiplication-1-ks",
+      "trackId": "multiplication",
+      "trackTitle": "Multiplication (ضَرَب)",
+      "trackOrder": 1,
+      "totalInTrack": 4,
+      "nextLessonId": "multiplication-2-ks",
+      "label": "Multiplication · Part 1: Repeated Addition",
+      "grade": 4,
+      "subject": "maths",
+      "language": "kashmiri",
+      "source": "Grade lesson on multiplication as repeated addition.",
+      "lesson": {
+        "title": "1. Multiplication as Repeated Addition (لَگاتار جمع)",
+        "objective": "To understand that multiplying numbers is adding equal groups together.",
+        "prerequisites": [
+          "Basic addition",
+          "Counting in groups"
+        ],
+        "difficulty": "easy",
+        "concepts": [
+          {
+            "name_en": "Repeated Addition",
+            "name_target": "لَگاتار جمع (Repeated Addition)",
+            "simplified_en": "Multiplication is a fast way of adding equal groups. 3 groups of 4 walnuts is 4 + 4 + 4 = 12 walnuts, written as 3 × 4 = 12.",
+            "explanation_target": "ضَرَب چھُ اَکوی قِسمٕک گرُوپ لَگاتار جمع کَرنُک تیٖز طَریقہٕ۔ ۳ دفعہ ۴ دونٛٹھ جمع کَرُن چھُ ۳ × ۴ = ۱۲۔",
+            "example_title": "Walnut Heaps",
+            "example_en": "If a farmer puts 5 walnuts in each of 4 willow baskets, he has 4 × 5 = 20 walnuts in total.",
+            "example_target": "اگر اکھ زَمِیندار ۴ ٹوکرؠن مَنٛز ۵-۵ دونٛٹھ تھاوان چھُ، تَمِس نِش چھِ ۴ × ۵ = ۲۰ دونٛٹھ۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Repeated Addition",
+          "type": "mcq",
+          "question_en": "Which repeated addition matches 4 × 3?",
+          "question_target": "4 × 3 خٲطرٕ کُس جمع مَیل کھؠوان چھُ؟",
+          "options": [
+            "3 + 3 + 3 + 3",
+            "4 + 4 + 4 + 4",
+            "4 + 3",
+            "3 × 3 × 3"
+          ],
+          "answer": "3 + 3 + 3 + 3",
+          "answer_target": "3 + 3 + 3 + 3"
+        }
+      ]
+    },
+    {
+      "id": "multiplication-2-ks",
+      "trackId": "multiplication",
+      "trackTitle": "Multiplication (ضَرَب)",
+      "trackOrder": 2,
+      "totalInTrack": 4,
+      "nextLessonId": "multiplication-3-ks",
+      "label": "Multiplication · Part 2: Arrays & Rows",
+      "grade": 4,
+      "subject": "maths",
+      "language": "kashmiri",
+      "source": "Grade lesson on arrays, rows and columns in multiplication.",
+      "lesson": {
+        "title": "2. Arrays & Grids (قَطارَن مَنٛز گِنُن)",
+        "objective": "To model multiplication using rows and columns in arrays.",
+        "prerequisites": [
+          "Repeated addition"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Arrays and Grids",
+            "name_target": "قَطار تہٕ ضَرَب",
+            "simplified_en": "Objects placed in equal rows and columns make an array. Rows × Columns gives the total number of items.",
+            "explanation_target": "چیزن برابر قطارن مَنٛز تھاوُن چھُ اَرے بَناوَن۔ قطارن ضرب کٔرِو کالمَن سٟتؠ، کُل حِساب چھُ مِلان۔",
+            "example_title": "Apple Box Packing",
+            "example_en": "Apples arranged in a wooden crate with 4 rows of 6 apples equal 4 × 6 = 24 apples.",
+            "example_target": "پیٹی مَنٛز ۴ قطارن مَنٛز ۶-۶ ژوٗنٛٹھ تھاوُن چھُ ۴ × ۶ = ۲۴ ژوٗنٛٹھ بَناوَن۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Arrays and Grids",
+          "type": "numeric",
+          "question_en": "A baker arranges Kashmiri Girdas in 3 rows with 5 in each row. How many Girdas are there?",
+          "question_target": "کاندرَن ترٛاوان چھِ ۳ قطارن مَنٛز ۵-۵ گِردٕ۔ کُل کٔتؠ گِردٕ چھِ؟",
+          "options": [],
+          "answer": "15",
+          "answer_target": "15"
+        }
+      ]
+    },
+    {
+      "id": "multiplication-3-ks",
+      "trackId": "multiplication",
+      "trackTitle": "Multiplication (ضَرَب)",
+      "trackOrder": 3,
+      "totalInTrack": 4,
+      "nextLessonId": "multiplication-4-ks",
+      "label": "Multiplication · Part 3: Multiplication Tables",
+      "grade": 4,
+      "subject": "maths",
+      "language": "kashmiri",
+      "source": "Grade lesson on multiplication tables and mental math.",
+      "lesson": {
+        "title": "3. Times Tables & Patterns (پَہاڑٕ)",
+        "objective": "To recognize number patterns and memorize essential multiplication facts.",
+        "prerequisites": [
+          "Arrays and multiplication basics"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Number Patterns in Tables",
+            "name_target": "پَہاڑن ہِنٛد نَمونہٕ (Patterns)",
+            "simplified_en": "Multiplication tables follow predictable skips. Multiplying by 10 always ends in 0; multiplying by 5 ends in 0 or 5.",
+            "explanation_target": "پہاڑن مَنٛز چھِ نمبرن ہُنٛد نَمونہٕ آسان۔ ۱۰ سٟتؠ ضَرَب کَرنَس پؠٹھ چھُ ٲخِرَس ۰ یِوان۔",
+            "example_title": "Saffron Flower Petals",
+            "example_en": "Each saffron flower has 6 purple petals. 5 flowers have 5 × 6 = 30 petals.",
+            "example_target": "پرؠتھ کۄنٛگ پوشَس چھِ ۶ پَنکھڑی آسان۔ ۵ پوشَن چھِ ۵ × ۶ = ۳۰ پَنکھڑی۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Number Patterns in Tables",
+          "type": "mcq",
+          "question_en": "What is 7 × 8?",
+          "question_target": "7 × 8 کیا بَنییہِ؟",
+          "options": [
+            "56",
+            "54",
+            "48",
+            "64"
+          ],
+          "answer": "56",
+          "answer_target": "56"
+        }
+      ]
+    },
+    {
+      "id": "multiplication-4-ks",
+      "trackId": "multiplication",
+      "trackTitle": "Multiplication (ضَرَب)",
+      "trackOrder": 4,
+      "totalInTrack": 4,
+      "nextLessonId": null,
+      "label": "Multiplication · Part 4: Kashmiri Word Problems",
+      "grade": 4,
+      "subject": "maths",
+      "language": "kashmiri",
+      "source": "Grade lesson on multiplication word problems in Kashmir.",
+      "lesson": {
+        "title": "4. Practical Word Problems (عملی ضَرَب)",
+        "objective": "To solve two-step real-world problems in Kashmiri markets and crafts.",
+        "prerequisites": [
+          "Tables up to 10"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Real World Word Problems",
+            "name_target": "روزمرہ زِندگی مَنٛز ضَرَب",
+            "simplified_en": "When shopping at the bazaar or selling handicrafts, multiplying unit price by quantity gives total cost.",
+            "explanation_target": "بازارَس مَنٛز کُنہِ چیٖزٕچ قِیمَت تعدادَس سٟتؠ ضَرَب کَرِتھ کُل خَرچ لَبنہٕ یِوان چھُ۔",
+            "example_title": "Buying Girda at Kandur",
+            "example_en": "If 1 Kashmiri Girda costs 5 rupees, 6 Girdas cost 6 × 5 = 30 rupees.",
+            "example_target": "اگر اکھ گِردٕ ۵ رۄپین مَنٛز یِوان چھُ، ۶ گِردَن ہُنٛد مُول چھُ ۶ × ۵ = ۳۰ رۄپیہِ۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Real World Word Problems",
+          "type": "numeric",
+          "question_en": "A shikara boatman charges 20 rupees per ride. He does 4 rides in the morning. How much money did he earn?",
+          "question_target": "اکھ شِکارٕ وول ۲۰ رۄپیہِ چَلاوَن چھُ اِکِس چَکَر خٲطرٕ۔ ۴ چَکَر کٔرِتھ کٔتؠ رۄپیہِ کَمٲوَن تَمؠ؟",
+          "options": [],
+          "answer": "80",
+          "answer_target": "80"
+        }
+      ]
+    },
+    {
+      "id": "gravity-1-ks",
+      "trackId": "gravity",
+      "trackTitle": "Gravity & Force (طاقَت تہٕ کَششِ ثِقَل)",
+      "trackOrder": 1,
+      "totalInTrack": 4,
+      "nextLessonId": "gravity-2-ks",
+      "label": "Forces · Part 1: Push and Pull",
+      "grade": 6,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on force: pushes, pulls and motion.",
+      "lesson": {
+        "title": "1. Pushes & Pulls (دَکہٕ تہٕ کَشِش)",
+        "objective": "To define force as a push or a pull that changes an object's speed, direction, or shape.",
+        "prerequisites": [
+          "Concept of movement"
+        ],
+        "difficulty": "easy",
+        "concepts": [
+          {
+            "name_en": "Force as Push and Pull",
+            "name_target": "طاقَت - دَکہٕ تہٕ کَشِش (Push & Pull)",
+            "simplified_en": "A force is a push or pull on an object. Forces can make things start moving, speed up, slow down, or change direction.",
+            "explanation_target": "طاقَت چھِ کُنہِ چیٖزَس دَکہٕ دِیُن یا پانہٕ کُن کَشِش کَرُن۔ اَتھ سٟتؠ چھِ چیٖز حَرکَت کَران۔",
+            "example_title": "Rowing a Shikara",
+            "example_en": "A boatman pulls the wooden paddle against the water of Dal Lake to push the Shikara forward.",
+            "example_target": "ڈَل جھیلَس مَنٛز مٲنٛج چھُ چَپہٕ پانہٕ کُن کَشان تاکہِ شِکارٕ برٛونٛہہ کُن پَکے۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Force as Push and Pull",
+          "type": "mcq",
+          "question_en": "What do we call a push or a pull on an object?",
+          "question_target": "کُنہِ چیٖزَس دَکہٕ یا کَشِش کَرنَس کیاہ چھُ وَنان؟",
+          "options": [
+            "Force (طاقَت)",
+            "Speed",
+            "Energy",
+            "Weight"
+          ],
+          "answer": "Force (طاقَت)",
+          "answer_target": "Force (طاقَت)"
+        }
+      ]
+    },
+    {
+      "id": "gravity-2-ks",
+      "trackId": "gravity",
+      "trackTitle": "Gravity & Force (طاقَت تہٕ کَششِ ثِقَل)",
+      "trackOrder": 2,
+      "totalInTrack": 4,
+      "nextLessonId": "gravity-3-ks",
+      "label": "Forces · Part 2: Gravity",
+      "grade": 6,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on Earth's gravity and falling objects.",
+      "lesson": {
+        "title": "2. Earth's Gravity (کَششِ ثِقَل - Gravity)",
+        "objective": "To understand Earth's gravitational pull pulling all objects towards its center.",
+        "prerequisites": [
+          "Forces basics"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Gravity",
+            "name_target": "کَششِ ثِقَل (Gravity)",
+            "simplified_en": "Gravity is the invisible pulling force of the Earth. It pulls everything downward towards the ground so we don't float into space.",
+            "explanation_target": "کَششِ ثِقَل چھِ زٔمیٖنٕچ اکھ لۄکٹی مَگَر مَضبُوط کَشِش یۄس پرؠتھ چیٖز بۄن زٔمیٖن کُن کَشان چھِ۔",
+            "example_title": "Falling Apple in Shopian",
+            "example_en": "When a ripe apple breaks from a tree in Shopian, gravity pulls it straight down to the grass below.",
+            "example_target": "شۆپیان کِس باغَس مَنٛز ییلہِ پۆکمُت ژوٗنٛٹھ کُلِ پیٹھہٕ کَٹان چھُ، سُہ چھُ بۄن زٔمیٖنَس پؠٹھ پؠوان۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Gravity",
+          "type": "mcq",
+          "question_en": "Why do dropped objects fall towards the ground?",
+          "question_target": "تھاوِتھ ترٛاوِتھ چیز بۄن زٔمیٖن کُن کِیاہ چھِ پؠوان؟",
+          "options": [
+            "Due to Earth's gravity (کَششِ ثِقَل کِنؠ)",
+            "Due to wind",
+            "Due to magnetism only",
+            "Due to heat"
+          ],
+          "answer": "Due to Earth's gravity (کَششِ ثِقَل کِنؠ)",
+          "answer_target": "Due to Earth's gravity (کَششِ ثِقَل کِنؠ)"
+        }
+      ]
+    },
+    {
+      "id": "gravity-3-ks",
+      "trackId": "gravity",
+      "trackTitle": "Gravity & Force (طاقَت تہٕ کَششِ ثِقَل)",
+      "trackOrder": 3,
+      "totalInTrack": 4,
+      "nextLessonId": "gravity-4-ks",
+      "label": "Forces · Part 3: Friction",
+      "grade": 6,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on friction, gripping and slipping.",
+      "lesson": {
+        "title": "3. Friction & Gripping (رَگَڑ - Friction)",
+        "objective": "To investigate friction between surfaces and how roughness affects motion.",
+        "prerequisites": [
+          "Movement and gravity"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Friction",
+            "name_target": "رَگَڑ (Friction)",
+            "simplified_en": "Friction is the resistance force between two surfaces rubbing together. Rough surfaces create more friction; smooth ice creates very little.",
+            "explanation_target": "رَگَڑ چھِ دۄن سَطَحَن درمِیان تِتھ طاقَت یۄس حَرکَتَس رُکاوَن چھِ۔ کھَردَرے سَطَحَن پؠٹھ چھِ رَگَڑ زِیادٕ آسان۔",
+            "example_title": "Walking on Snow in Winter",
+            "example_en": "Smooth shoe soles slip on frozen ice in winter because there is little friction; boots with deep treads grip the snow.",
+            "example_target": "وَنٛدَس مَنٛز کُنگِری شِینَس پؠٹھ رَگَڑ کَم آسَن سٟتؠ چھُ اِنسان پِھسلان، مَگَر کھَردَرے بوٗٹ چھِ گرِپ بَناوَن۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Friction",
+          "type": "mcq",
+          "question_en": "Why is it slippery to walk on frozen ice?",
+          "question_target": "جَمِتھ شِینَس (Ice) پؠٹھ پَکُن کِیاہ چھُ پھِسلَندٕ آسان؟",
+          "options": [
+            "There is very low friction (رَگَڑ چھِ واریاہ کَم آسان)",
+            "There is too much gravity",
+            "The air is cold",
+            "There is high friction"
+          ],
+          "answer": "There is very low friction (رَگَڑ چھِ واریاہ کَم آسان)",
+          "answer_target": "There is very low friction (رَگَڑ چھِ واریاہ کَم آسان)"
+        }
+      ]
+    },
+    {
+      "id": "gravity-4-ks",
+      "trackId": "gravity",
+      "trackTitle": "Gravity & Force (طاقَت تہٕ کَششِ ثِقَل)",
+      "trackOrder": 4,
+      "totalInTrack": 4,
+      "nextLessonId": null,
+      "label": "Forces · Part 4: Weight vs Mass",
+      "grade": 6,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on mass vs weight.",
+      "lesson": {
+        "title": "4. Weight vs Mass (مِقدار بَقابِل وَزَن)",
+        "objective": "To distinguish between mass (amount of matter in kilograms) and weight (gravitational pull in Newtons).",
+        "prerequisites": [
+          "Understanding gravity"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Mass vs Weight",
+            "name_target": "مِقدار (Mass) تہٕ وَزَن (Weight)",
+            "simplified_en": "Mass is the amount of matter inside you, which never changes. Weight is the gravitational pull on that mass.",
+            "explanation_target": "مِقدار (Mass) چھُ کُنہِ چیٖزُک اَصلی مَواد یُس بَدلان نَہ چھُ۔ وَزَن چھُ زٔمیٖنٕچ کَشِش یۄس اَتھ مِقدارَس پیٹھ لَگان چھِ۔",
+            "example_title": "Kangri Weight",
+            "example_en": "A clay Kangri has the same amount of baked clay everywhere, but would feel 6 times lighter on the Moon because the Moon has weaker gravity.",
+            "example_target": "کَنٛگِیر مَنٛز کُنڈَلُک مَواد چھُ سُہوی روزان مَگَر زوٗنہِ پؠٹھ آسِہ اَمِیُک وَزَن ۶ حِصہٕ کَم۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Mass vs Weight",
+          "type": "mcq",
+          "question_en": "Which quantity stays constant wherever you go in the universe?",
+          "question_target": "کائناتَس مَنٛز کَتہِ ژلو، کُس چیٖز اَکوی قٲیِم روزان چھُ؟",
+          "options": [
+            "Mass (مِقدار)",
+            "Weight (وَزَن)",
+            "Friction",
+            "Speed"
+          ],
+          "answer": "Mass (مِقدار)",
+          "answer_target": "Mass (مِقدار)"
+        }
+      ]
+    },
+    {
+      "id": "electricity-1-ks",
+      "trackId": "electricity",
+      "trackTitle": "Electricity & Circuits (بِجلی تہٕ سَرکَٹ)",
+      "trackOrder": 1,
+      "totalInTrack": 4,
+      "nextLessonId": "electricity-2-ks",
+      "label": "Electricity · Part 1: Electric Current",
+      "grade": 7,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on electric current, flow of electrons, circuits.",
+      "lesson": {
+        "title": "1. What is Electric Current? (بِجلی کیاہ چھِ؟)",
+        "objective": "To define electric current as the flow of electrons through a conductive pathway.",
+        "prerequisites": [
+          "Atoms and electrons basics"
+        ],
+        "difficulty": "easy",
+        "concepts": [
+          {
+            "name_en": "Electric Current",
+            "name_target": "بِجلی ہُنٛد بَہاو (Electric Current)",
+            "simplified_en": "Electricity is the flow of tiny electric charges called electrons moving together through a wire like water flowing in a pipe.",
+            "explanation_target": "بِجلی چھِ اصلَس مَنٛز تارَن مَنٛز الؠکٹرانَن ہُنٛد اکھ لَگاتار بَہاو یَتھ کَن نَلہِ مَنٛز آب پَکان چھُ۔",
+            "example_title": "Hydroelectric Power at Uri",
+            "example_en": "Water rushing down the Jhelum river spins giant turbines at the Uri powerhouse to generate electricity for Kashmir.",
+            "example_target": "اوٗڑی کِس بِجلی گھرَس مَنٛز وؠتھ (Jhelum) ہُنٛد آب تَرکِش گھُمٲوِتھ کٔشیٖرِ خٲطرٕ بِجلی پٲدا کَران چھُ۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Electric Current",
+          "type": "mcq",
+          "question_en": "What particles move through a metal wire to create an electric current?",
+          "question_target": "تارَن مَنٛز کُس ذَرٕ پَکِتھ بِجلی بَناوَن چھِ؟",
+          "options": [
+            "Electrons (الیکٹران)",
+            "Protons",
+            "Neutrons",
+            "Molecules"
+          ],
+          "answer": "Electrons (الیکٹران)",
+          "answer_target": "Electrons (الیکٹران)"
+        }
+      ]
+    },
+    {
+      "id": "electricity-2-ks",
+      "trackId": "electricity",
+      "trackTitle": "Electricity & Circuits (بِجلی تہٕ سَرکَٹ)",
+      "trackOrder": 2,
+      "totalInTrack": 4,
+      "nextLessonId": "electricity-3-ks",
+      "label": "Electricity · Part 2: Complete Circuits",
+      "grade": 7,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on closed vs open circuits.",
+      "lesson": {
+        "title": "2. Simple Circuits & Switches (سَرکَٹ تہٕ سُوِچ)",
+        "objective": "To construct a closed loop circuit with a battery, wire, switch and bulb.",
+        "prerequisites": [
+          "Electric current"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Closed vs Open Circuit",
+            "name_target": "بَنٛد تہٕ مۄکٕل سَرکَٹ (Closed & Open)",
+            "simplified_en": "Electricity needs a complete, unbroken circle (closed circuit) to flow. A switch opens the circuit to stop the flow and turn off the light.",
+            "explanation_target": "بِجلی چَلنہِ خٲطرٕ چھُ پورٕ بَنٛد راستہٕ ضۆروٗری۔ سُوِچ دَبٲوِتھ چھُ راستہٕ ٹوٗٹان تہٕ بتؠ بَنٛد گژھان۔",
+            "example_title": "Torch Light in Pheran",
+            "example_en": "When you press the button on your hand torch, you close the circuit so battery power lights up the small bulb.",
+            "example_target": "ٹارچُک بَٹَن دَبٲوِتھ چھُ سَرکَٹ بَنٛد گژھان تہٕ بتؠ گاش دِوان۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Closed vs Open Circuit",
+          "type": "mcq",
+          "question_en": "What happens when an electric switch is turned OFF?",
+          "question_target": "ییٚلہِ سُوِچ بَنٛد (OFF) کَرنہٕ یِوان چھُ، تیٚلہِ کیاہ گژھان چھُ؟",
+          "options": [
+            "The circuit is opened and current stops (سَرکَٹ ٹوٗٹان چھُ تہٕ بِجلی رُکان)",
+            "The current speeds up",
+            "The battery charges",
+            "The bulb burns out"
+          ],
+          "answer": "The circuit is opened and current stops (سَرکَٹ ٹوٗٹان چھُ تہٕ بِجلی رُکان)",
+          "answer_target": "The circuit is opened and current stops (سَرکَٹ ٹوٗٹان چھُ تہٕ بِجلی رُکان)"
+        }
+      ]
+    },
+    {
+      "id": "electricity-3-ks",
+      "trackId": "electricity",
+      "trackTitle": "Electricity & Circuits (بِجلی تہٕ سَرکَٹ)",
+      "trackOrder": 3,
+      "totalInTrack": 4,
+      "nextLessonId": "electricity-4-ks",
+      "label": "Electricity · Part 3: Conductors & Insulators",
+      "grade": 7,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on electrical conductors vs insulators.",
+      "lesson": {
+        "title": "3. Conductors & Insulators (موصل تہٕ غٲر موصل)",
+        "objective": "To differentiate materials that allow electricity to flow freely from those that block it.",
+        "prerequisites": [
+          "Circuits"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Conductors and Insulators",
+            "name_target": "موصل (Conductors) تہٕ غٲر موصل (Insulators)",
+            "simplified_en": "Conductors like copper and iron let electricity pass through easily. Insulators like rubber and plastic block electricity to keep us safe.",
+            "explanation_target": "موصل (Conductors) مِثال تام تہٕ شِشتر چھِ بِجلی اَندر نِنہِ دِوان۔ رَبَڑ تہٕ پلاسٹِک چھِ بِجلی رُکاوَن تاکہِ اَسہِ کَرَنٛٹ نَہ لَگےِ۔",
+            "example_title": "Insulated Copper Wires",
+            "example_en": "Electric wires in our homes have shiny copper metal inside to carry current, wrapped in colorful plastic outside for safety.",
+            "example_target": "گرَن مَنٛز تارَن مَنٛز چھُ اَندر تام آسان مَگَر نؠبَر چھُ پلاسٹِک تاکہِ اِنسان صَحِیح سَلامَت روزِ۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Conductors and Insulators",
+          "type": "mcq",
+          "question_en": "Which material is an insulator used to coat electric wires?",
+          "question_target": "تارَن نؠبَر کُس مَواد غٲر موصل (Insulator) کِس طور لَگان چھُ؟",
+          "options": [
+            "Plastic / Rubber (پلاسٹِک یا رَبَڑ)",
+            "Copper (تام)",
+            "Iron (شِشتر)",
+            "Silver"
+          ],
+          "answer": "Plastic / Rubber (پلاسٹِک یا رَبَڑ)",
+          "answer_target": "Plastic / Rubber (پلاسٹِک یا رَبَڑ)"
+        }
+      ]
+    },
+    {
+      "id": "electricity-4-ks",
+      "trackId": "electricity",
+      "trackTitle": "Electricity & Circuits (بِجلی تہٕ سَرکَٹ)",
+      "trackOrder": 4,
+      "totalInTrack": 4,
+      "nextLessonId": null,
+      "label": "Electricity · Part 4: Electrical Safety",
+      "grade": 7,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on safe use of electricity and fuses.",
+      "lesson": {
+        "title": "4. Electrical Safety & Fuses (حِفاظَت تہٕ فِیوز)",
+        "objective": "To understand home safety rules with electric heaters and the role of fuses.",
+        "prerequisites": [
+          "Conductors and short circuits"
+        ],
+        "difficulty": "easy",
+        "concepts": [
+          {
+            "name_en": "Electrical Safety",
+            "name_target": "بِجلی ہِنٛز حِفاظَت تہٕ فِیوز",
+            "simplified_en": "Water is a conductor of electricity, so never touch electric appliances with wet hands. Fuses melt to cut off power if too much current flows.",
+            "explanation_target": "آب چھُ بِجلی پَکناوَن، اَمِہ مۆکھ نَم اَتھن سٟتؠ سُوِچ کٔہِنٛزِ مہٕ چھُوِو۔ فِیوز چھُ زِیادٕ لۄڈ لَگنہِ پؠٹھ پِگھلان۔",
+            "example_title": "Winter Heaters in Kashmir",
+            "example_en": "Using heavy electric blowers and water geysers safely in Kashmiri winter requires proper earthing and fuses.",
+            "example_target": "وَنٛدَس مَنٛز ہِیٹَر تہٕ گیزَر صَحِیح ارثِنگ تہٕ فِیوز سٟتؠ چَلاوِو تاکہِ شارٹ سَرکَٹ نَہ گَژھے۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Electrical Safety",
+          "type": "mcq",
+          "question_en": "Why should you never touch electrical switches with wet hands?",
+          "question_target": "نَم اَتھن سٟتؠ بِجلی ہُنٛد سُوِچ چُھوُن کِیاہ چھُ خَطرناک؟",
+          "options": [
+            "Water conducts electricity and can give a shock (آب سٟتؠ چھُ کَرَنٛٹ لَگان)",
+            "The switch gets dirty",
+            "The bulb stops glowing",
+            "Water cools the switch"
+          ],
+          "answer": "Water conducts electricity and can give a shock (آب سٟتؠ چھُ کَرَنٛٹ لَگان)",
+          "answer_target": "Water conducts electricity and can give a shock (آب سٟتؠ چھُ کَرَنٛٹ لَگان)"
+        }
+      ]
+    },
+    {
+      "id": "matter-1-ks",
+      "trackId": "matter",
+      "trackTitle": "States of Matter (مادٕ ہِنٛزِ حالَتہٕ)",
+      "trackOrder": 1,
+      "totalInTrack": 4,
+      "nextLessonId": "matter-2-ks",
+      "label": "Matter · Part 1: Solid, Liquid & Gas",
+      "grade": 5,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on states of matter: solid, liquid, gas.",
+      "lesson": {
+        "title": "1. Solid, Liquid & Gas (ٹھوس، آب تہٕ گیس)",
+        "objective": "To identify the three states of matter by their shape, volume and particle packing.",
+        "prerequisites": [
+          "Basic sense of materials"
+        ],
+        "difficulty": "easy",
+        "concepts": [
+          {
+            "name_en": "Three States of Matter",
+            "name_target": "مادٕ ہِنٛزِ ترےٚ بُنیادی حالَتہٕ",
+            "simplified_en": "Solids keep their fixed shape (like wood). Liquids flow and take the shape of their container (like Kahwa). Gases expand to fill any space (like air).",
+            "explanation_target": "ٹھوس چھِ پَنُن شَکٕل قٲیِم تھاوان (کُلِ لَکٕڑ)۔ مائع چھُ بَہان (آب)۔ گیس چھُ سٲری جاے بَران (ہَوا)۔",
+            "example_title": "Walnut Wood vs Lidder Stream",
+            "example_en": "A carved walnut wood table is a hard solid. The rushing cold water of Lidder is a liquid. The pine aroma in Pahalgam is a gas.",
+            "example_target": "دونٛٹھ لَکٕڑِ ہُنٛد میز چھُ ٹھوس، لِدَر کولِ ہُند آب چھُ مائع، تہٕ جَنٛگَل مَنٛز ہَوا چھِ گیس۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Three States of Matter",
+          "type": "mcq",
+          "question_en": "Which state of matter takes the shape of the container it is poured into?",
+          "question_target": "کُس حالَت تَتھ بَرابَر شَکٕل ہؠوان چھُ یَتھ بَرَس مَنٛز یہِ ترٛاوَن چھِ؟",
+          "options": [
+            "Liquid (مائع / آب)",
+            "Solid (ٹھوس)",
+            "Rock",
+            "Iron"
+          ],
+          "answer": "Liquid (مائع / آب)",
+          "answer_target": "Liquid (مائع / آب)"
+        }
+      ]
+    },
+    {
+      "id": "matter-2-ks",
+      "trackId": "matter",
+      "trackTitle": "States of Matter (مادٕ ہِنٛزِ حالَتہٕ)",
+      "trackOrder": 2,
+      "totalInTrack": 4,
+      "nextLessonId": "matter-3-ks",
+      "label": "Matter · Part 2: Melting and Freezing",
+      "grade": 5,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on changes of state: melting and freezing.",
+      "lesson": {
+        "title": "2. Melting & Freezing (گَلُن تہٕ جَمُن)",
+        "objective": "To understand how temperature changes cause matter to switch between solid and liquid.",
+        "prerequisites": [
+          "Three states of matter"
+        ],
+        "difficulty": "easy",
+        "concepts": [
+          {
+            "name_en": "Melting and Freezing",
+            "name_target": "گَلُن (Melting) تہٕ جَمُن (Freezing)",
+            "simplified_en": "Heating a solid causes it to melt into a liquid. Cooling a liquid below its freezing point turns it into a solid.",
+            "explanation_target": "گرمی دِتھ چھُ ٹھوس گَلان تہٕ مائع بَنان۔ سَردی سٟتؠ چھُ آب جَمِتھ شِین بَنان۔",
+            "example_title": "Dal Lake Freezing in Chillai Kalan",
+            "example_en": "During Chillai Kalan in January, sub-zero cold freezes the surface water of Dal Lake into solid glassy ice.",
+            "example_target": "چِلہِ کَلان مَنٛز بۄن ترٛیشر سٟتؠ چھُ ڈَل جھیلُک آب بۄن جَمِتھ شِیشہٕ ہِش شِین بَنان۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Melting and Freezing",
+          "type": "mcq",
+          "question_en": "What process turns solid ice into liquid water when heated?",
+          "question_target": "شِین گرم کٔرِتھ آبَس مَنٛز بَدلَن کِس عَمَل کیاہ چھُ وَنان؟",
+          "options": [
+            "Melting (گَلُن)",
+            "Freezing (جَمُن)",
+            "Condensation",
+            "Sublimation"
+          ],
+          "answer": "Melting (گَلُن)",
+          "answer_target": "Melting (گَلُن)"
+        }
+      ]
+    },
+    {
+      "id": "matter-3-ks",
+      "trackId": "matter",
+      "trackTitle": "States of Matter (مادٕ ہِنٛزِ حالَتہٕ)",
+      "trackOrder": 3,
+      "totalInTrack": 4,
+      "nextLessonId": "matter-4-ks",
+      "label": "Matter · Part 3: Boiling & Evaporation",
+      "grade": 5,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on boiling and evaporation.",
+      "lesson": {
+        "title": "3. Boiling & Vaporization (کھَولُن تہٕ باف)",
+        "objective": "To explain the transformation of liquid into gas at boiling point.",
+        "prerequisites": [
+          "Liquid and gas"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Boiling Point",
+            "name_target": "کھَولُن (Boiling)",
+            "simplified_en": "When water reaches 100°C, it boils vigorously, producing steam bubbles that escape into the air as water vapor.",
+            "explanation_target": "ییلہِ آب ۱۰۰ ڈِگری سینٹی گریڈَس پؠٹھ کھَولان چھُ، یہِ چھُ باف بَنِتھ نَبَس کُن کھَسان۔",
+            "example_title": "Boiling Samovar Steam",
+            "example_en": "When burning charcoal in a Samovar heats water to boiling point, white steam puffs out from the chimney top.",
+            "example_target": "سَماوارَس مَنٛز چَکَن وٲلِہ قَہوہ کِہ نَلہِ مَنٛزہ یُس سَفید باف نیران چھُ، سُہ چھُ کھَولَنُک نَتیجَہ۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Boiling Point",
+          "type": "numeric",
+          "question_en": "At what temperature in degrees Celsius does pure water boil at sea level?",
+          "question_target": "عام سَطَحَس پؠٹھ کٔتؠ ڈگری سینٹی گریڈَس پؠٹھ آب کھَولان چھُ؟",
+          "options": [],
+          "answer": "100",
+          "answer_target": "100"
+        }
+      ]
+    },
+    {
+      "id": "matter-4-ks",
+      "trackId": "matter",
+      "trackTitle": "States of Matter (مادٕ ہِنٛزِ حالَتہٕ)",
+      "trackOrder": 4,
+      "totalInTrack": 4,
+      "nextLessonId": null,
+      "label": "Matter · Part 4: Particle Behavior",
+      "grade": 5,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on particle behavior in solids, liquids, gases.",
+      "lesson": {
+        "title": "4. Particle Packing Inside Matter (ذَرَن ہِنٛز بَناوَٹ)",
+        "objective": "To visualize how particles are tightly packed in solids, sliding in liquids, and bouncing freely in gases.",
+        "prerequisites": [
+          "Solid, liquid, gas"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Particle Packing",
+            "name_target": "ذَرَن ہِنٛز بَناوَٹ تہٕ فاصلہٕ",
+            "simplified_en": "In solids, particles are locked tight and vibrate in place. In liquids, they slide past each other. In gases, they fly around with huge spaces between them.",
+            "explanation_target": "ٹھوس مَنٛز چھِ ذَرٕ اکھ اِکِس سٟتؠ چِپکِتھ۔ مائع مَنٛز چھِ پَھسلان۔ گیس مَنٛز چھِ مۄکٕل پٲٹھؠ اُڈان۔",
+            "example_title": "Classroom Crowding Analogy",
+            "example_en": "Like students packed shoulder-to-shoulder in morning assembly (solid) vs walking to recess (liquid) vs running in sports field (gas).",
+            "example_target": "شُرؠ اسمبلی مَنٛز اکھ اِکِس سٟتؠ کھَڑا (ٹھوس)، گَرِ کُن پَکان (مائع)، تہٕ مَیدانَس مَنٛز دَووان (گیس)۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Particle Packing",
+          "type": "mcq",
+          "question_en": "In which state of matter are particles packed most tightly together?",
+          "question_target": "کُس حالَتَس مَنٛز ذَرٕ سارِوٕے کھۄتہٕ نَزدیٖک تہٕ مَضبُوط چِپکِتھ آسان چھِ؟",
+          "options": [
+            "Solid (ٹھوس)",
+            "Liquid (مائع)",
+            "Gas (گیس)",
+            "Vapor"
+          ],
+          "answer": "Solid (ٹھوس)",
+          "answer_target": "Solid (ٹھوس)"
+        }
+      ]
+    },
+    {
+      "id": "solar-1-ks",
+      "trackId": "solar-system",
+      "trackTitle": "Solar System (نِظامِ شَمسی)",
+      "trackOrder": 1,
+      "totalInTrack": 4,
+      "nextLessonId": "solar-2-ks",
+      "label": "Solar System · Part 1: The Sun and Planets",
+      "grade": 6,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on the Sun, Earth and eight planets.",
+      "lesson": {
+        "title": "1. The Sun and Eight Planets (آفتاب تہٕ اَٹھ سَیارٕ)",
+        "objective": "To name and order the 8 planets revolving around the central star, the Sun.",
+        "prerequisites": [
+          "Sun and night sky"
+        ],
+        "difficulty": "easy",
+        "concepts": [
+          {
+            "name_en": "The Solar System",
+            "name_target": "نِظامِ شَمسی تہٕ اَٹھ سَیارٕ",
+            "simplified_en": "Our solar system consists of the Sun at the center and 8 planets revolving around it: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, and Neptune.",
+            "explanation_target": "نِظامِ شَمسی مَنٛز چھُ آفتاب بیٖچِس مَنٛز تہٕ اَٹھ سَیارٕ اَمِس گِرد چَکَر کاٹان چھِ۔",
+            "example_title": "Kashmiri Sufiana Charkha",
+            "example_en": "Like spindles turning steadily around the wheel hub, all 8 planets orbit the glowing Sun in fixed tracks.",
+            "example_target": "یَتھ کَن چَرخُک پہیہٕ مرکزَس گِرد پَکان چھُ، تِتھ کَن چھِ سَیارٕ آفتابَس گِرد چَکَر کاٹان۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "The Solar System",
+          "type": "mcq",
+          "question_en": "How many planets are there in our solar system?",
+          "question_target": "سانہِ نِظامِ شَمسی مَنٛز کٔتؠ سَیارٕ (Planets) چھِ؟",
+          "options": [
+            "8",
+            "9",
+            "7",
+            "10"
+          ],
+          "answer": "8",
+          "answer_target": "8"
+        }
+      ]
+    },
+    {
+      "id": "solar-2-ks",
+      "trackId": "solar-system",
+      "trackTitle": "Solar System (نِظامِ شَمسی)",
+      "trackOrder": 2,
+      "totalInTrack": 4,
+      "nextLessonId": "solar-3-ks",
+      "label": "Solar System · Part 2: Planet Earth",
+      "grade": 6,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on Planet Earth: the blue planet with life and water.",
+      "lesson": {
+        "title": "2. Earth: The Living Planet (سانی زٔمیٖن)",
+        "objective": "To explain why Earth is the only known planet to support life, with liquid water and an atmosphere.",
+        "prerequisites": [
+          "Planets"
+        ],
+        "difficulty": "easy",
+        "concepts": [
+          {
+            "name_en": "The Blue Planet",
+            "name_target": "سانی نِیلی زٔمیٖن (Earth)",
+            "simplified_en": "Earth is the third planet from the Sun. It has liquid water, an oxygen-rich atmosphere, and mild temperatures that allow plants, animals, and humans to thrive.",
+            "explanation_target": "زٔمیٖن چھِ ترٛییِم سَیارٕ۔ اَتھ پؠٹھ چھُ آب، آکسیجَن تہٕ معتدل مَوسَم یَتھ سٟتؠ زِندگی مُمکِن چھِ۔",
+            "example_title": "Kashmir Valley on Earth",
+            "example_en": "From space, the snowy mountains and green valley of Kashmir shine as part of Earth's vibrant living ecosystem.",
+            "example_target": "آسمانہِ پیٹھہٕ کٔشیٖرِ ہِنٛز سَبز وادی تہٕ شِین لَگتھ پہاڑ چھِ زٔمیٖنہِ ہِنٛزِ زِندگی ہُنٛد حِصہٕ۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "The Blue Planet",
+          "type": "mcq",
+          "question_en": "What makes Earth unique compared to other planets?",
+          "question_target": "باقٕیہ سَیارَن خِلاف زٔمیٖن کِیاہ مۆکھ خاص چھِ؟",
+          "options": [
+            "It has liquid water and supports life (آب تہٕ زِندگی چھِ مۆجوٗد)",
+            "It is the biggest planet",
+            "It is closest to the Sun",
+            "It is made of gas only"
+          ],
+          "answer": "It has liquid water and supports life (آب تہٕ زِندگی چھِ مۆجوٗد)",
+          "answer_target": "It has liquid water and supports life (آب تہٕ زِندگی چھِ مۆجوٗد)"
+        }
+      ]
+    },
+    {
+      "id": "solar-3-ks",
+      "trackId": "solar-system",
+      "trackTitle": "Solar System (نِظامِ شَمسی)",
+      "trackOrder": 3,
+      "totalInTrack": 4,
+      "nextLessonId": "solar-4-ks",
+      "label": "Solar System · Part 3: Day and Night",
+      "grade": 6,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on Earth rotation causing day and night.",
+      "lesson": {
+        "title": "3. Rotation: Day & Night (دوہ تہٕ رات)",
+        "objective": "To explain how Earth's 24-hour rotation on its axis creates day and night.",
+        "prerequisites": [
+          "Earth in space"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Day and Night Rotation",
+            "name_target": "زٔمیٖنہِ ہُنٛد چَکَر: دوہ تہٕ رات",
+            "simplified_en": "Earth spins like a top on its axis once every 24 hours. The side facing the Sun has daylight, while the side in shadow has nighttime.",
+            "explanation_target": "زٔمیٖن چھِ پَننِس دُھرَس پؠٹھ ۲۴ گَنٛٹَن مَنٛز اکھ چَکَر کاٹان۔ یُس حِصہٕ آفتابَس سَمکھ آسِہ تَتھ مَنٛز چھُ دوہ بَنان۔",
+            "example_title": "Sunrise over Hari Parbat",
+            "example_en": "As Srinagar rotates toward the east, sunlight kisses the fort on Hari Parbat bringing morning to the valley.",
+            "example_target": "سِری نَگَر ییلہِ مشرقَس کُن گُھمان چھُ، ہَری پَربَت کِس قِلعَس پؠٹھ صۆبحُک گاش پیوان چھُ۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Day and Night Rotation",
+          "type": "numeric",
+          "question_en": "How many hours does Earth take to complete one full rotation on its axis?",
+          "question_target": "زٔمیٖن پَننِس دُھرَس پؠٹھ اکھ پورٕ چَکَر کَرنَس مَنٛز کٔتؠ گَنٛٹہٕ لَگاوَن چھِ؟",
+          "options": [],
+          "answer": "24",
+          "answer_target": "24"
+        }
+      ]
+    },
+    {
+      "id": "solar-4-ks",
+      "trackId": "solar-system",
+      "trackTitle": "Solar System (نِظامِ شَمسی)",
+      "trackOrder": 4,
+      "totalInTrack": 4,
+      "nextLessonId": null,
+      "label": "Solar System · Part 4: The Moon & Seasons",
+      "grade": 6,
+      "subject": "science",
+      "language": "kashmiri",
+      "source": "Grade lesson on the Moon and Earth's orbit causing seasons.",
+      "lesson": {
+        "title": "4. The Moon & Kashmir's Seasons (زوٗن تہٕ موسم)",
+        "objective": "To explain how Earth's tilt as it orbits the Sun creates Kashmir's four distinct seasons (Sonth, Retakol, Harud, Wandh).",
+        "prerequisites": [
+          "Rotation and orbit"
+        ],
+        "difficulty": "medium",
+        "concepts": [
+          {
+            "name_en": "Seasons in Kashmir",
+            "name_target": "سانہِ کٔشیٖرِ ہِنٛدِ ژور مَوسَم",
+            "simplified_en": "Earth orbits the Sun once a year (365 days). Because Earth is tilted, different parts receive more direct sunlight at different times, giving Kashmir its four seasons: Sonth (Spring), Retakol (Summer), Harud (Autumn), and Wandh (Winter).",
+            "explanation_target": "زٔمیٖن چھِ آفتابَس گِرد اِکِس سالَس (۳۶۵ دوہ) مَنٛز چَکَر کاٹان۔ اَمِہ سٟتؠ چھِ کٔشیٖرِ مَنٛز ژور مَوسَم بَنان: سونٛتھ، ریٹھہٕ کول، ہاَرُد تہٕ وَنٛدٕ۔",
+            "example_title": "Four Seasons of Chinar",
+            "example_en": "The Chinar sprouts green buds in Sonth, provides cool shade in Retakol, glows fiery red in Harud, and rests bare in Wandh.",
+            "example_target": "بوٗنی پَن سونٛتھَس مَنٛز پوٗٹھ دِوان، ریٹھہٕ کولَس مَنٛز نِیول سایہٕ، ہاَرودَس مَنٛز موج لعل، تہٕ وَنٛدَس مَنٛز آرام۔",
+            "diagram": null
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "concept": "Seasons in Kashmir",
+          "type": "mcq",
+          "question_en": "What is the Kashmiri name for the autumn season when Chinar leaves turn red?",
+          "question_target": "تَتھ موسمَس کٲشُر ناو کیاہ چھُ ییلہِ بوٗنی پَن لعل رَنٛگ ہؠوان چھِ؟",
+          "options": [
+            "Harud (ہاَرُد)",
+            "Sonth (سونٛتھ)",
+            "Wandh (وَنٛدٕ)",
+            "Retakol (ریٹھہٕ کول)"
+          ],
+          "answer": "Harud (ہاَرُد)",
+          "answer_target": "Harud (ہاَرُد)"
+        }
+      ]
+    }
+  ]
+}
