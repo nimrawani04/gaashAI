@@ -52,6 +52,95 @@ function isNativeApp(): boolean {
   );
 }
 
+/* ---------- Account sync (signed-in users) ---------- */
+
+async function signedInClient() {
+  try {
+    const { getSupabaseClient } = await import("@/integrations/supabase/client");
+    const client = getSupabaseClient();
+    if (!client) return null;
+    const { data } = await client.auth.getSession();
+    const userId = data.session?.user.id;
+    return userId ? { client, userId } : null;
+  } catch {
+    return null;
+  }
+}
+
+async function fetchCloudState(): Promise<{ progress: LessonProgress; history: LessonHistoryItem[] } | null> {
+  const ctx = await signedInClient();
+  if (!ctx) return null;
+  const { data, error } = await ctx.client
+    .from("user_lesson_state")
+    .select("progress, history")
+    .eq("user_id", ctx.userId)
+    .maybeSingle();
+  if (error) return null;
+  const progress = data?.progress && typeof data.progress === "object" && !Array.isArray(data.progress)
+    ? (data.progress as unknown as LessonProgress) : {};
+  const history = Array.isArray(data?.history) ? (data!.history as unknown as LessonHistoryItem[]) : [];
+  return { progress, history };
+}
+
+async function pushCloud(patch: { progress?: LessonProgress; history?: LessonHistoryItem[] }) {
+  const ctx = await signedInClient();
+  if (!ctx) return;
+  const row: Record<string, unknown> = { user_id: ctx.userId, updated_at: new Date().toISOString() };
+  if (patch.progress) row["progress"] = patch.progress;
+  if (patch.history) row["history"] = patch.history;
+  await ctx.client.from("user_lesson_state").upsert(row as never, { onConflict: "user_id" });
+}
+
+/** Keep the most recent completion per key. */
+function mergeProgress(a: LessonProgress, b: LessonProgress): LessonProgress {
+  const out: LessonProgress = { ...a };
+  for (const [k, v] of Object.entries(b)) {
+    const cur = out[k];
+    if (!cur || new Date(v.completedAt).getTime() > new Date(cur.completedAt).getTime()) out[k] = v;
+  }
+  return out;
+}
+
+function mergeHistory(a: LessonHistoryItem[], b: LessonHistoryItem[]): LessonHistoryItem[] {
+  const map = new Map<string, LessonHistoryItem>();
+  for (const item of [...a, ...b]) if (item?.id) map.set(item.id, item);
+  return Array.from(map.values())
+    .sort((x, y) => new Date(y.completedAt).getTime() - new Date(x.completedAt).getTime())
+    .slice(0, 200);
+}
+
+function writeLocal(key: string, value: unknown) {
+  const json = JSON.stringify(value);
+  try { localStorage.setItem(key, json); } catch { /* ignore */ }
+  if (isNativeApp()) {
+    void import("@capacitor/preferences")
+      .then(({ Preferences }) => Preferences.set({ key, value: json }))
+      .catch(() => {});
+  }
+}
+
+/**
+ * Merge this device's progress/history with the account copy, save the
+ * result both locally and to the account. No-op when signed out.
+ */
+export async function syncLessonStateWithAccount(
+  localProgress: LessonProgress,
+  localHistory: LessonHistoryItem[],
+): Promise<{ progress: LessonProgress; history: LessonHistoryItem[] } | null> {
+  try {
+    const cloud = await fetchCloudState();
+    if (!cloud) return null;
+    const progress = mergeProgress(cloud.progress, localProgress);
+    const history = mergeHistory(cloud.history, localHistory);
+    writeLocal(KEY, progress);
+    writeLocal(HISTORY_KEY, history);
+    await pushCloud({ progress, history });
+    return { progress, history };
+  } catch {
+    return null;
+  }
+}
+
 export function readLessonProgress(): LessonProgress {
   try {
     const value = JSON.parse(localStorage.getItem(KEY) ?? "{}");
