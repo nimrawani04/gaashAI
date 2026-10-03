@@ -44,6 +44,7 @@ import {
   loadLessonHistory,
   saveLessonHistoryItem,
   deleteLessonHistoryItem,
+  syncLessonStateWithAccount,
   type LessonProgress,
   type LessonHistoryItem,
 } from "@/lib/lesson-progress";
@@ -262,12 +263,24 @@ function LearnPage() {
   // Load progress and history from device storage (Capacitor Preferences + localStorage)
   useEffect(() => {
     let active = true;
-    void loadLessonProgress().then((saved) => {
-      if (active) setProgress((current) => ({ ...saved, ...current }));
-    });
-    void loadLessonHistory().then((savedHistory) => {
-      if (active) setHistory(savedHistory);
-    });
+    void Promise.all([loadLessonProgress(), loadLessonHistory()]).then(
+      async ([saved, savedHistory]) => {
+        if (!active) return;
+        setProgress((current) => ({ ...saved, ...current }));
+        setHistory(savedHistory);
+        // Merge with the account copy so phone and website share progress.
+        const synced = await syncLessonStateWithAccount(saved, savedHistory);
+        if (!active || !synced) return;
+        setProgress((current) => ({ ...synced.progress, ...current }));
+        setHistory((prev) => {
+          const map = new Map(synced.history.map((i) => [i.id, i]));
+          for (const i of prev) if (!map.has(i.id)) map.set(i.id, i);
+          return Array.from(map.values()).sort(
+            (a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime(),
+          );
+        });
+      },
+    );
 
     // Cloud synchronization if user is authenticated with Supabase
     void (async () => {
