@@ -8,6 +8,7 @@ import AppErrorBoundary from "@/components/AppErrorBoundary";
 import SplashScreen from "@/components/SplashScreen";
 import ChinarLoader from "@/components/ChinarLoader";
 import { enterGuestMode, exitGuestMode, isGuestMode } from "@/lib/guest";
+import { backupSession, hasStoredSession, restoreBackupSession } from "@/lib/session-backup";
 
 /** Never let session restoration block the UI for longer than this. */
 const AUTH_TIMEOUT_MS = 6000;
@@ -75,17 +76,31 @@ export default function AppShell() {
       return;
     }
 
-    withTimeout(client.auth.getSession(), AUTH_TIMEOUT_MS)
-      .then(({ data }) => {
-        if (!active || runId !== initRef.current) return;
-        setAuth({ status: "ready", session: data.session ?? null });
-      })
-      .catch(() => {
-        if (!active || runId !== initRef.current) return;
-        // Restoring a previous session failed — that says nothing about the
-        // ability to sign in now. Show the signed-out form, fully usable.
-        setAuth({ status: "ready", session: null });
-      });
+    const finish = (session: Session | null) => {
+      if (!active || runId !== initRef.current) return;
+      setAuth({ status: "ready", session });
+    };
+
+    const restore = async (): Promise<Session | null> => {
+      try {
+        const { data } = await withTimeout(client.auth.getSession(), AUTH_TIMEOUT_MS);
+        if (data.session) return data.session;
+      } catch {
+        // Slow network: if a session is saved, keep waiting instead of
+        // signing the user out — the token refresh just needs more time.
+        if (hasStoredSession()) {
+          try {
+            const { data } = await client.auth.getSession();
+            if (data.session) return data.session;
+          } catch {
+            /* fall through */
+          }
+        }
+      }
+      return restoreBackupSession(client);
+    };
+
+    void restore().then(finish);
 
     return () => {
       active = false;
@@ -96,7 +111,12 @@ export default function AppShell() {
   useEffect(() => {
     const client = getSupabaseClient();
     if (!client) return;
-    const { data: sub } = client.auth.onAuthStateChange((_event, s) => {
+    const { data: sub } = client.auth.onAuthStateChange((event, s) => {
+      if (event === "SIGNED_OUT") void backupSession(null);
+      else if (s) void backupSession(s);
+      // INITIAL_SESSION with no session is handled by the restore above
+      // (which may still recover a backed-up session) — don't race it.
+      if (event === "INITIAL_SESSION" && !s) return;
       setAuth({ status: "ready", session: s });
       if (s) {
         exitGuestMode();
