@@ -218,6 +218,7 @@ export function saveLessonCompletion(
       .catch(() => { /* Keep current progress even if native storage is unavailable. */ });
   }
 
+  void pushCloud({ progress: next }).catch(() => {});
   return next;
 }
 
@@ -282,6 +283,7 @@ export async function saveLessonHistoryItem(item: LessonHistoryItem): Promise<Le
     }
   }
 
+  void pushCloud({ history: updated }).catch(() => {});
   return updated;
 }
 
@@ -304,5 +306,6 @@ export async function deleteLessonHistoryItem(id: string): Promise<LessonHistory
     }
   }
 
+  void pushCloud({ history: updated }).catch(() => {});
   return updated;
 }
