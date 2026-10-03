@@ -362,6 +362,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_lesson_state: {
+        Row: {
+          history: Json
+          progress: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          history?: Json
+          progress?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          history?: Json
+          progress?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
