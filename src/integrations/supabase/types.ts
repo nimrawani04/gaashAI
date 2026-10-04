@@ -332,6 +332,36 @@ export type Database = {
         }
         Relationships: []
       }
+      translation_history: {
+        Row: {
+          created_at: string
+          direction: string
+          id: string
+          roman: string
+          source: string
+          translation: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          direction: string
+          id?: string
+          roman?: string
+          source: string
+          translation: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          direction?: string
+          id?: string
+          roman?: string
+          source?: string
+          translation?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       translation_pairs: {
         Row: {
           created_at: string
