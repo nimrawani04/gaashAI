@@ -11,6 +11,15 @@ import { startRecording, blobToBase64, type Recorder } from "@/lib/recorder";
 import { transcribeSpeech } from "@/lib/stt.functions";
 import GuestPrompt from "@/components/GuestPrompt";
 import { isGuestMode } from "@/lib/guest";
+import {
+  deleteHistoryItem,
+  readLocalHistory,
+  saveHistoryItem,
+  syncHistoryWithAccount,
+  writeLocalHistory,
+  TRANSLATION_HISTORY_LIMIT,
+  type TranslationHistoryItem,
+} from "@/lib/translation-history";
 
 
 
@@ -52,17 +61,8 @@ const PHRASES: { en: string; ks: string; roman: string }[] = [
   { en: "Good night", ks: "خُدا حافظ، شُبہ خیر", roman: "Khuda hafiz, shubh khair" },
 ];
 
-type HistoryItem = {
-  id: string;
-  direction: "en2ks" | "ks2en";
-  source: string;
-  translation: string;
-  roman: string;
-  at: number;
-};
-
-const HISTORY_KEY = "kashmiri-translate-history";
-const HISTORY_LIMIT = 20;
+type HistoryItem = TranslationHistoryItem;
+const HISTORY_LIMIT = TRANSLATION_HISTORY_LIMIT;
 
 function TranslatePage() {
   const run = useServerFn(translateText);
@@ -87,25 +87,28 @@ function TranslatePage() {
       setGuest(true);
       return; // guests get no persisted history
     }
-    try {
-      const raw = localStorage.getItem(HISTORY_KEY);
-      if (raw) setHistory(JSON.parse(raw) as HistoryItem[]);
-    } catch {
-      /* ignore corrupt history */
-    }
+    const local = readLocalHistory();
+    setHistory(local);
+    // Pull in translations made on other devices (phone ⇄ website).
+    let alive = true;
+    void syncHistoryWithAccount(local).then((merged) => {
+      if (!alive || !merged) return;
+      setHistory(merged);
+      writeLocalHistory(merged);
+    });
+    return () => {
+      alive = false;
+    };
   }, []);
 
-  const persist = (items: HistoryItem[]) => {
+  const persist = (items: HistoryItem[], removed?: HistoryItem) => {
     if (guest) {
       setShowGuestPrompt(true);
       return;
     }
     setHistory(items);
-    try {
-      localStorage.setItem(HISTORY_KEY, JSON.stringify(items));
-    } catch {
-      /* storage may be unavailable */
-    }
+    writeLocalHistory(items);
+    if (removed) void deleteHistoryItem(removed);
   };
 
   const handleTranslate = async (override?: { text: string; direction: "en2ks" | "ks2en" }) => {
@@ -118,19 +121,21 @@ function TranslatePage() {
       const res = await run({ data: { text: source, direction: dir } });
       setResult(res);
       if (res.translation) {
+        const item: HistoryItem = {
+          id: `${Date.now()}`,
+          direction: dir,
+          source,
+          translation: res.translation,
+          roman: res.roman,
+          at: Date.now(),
+        };
         persist(
-          [
-            {
-              id: `${Date.now()}`,
-              direction: dir,
-              source,
-              translation: res.translation,
-              roman: res.roman,
-              at: Date.now(),
-            },
-            ...history.filter((h) => !(h.source === source && h.direction === dir)),
-          ].slice(0, HISTORY_LIMIT),
+          [item, ...history.filter((h) => !(h.source === source && h.direction === dir))].slice(
+            0,
+            HISTORY_LIMIT,
+          ),
         );
+        if (!guest) void saveHistoryItem(item);
       }
     } catch (err) {
       const msg = String((err as Error)?.message ?? "");
@@ -476,7 +481,7 @@ function TranslatePage() {
                       </button>
                     )}
                     <button
-                      onClick={() => persist(history.filter((x) => x.id !== h.id))}
+                      onClick={() => persist(history.filter((x) => x.id !== h.id), h)}
                       aria-label="Remove from history"
                       className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-[8px] border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
                     >
