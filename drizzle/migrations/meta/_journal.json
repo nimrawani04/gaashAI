@@ -15,6 +15,13 @@
       "when": 1790990016455,
       "tag": "0001_user_lesson_state",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791076203865,
+      "tag": "0002_translation_history_sync",
+      "breakpoints": true
     }
   ]
 }
