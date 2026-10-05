@@ -22,6 +22,20 @@
       "when": 1791076203865,
       "tag": "0002_translation_history_sync",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791163968411,
+      "tag": "0003_kb_large_embeddings",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791164006405,
+      "tag": "0004_translation_history_grants",
+      "breakpoints": true
     }
   ]
 }

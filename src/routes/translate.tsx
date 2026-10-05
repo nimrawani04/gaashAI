@@ -89,15 +89,25 @@ function TranslatePage() {
     }
     const local = readLocalHistory();
     setHistory(local);
-    // Pull in translations made on other devices (phone ⇄ website).
+    // Pull in translations made on other devices (phone ⇄ website), on open
+    // and whenever the user comes back to the page/app.
     let alive = true;
-    void syncHistoryWithAccount(local).then((merged) => {
-      if (!alive || !merged) return;
-      setHistory(merged);
-      writeLocalHistory(merged);
-    });
+    const sync = () =>
+      void syncHistoryWithAccount(readLocalHistory()).then((merged) => {
+        if (!alive || !merged) return;
+        setHistory(merged);
+        writeLocalHistory(merged);
+      });
+    sync();
+    const onVisible = () => {
+      if (document.visibilityState === "visible") sync();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", sync);
     return () => {
       alive = false;
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", sync);
     };
   }, []);
 
