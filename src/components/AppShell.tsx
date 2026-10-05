@@ -48,6 +48,9 @@ export default function AppShell() {
   const [guest, setGuest] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const [reconnecting, setReconnecting] = useState(false);
+  // Decided once per app run, before any auth event can mark the run alive.
+  const forgetRef = useRef<boolean | null>(null);
+  if (forgetRef.current === null && typeof window !== "undefined") forgetRef.current = shouldForgetOnStartup();
   const initRef = useRef(0);
   // Whether the backend is *configured* — independent of whether restoring an
   // existing session succeeded. A failed/slow restore must never block sign-in.
@@ -87,7 +90,8 @@ export default function AppShell() {
 
     const restore = async (): Promise<Session | null> => {
       // "Keep me signed in" was unticked and this is a fresh browser/app run.
-      if (shouldForgetOnStartup() && hasStoredSession()) {
+      if (forgetRef.current) {
+        forgetRef.current = false;
         try {
           await client.auth.signOut({ scope: "local" });
         } catch {
@@ -134,7 +138,7 @@ export default function AppShell() {
       else if (s) void backupSession(s);
       // INITIAL_SESSION with no session is handled by the restore above
       // (which may still recover a backed-up session) — don't race it.
-      if (event === "INITIAL_SESSION" && !s) return;
+      if (event === "INITIAL_SESSION" && (!s || forgetRef.current)) return;
       setAuth({ status: "ready", session: s });
       if (s) {
         markBrowserSessionAlive();
