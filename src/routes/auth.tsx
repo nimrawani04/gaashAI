@@ -16,6 +16,7 @@ import { signInWithGoogle } from "@/lib/oauth";
 import { supabase } from "@/integrations/supabase/client";
 import { enterGuestMode, exitGuestMode } from "@/lib/guest";
 import ChinarLoader from "@/components/ChinarLoader";
+import RememberMe from "@/components/auth/RememberMe";
 
 export const Route = createFileRoute("/auth")({
   component: AuthPage,
@@ -200,6 +201,7 @@ function AuthPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3 xs:space-y-4 px-4 xs:px-6 pb-4 xs:pb-6">
+          <RememberMe className="justify-center" />
           <Button
             variant="outline"
             className="w-full text-sm xs:text-base"

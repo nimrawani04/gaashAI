@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import ThemeToggle from "@/components/ThemeToggle";
 import { clearGoogleAutostart, shouldAutostartGoogle, signInWithGoogle } from "@/lib/oauth";
 import ChinarLoader from "@/components/ChinarLoader";
+import RememberMe from "@/components/auth/RememberMe";
 
 type Mode = "signin" | "signup";
 type Method = "email" | "phone";
@@ -175,6 +176,8 @@ export default function AuthScreen({ backendAvailable = true }: { backendAvailab
               : "Create your account"}
           </p>
         </div>
+
+        <RememberMe className="mb-3 justify-center" />
 
         {/* Google */}
         <button
