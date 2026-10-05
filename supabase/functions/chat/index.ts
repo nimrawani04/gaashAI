@@ -109,13 +109,38 @@ Deno.serve(async (req) => {
         Deno.env.get("SUPABASE_URL")!,
         Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
       );
-      const { data: matches } = await supabase.rpc("match_knowledge", {
+      const { data: small } = await supabase.rpc("match_knowledge", {
         query_embedding: queryEmbedding,
         match_threshold: 0.3,
         match_count: 5,
       });
+      // Large-vector entries (incl. the 2,000 BPCC word pairs).
+      let large: unknown[] = [];
+      try {
+        const r = await fetch("https://ai.gateway.lovable.dev/v1/embeddings", {
+          method: "POST",
+          headers: {
+            "Lovable-API-Key": lovableKey,
+            Authorization: `Bearer ${lovableKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ model: "openai/text-embedding-3-small", input: englishMessage.slice(0, 1000) }),
+        });
+        const v = r.ok ? (await r.json())?.data?.[0]?.embedding : null;
+        if (Array.isArray(v)) {
+          const { data } = await supabase.rpc("match_knowledge_large", {
+            query_embedding: v,
+            match_threshold: 0.35,
+            match_count: 5,
+          });
+          large = data ?? [];
+        }
+      } catch (e) {
+        console.error("large KB lookup failed", e);
+      }
+      const matches = [...(small ?? []), ...large];
 
-      if (matches && matches.length > 0) {
+      if (matches.length > 0) {
         const lines = matches
           .map((m: { title: string; content_english: string; content_urdu?: string; content_kashmiri?: string }) => {
             const native =
