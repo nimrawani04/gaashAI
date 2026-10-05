@@ -9,6 +9,7 @@ import SplashScreen from "@/components/SplashScreen";
 import ChinarLoader from "@/components/ChinarLoader";
 import { enterGuestMode, exitGuestMode, isGuestMode } from "@/lib/guest";
 import { backupSession, hasStoredSession, restoreBackupSession } from "@/lib/session-backup";
+import { markBrowserSessionAlive, shouldForgetOnStartup } from "@/lib/remember-me";
 
 /** Never let session restoration block the UI for longer than this. */
 const AUTH_TIMEOUT_MS = 6000;
@@ -46,6 +47,10 @@ export default function AppShell() {
   const [startup, dispatchStartup] = useReducer(startupReducer, { phase: "splash" });
   const [guest, setGuest] = useState(false);
   const [attempt, setAttempt] = useState(0);
+  const [reconnecting, setReconnecting] = useState(false);
+  // Decided once per app run, before any auth event can mark the run alive.
+  const forgetRef = useRef<boolean | null>(null);
+  if (forgetRef.current === null && typeof window !== "undefined") forgetRef.current = shouldForgetOnStartup();
   const initRef = useRef(0);
   // Whether the backend is *configured* — independent of whether restoring an
   // existing session succeeded. A failed/slow restore must never block sign-in.
@@ -81,26 +86,43 @@ export default function AppShell() {
       setAuth({ status: "ready", session });
     };
 
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
     const restore = async (): Promise<Session | null> => {
-      try {
-        const { data } = await withTimeout(client.auth.getSession(), AUTH_TIMEOUT_MS);
-        if (data.session) return data.session;
-      } catch {
-        // Slow network: if a session is saved, keep waiting instead of
-        // signing the user out — the token refresh just needs more time.
-        if (hasStoredSession()) {
-          try {
-            const { data } = await client.auth.getSession();
-            if (data.session) return data.session;
-          } catch {
-            /* fall through */
-          }
+      // "Keep me signed in" was unticked and this is a fresh browser/app run.
+      if (forgetRef.current) {
+        forgetRef.current = false;
+        try {
+          await client.auth.signOut({ scope: "local" });
+        } catch {
+          /* ignore */
         }
+        return null;
+      }
+      // While a saved sign-in exists, keep retrying with backoff instead of
+      // giving up — a weak connection must never look like a sign-out.
+      let delay = 1000;
+      for (let i = 0; ; i++) {
+        if (!active) return null;
+        try {
+          const { data } = await withTimeout(client.auth.getSession(), AUTH_TIMEOUT_MS);
+          if (data.session) return data.session;
+        } catch {
+          /* slow network — retry below */
+        }
+        if (!hasStoredSession()) break; // token was rejected/cleared: truly signed out
+        if (i === 0) setReconnecting(true);
+        await sleep(delay);
+        delay = Math.min(delay * 2, 15000);
       }
       return restoreBackupSession(client);
     };
 
-    void restore().then(finish);
+    void restore().then((s) => {
+      setReconnecting(false);
+      if (s) markBrowserSessionAlive();
+      finish(s);
+    });
 
     return () => {
       active = false;
@@ -116,9 +138,10 @@ export default function AppShell() {
       else if (s) void backupSession(s);
       // INITIAL_SESSION with no session is handled by the restore above
       // (which may still recover a backed-up session) — don't race it.
-      if (event === "INITIAL_SESSION" && !s) return;
+      if (event === "INITIAL_SESSION" && (!s || forgetRef.current)) return;
       setAuth({ status: "ready", session: s });
       if (s) {
+        markBrowserSessionAlive();
         exitGuestMode();
         setGuest(false);
       }
@@ -147,6 +170,11 @@ export default function AppShell() {
         <div className="flex min-h-[100dvh] flex-col items-center justify-center gap-3 bg-background px-6 text-center">
           <ChinarLoader size={56} />
           <p className="font-nastaliq text-sm text-muted-foreground">لوڈ گژھان...</p>
+          {reconnecting && (
+            <p className="text-xs text-muted-foreground">
+              Weak connection — reconnecting to your account…
+            </p>
+          )}
           <button
             onClick={continueAsGuest}
             className="mt-2 rounded-full border border-border px-5 py-2 text-sm font-semibold text-foreground transition hover:bg-accent"
