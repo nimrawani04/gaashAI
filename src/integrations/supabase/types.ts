@@ -179,6 +179,7 @@ export type Database = {
           content_urdu: string
           created_at: string
           embedding: string | null
+          embedding_large: string | null
           id: string
           source: string | null
           title: string
@@ -190,6 +191,7 @@ export type Database = {
           content_urdu?: string
           created_at?: string
           embedding?: string | null
+          embedding_large?: string | null
           id?: string
           source?: string | null
           title: string
@@ -201,6 +203,7 @@ export type Database = {
           content_urdu?: string
           created_at?: string
           embedding?: string | null
+          embedding_large?: string | null
           id?: string
           source?: string | null
           title?: string
@@ -448,6 +451,22 @@ export type Database = {
       }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
       match_knowledge: {
+        Args: {
+          match_count?: number
+          match_threshold?: number
+          query_embedding: string
+        }
+        Returns: {
+          category: string
+          content_english: string
+          content_kashmiri: string
+          content_urdu: string
+          id: string
+          similarity: number
+          title: string
+        }[]
+      }
+      match_knowledge_large: {
         Args: {
           match_count?: number
           match_threshold?: number
