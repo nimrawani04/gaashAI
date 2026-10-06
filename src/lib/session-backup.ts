@@ -47,7 +47,7 @@ export function hasStoredSession(): boolean {
   } catch {
     /* ignore */
   }
-  return !!readCookie();
+  return false;
 }
 
 export async function backupSession(session: Session | null): Promise<void> {
