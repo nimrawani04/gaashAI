@@ -8,6 +8,28 @@
 import type { Session, SupabaseClient } from "@supabase/supabase-js";
 
 const BACKUP_KEY = "kashmirbot:auth-backup:v1";
+const COOKIE = "kb_auth_backup";
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year — cleared on sign-out
+
+function writeCookie(value: string | null) {
+  try {
+    const secure = location.protocol === "https:" ? "; Secure" : "";
+    document.cookie = value
+      ? `${COOKIE}=${encodeURIComponent(value)}; Max-Age=${COOKIE_MAX_AGE}; Path=/; SameSite=Lax${secure}`
+      : `${COOKIE}=; Max-Age=0; Path=/; SameSite=Lax${secure}`;
+  } catch {
+    /* ignore */
+  }
+}
+
+function readCookie(): string | null {
+  try {
+    const m = document.cookie.match(new RegExp(`(?:^|; )${COOKIE}=([^;]*)`));
+    return m ? decodeURIComponent(m[1]) : null;
+  } catch {
+    return null;
+  }
+}
 
 function isNative(): boolean {
   if (typeof window === "undefined") return false;
@@ -25,10 +47,13 @@ export function hasStoredSession(): boolean {
   } catch {
     /* ignore */
   }
-  return false;
+  return !!readCookie();
 }
 
 export async function backupSession(session: Session | null): Promise<void> {
+  if (typeof window === "undefined") return;
+  // Only the long-lived refresh token is kept in the cookie (fits size limits).
+  writeCookie(session?.refresh_token ?? null);
   if (!isNative()) return;
   try {
     const { Preferences } = await import("@capacitor/preferences");
@@ -47,6 +72,17 @@ export async function backupSession(session: Session | null): Promise<void> {
 
 /** Restore a session from native storage when the WebView lost it. */
 export async function restoreBackupSession(client: SupabaseClient<any>): Promise<Session | null> {
+  if (typeof window === "undefined") return null;
+  const cookieToken = readCookie();
+  if (cookieToken) {
+    try {
+      const { data, error } = await client.auth.refreshSession({ refresh_token: cookieToken });
+      if (data.session) return data.session;
+      if (error?.status && error.status >= 400 && error.status < 500) writeCookie(null);
+    } catch {
+      /* network — fall through */
+    }
+  }
   if (!isNative()) return null;
   try {
     const { Preferences } = await import("@capacitor/preferences");
