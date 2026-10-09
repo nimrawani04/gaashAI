@@ -43,3 +43,31 @@ export function shouldForgetOnStartup(): boolean {
     return false;
   }
 }
+
+const SIGNED_OUT_KEY = "kb_signed_out";
+
+/** User pressed Sign out: never auto-restore until they sign in themselves. */
+export function markSignedOut() {
+  try {
+    localStorage.setItem(SIGNED_OUT_KEY, "1");
+    sessionStorage.removeItem(ALIVE_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+export function clearSignedOut() {
+  try {
+    localStorage.removeItem(SIGNED_OUT_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+export function didSignOut(): boolean {
+  try {
+    return localStorage.getItem(SIGNED_OUT_KEY) === "1";
+  } catch {
+    return false;
+  }
+}

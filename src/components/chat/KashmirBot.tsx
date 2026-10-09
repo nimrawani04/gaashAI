@@ -2,6 +2,8 @@ import { useEffect, useRef, useState, useCallback, memo, lazy, Suspense } from "
 import ThemeToggle from "@/components/ThemeToggle";
 import { readImage } from "@/lib/vision.functions";
 import { Mic, Send, LogOut, Menu, HeartHandshake, Paperclip, X, FileText, Loader2, Languages, GraduationCap, Copy, Check } from "lucide-react";
+import ListenButton from "@/components/ListenButton";
+import { markSignedOut } from "@/lib/remember-me";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { Session } from "@supabase/supabase-js";
@@ -161,6 +163,7 @@ const MessageBubble = memo(function MessageBubble({
             {copied ? <Check className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" /> : <Copy className="h-4 w-4 shrink-0" aria-hidden="true" />}
             <span>{copied ? "Copied" : "Copy"}</span>
           </button>
+          {!isUser && msg.isRTL ? <ListenButton text={msg.text} /> : null}
           {!isUser && userId ? <FeedbackButtons messageId={msg.dbId ?? null} userId={userId} /> : null}
 
         </div>
@@ -661,7 +664,12 @@ export default function KashmirBot({
     if (typeof window !== "undefined" && window.speechSynthesis) {
       window.speechSynthesis.cancel();
     }
-    await supabase.auth.signOut();
+    markSignedOut();
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      await supabase.auth.signOut({ scope: "local" }).catch(() => {});
+    }
   };
 
   const inputIsRTL = isRTL(input) || lang !== "en";
