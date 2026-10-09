@@ -9,7 +9,7 @@ import SplashScreen from "@/components/SplashScreen";
 import ChinarLoader from "@/components/ChinarLoader";
 import { enterGuestMode, exitGuestMode, isGuestMode } from "@/lib/guest";
 import { backupSession, hasStoredSession, restoreBackupSession } from "@/lib/session-backup";
-import { markBrowserSessionAlive, shouldForgetOnStartup } from "@/lib/remember-me";
+import { clearSignedOut, didSignOut, markBrowserSessionAlive, shouldForgetOnStartup } from "@/lib/remember-me";
 
 /** Never let session restoration block the UI for longer than this. */
 const AUTH_TIMEOUT_MS = 6000;
@@ -89,6 +89,11 @@ export default function AppShell() {
     const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
     const restore = async (): Promise<Session | null> => {
+      // The user pressed Sign out last time: stay signed out until they sign in.
+      if (didSignOut()) {
+        void backupSession(null);
+        return null;
+      }
       // "Keep me signed in" was unticked and this is a fresh browser/app run.
       if (forgetRef.current) {
         forgetRef.current = false;
@@ -134,6 +139,7 @@ export default function AppShell() {
     const client = getSupabaseClient();
     if (!client) return;
     const { data: sub } = client.auth.onAuthStateChange((event, s) => {
+      if (event === "SIGNED_IN") clearSignedOut();
       if (event === "SIGNED_OUT") void backupSession(null);
       else if (s) void backupSession(s);
       // INITIAL_SESSION with no session is handled by the restore above
