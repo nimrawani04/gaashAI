@@ -1,0 +1,4 @@
+# Install the official Bolbosh requirements in the external checkout first.
+fastapi>=0.115
+uvicorn[standard]>=0.30
+soundfile>=0.12

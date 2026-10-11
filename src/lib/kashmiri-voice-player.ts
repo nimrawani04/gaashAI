@@ -4,7 +4,11 @@ const cache = new Map<string, Promise<string>>();
 let current: HTMLAudioElement | null = null;
 
 export function cleanKashmiriText(text: string) {
-  return text.replace(/https?:\/\/\S+/g, "").replace(/[*_`#>]/g, "").trim().slice(0, 1500);
+  return text
+    .replace(/https?:\/\/\S+/g, "")
+    .replace(/[*_`#>]/g, "")
+    .trim()
+    .slice(0, 1500);
 }
 
 /** Fetches (and caches) Kashmiri speech from the trained Kashmiri voice model. */
@@ -13,10 +17,12 @@ export function getKashmiriAudio(text: string): Promise<string> {
   if (!clean) return Promise.reject(new Error("empty"));
   let p = cache.get(clean);
   if (!p) {
-    p = synthesizeKashmiri({ data: { text: clean, dialect: "kupwara", voice: "Female" } }).then((res) => {
-      if (!res.audio) throw new Error(res.error ?? "no_audio");
-      return res.audio;
-    });
+    p = synthesizeKashmiri({ data: { text: clean, dialect: "kupwara", voice: "Male" } }).then(
+      (res) => {
+        if (!res.audio) throw new Error(res.error ?? "no_audio");
+        return res.audio;
+      },
+    );
     p.catch(() => cache.delete(clean));
     cache.set(clean, p);
   }

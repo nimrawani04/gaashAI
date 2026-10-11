@@ -11,7 +11,7 @@ import { supabase, type ChatSession, type ChatMessageRow } from "@/lib/supabase"
 const SessionsPanel = lazy(() => import("@/components/chat/SessionsPanel"));
 import FeedbackButtons from "@/components/chat/FeedbackButtons";
 import { cleanForSpeech } from "@/lib/tts";
-import { startRecording, blobToBase64, type Recorder } from "@/lib/recorder";
+import { microphoneErrorMessage, startRecording, blobToBase64, type Recorder } from "@/lib/recorder";
 import { transcribeSpeech } from "@/lib/stt.functions";
 import ChinarLoader from "@/components/ChinarLoader";
 import GuestPrompt from "@/components/GuestPrompt";
@@ -346,7 +346,7 @@ export default function KashmirBot({
           return;
         }
         const audio = await blobToBase64(wav);
-        const { text } = await transcribeSpeech({ data: { audio } });
+        const { text } = await transcribeSpeech({ data: { audio, mime: wav.type || "audio/wav" } });
         const clean = text.trim();
         if (!clean) {
           toast("کوئی آواز نہیں سنی گئی");
@@ -364,10 +364,10 @@ export default function KashmirBot({
     try {
       recorderRef.current = await startRecording();
       setIsListening(true);
-    } catch {
+    } catch (error) {
       recorderRef.current = null;
       toast.error("مائیکروفون کی اجازت درکار ہے", {
-        description: "Please allow microphone access in your browser settings.",
+        description: microphoneErrorMessage(error),
       });
     }
   };

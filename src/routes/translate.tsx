@@ -7,9 +7,10 @@ import { toast } from "sonner";
 import { translateText, type TranslateResult } from "@/lib/translate.functions";
 import { readImage } from "@/lib/vision.functions";
 import { speak } from "@/lib/tts";
-import { startRecording, blobToBase64, type Recorder } from "@/lib/recorder";
+import { microphoneErrorMessage, startRecording, blobToBase64, type Recorder } from "@/lib/recorder";
 import { transcribeSpeech } from "@/lib/stt.functions";
 import GuestPrompt from "@/components/GuestPrompt";
+import ListenButton from "@/components/ListenButton";
 import { isGuestMode } from "@/lib/guest";
 import {
   deleteHistoryItem,
@@ -219,7 +220,7 @@ function TranslatePage() {
         }
         const audio = await blobToBase64(wav);
         const { text: heard } = await transcribeSpeech({
-          data: { audio, ...(toKashmiri ? { language: "en" } : {}) },
+          data: { audio, mime: wav.type || "audio/wav", ...(toKashmiri ? { language: "en" } : {}) },
         });
         const clean = heard.trim();
         if (!clean) {
@@ -240,9 +241,11 @@ function TranslatePage() {
     try {
       recorderRef.current = await startRecording();
       setListening(true);
-    } catch {
+    } catch (error) {
       recorderRef.current = null;
-      toast.error("Microphone access is needed to speak.");
+      toast.error("Microphone access is needed to speak.", {
+        description: microphoneErrorMessage(error),
+      });
     }
   };
 
@@ -403,7 +406,9 @@ function TranslatePage() {
               <p className="mt-2 text-xs xs:text-sm italic text-muted-foreground">{result.roman}</p>
             ) : null}
             <div className="mt-2 xs:mt-3 flex items-center gap-2">
-              {!toKashmiri && (
+              {toKashmiri ? (
+                <ListenButton text={result.translation} />
+              ) : (
                 <button
                   onClick={() => handleSpeak(result.translation)}
                   aria-label="Read translation aloud"
@@ -481,7 +486,9 @@ function TranslatePage() {
                     ) : null}
                   </button>
                   <div className="flex shrink-0 flex-col gap-1">
-                    {h.direction !== "en2ks" && (
+                    {h.direction === "en2ks" ? (
+                      <ListenButton text={h.translation} />
+                    ) : (
                       <button
                         onClick={() => handleSpeak(h.translation)}
                         aria-label="Read this translation aloud"
@@ -528,14 +535,7 @@ function TranslatePage() {
                   </span>
                   <span className="mt-0.5 block text-xs italic text-muted-foreground">{p.roman}</span>
                 </button>
-                <button
-                  onClick={() => handleSpeak(p.ks)}
-                  aria-label={`Hear "${p.en}" in Kashmiri`}
-                  className="flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-[8px] border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
-                  title="Press play to hear it"
-                >
-                  <Volume2 className="h-4 w-4 text-primary" />
-                </button>
+                <ListenButton text={p.ks} className="min-w-[44px] shrink-0 px-2" />
               </li>
             ))}
           </ul>

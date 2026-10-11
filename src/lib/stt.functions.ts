@@ -2,8 +2,10 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 const Input = z.object({
-  /** Base64-encoded WAV audio (no data: prefix). */
+  /** Base64-encoded recorder bytes (no data: prefix). */
   audio: z.string().min(64).max(20_000_000),
+  /** The recorder can return WAV or a WebView MediaRecorder container. */
+  mime: z.string().max(100).optional(),
   /** Optional ISO-639-1 hint, e.g. "ur" or "en". Omit to auto-detect. */
   language: z.string().max(5).optional(),
 });
@@ -24,7 +26,9 @@ const KASHMIRI_PROMPT = [
 async function transcribeWithKashmiriModel(
   apiKey: string,
   base64Wav: string,
+  mime = "audio/wav",
 ): Promise<string> {
+  const format = mime.split("/", 2)[1]?.split(";", 1)[0] ?? "wav";
   const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
@@ -36,7 +40,7 @@ async function transcribeWithKashmiriModel(
           role: "user",
           content: [
             { type: "text", text: "Transcribe this Kashmiri speech in Nastaliq script." },
-            { type: "input_audio", input_audio: { data: base64Wav, format: "wav" } },
+            { type: "input_audio", input_audio: { data: base64Wav, format } },
           ],
         },
       ],
@@ -61,12 +65,14 @@ async function transcribeFallback(
   apiKey: string,
   bytes: Uint8Array,
   language?: string,
+  mime = "audio/wav",
 ): Promise<string> {
   const form = new FormData();
   form.append("model", "openai/gpt-4o-transcribe");
   const view = new Uint8Array(bytes.byteLength);
   view.set(bytes);
-  form.append("file", new Blob([view.buffer as ArrayBuffer], { type: "audio/wav" }), "recording.wav");
+  const extension = mime.split("/", 2)[1]?.split(";", 1)[0] || "wav";
+  form.append("file", new Blob([view.buffer as ArrayBuffer], { type: mime }), `recording.${extension}`);
   if (language) form.append("language", language);
   form.append(
     "prompt",
@@ -101,7 +107,7 @@ export const transcribeSpeech = createServerFn({ method: "POST" })
     if (bytes.byteLength < 2048) return { text: "" };
 
     try {
-      const text = await transcribeWithKashmiriModel(apiKey, data.audio);
+      const text = await transcribeWithKashmiriModel(apiKey, data.audio, data.mime);
       if (text) return { text };
     } catch (err) {
       const status = (err as { status?: number }).status;
@@ -111,5 +117,5 @@ export const transcribeSpeech = createServerFn({ method: "POST" })
       // fall through to the generic transcription endpoint
     }
 
-    return { text: await transcribeFallback(apiKey, bytes, data.language) };
+    return { text: await transcribeFallback(apiKey, bytes, data.language, data.mime) };
   });

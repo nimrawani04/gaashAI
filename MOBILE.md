@@ -13,6 +13,7 @@ Version `1.0.0` (build 1).
 - `android/` — an Android Studio project with a leaf-only home icon and a static leaf launch image; the live app then plays the original SVG leaf-to-bot animation.
 - `ios/` — an Xcode project with the same leaf-only icon and original SVG startup animation after launch.
 - Completed Urdu and Kashmiri ready-made lesson quizzes are stored on-device and remain visible after restarting the app. They are not shared across devices.
+- Voice input requests the native microphone permission on iOS and Android; the iOS usage description is included in `ios/App/App/Info.plist`.
 
 ## One-time setup on your computer
 
