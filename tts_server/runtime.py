@@ -4,6 +4,7 @@ from __future__ import annotations
 import io
 import sys
 import types
+from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
@@ -78,6 +79,38 @@ def encode_text(text, metadata=None):
     return torch.tensor(result, dtype=torch.long)
 
 
+@dataclass(frozen=True)
+class AudioQuality:
+    peak_dbfs: float = -1.0
+    target_rms_dbfs: float = -22.0
+    fade_ms: float = 8.0
+
+
+def refine_waveform(audio, sample_rate=22050, quality=AudioQuality()):
+    audio = np.asarray(audio, dtype=np.float32).reshape(-1)
+    if not np.isfinite(audio).all() or not len(audio):
+        raise ValueError("Invalid generated waveform")
+
+    audio = audio - float(np.mean(audio))
+    peak_limit = float(10 ** (quality.peak_dbfs / 20))
+    rms_target = float(10 ** (quality.target_rms_dbfs / 20))
+    rms = float(np.sqrt(np.mean(audio * audio)))
+    if rms > 1e-6:
+        audio = audio * min(rms_target / rms, peak_limit / max(float(np.max(np.abs(audio))), 1e-6))
+
+    peak = float(np.max(np.abs(audio)))
+    if peak > peak_limit:
+        audio = audio * (peak_limit / peak)
+
+    fade = min(int(sample_rate * quality.fade_ms / 1000), len(audio) // 2)
+    if fade > 1:
+        ramp = np.linspace(0.0, 1.0, fade, dtype=np.float32)
+        audio[:fade] *= ramp
+        audio[-fade:] *= ramp[::-1]
+
+    return np.clip(audio, -1.0, 1.0)
+
+
 class Voice:
     def __init__(self, checkpoint, vocoder, device="cpu", speaker=423):
         self.device = device
@@ -88,7 +121,7 @@ class Voice:
         self.speaker = self.metadata.get("default_speaker", speaker) if self.metadata and speaker == 423 else speaker
 
     @torch.inference_mode()
-    def wav(self, text, steps=10, speaker=None):
+    def wav(self, text, steps=8, speaker=None, temperature=0.55, length_scale=1.0):
         from matcha.cli import to_waveform
         x = encode_text(text, self.metadata).unsqueeze(0).to(self.device)
         spk = self.speaker if speaker is None else speaker
@@ -96,12 +129,10 @@ class Voice:
             raise ValueError("Speaker outside checkpoint range")
         output = self.model.synthesise(
             x, torch.tensor([x.shape[1]], device=self.device),
-            n_timesteps=steps, temperature=0.667,
-            spks=torch.tensor([spk], device=self.device), length_scale=1.0,
+            n_timesteps=steps, temperature=temperature,
+            spks=torch.tensor([spk], device=self.device), length_scale=length_scale,
         )
-        audio = to_waveform(output["mel"], self.vocoder, self.denoiser).cpu().numpy()
-        if not np.isfinite(audio).all() or not len(audio):
-            raise ValueError("Invalid generated waveform")
+        audio = refine_waveform(to_waveform(output["mel"], self.vocoder, self.denoiser).cpu().numpy())
         buffer = io.BytesIO()
         sf.write(buffer, audio, 22050, format="WAV", subtype="PCM_16")
         return buffer.getvalue()

@@ -7,8 +7,8 @@ import { toast } from "sonner";
 import { translateText, type TranslateResult } from "@/lib/translate.functions";
 import { readImage } from "@/lib/vision.functions";
 import { speak } from "@/lib/tts";
-import { microphoneErrorMessage, startRecording, blobToBase64, type Recorder } from "@/lib/recorder";
-import { transcribeSpeech } from "@/lib/stt.functions";
+import { microphoneErrorMessage } from "@/lib/recorder";
+import { startVoiceInput, type VoiceInputSession } from "@/lib/voice-input";
 import GuestPrompt from "@/components/GuestPrompt";
 import ListenButton from "@/components/ListenButton";
 import { isGuestMode } from "@/lib/guest";
@@ -78,7 +78,7 @@ function TranslatePage() {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [listening, setListening] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
-  const recorderRef = useRef<Recorder | null>(null);
+  const voiceSessionRef = useRef<VoiceInputSession | null>(null);
 
 
   const toKashmiri = direction === "en2ks";
@@ -207,45 +207,55 @@ function TranslatePage() {
   /** Speak instead of type: records mic audio and transcribes it into the box. */
   const handleMic = async () => {
     if (transcribing) return;
-    if (listening && recorderRef.current) {
-      const rec = recorderRef.current;
-      recorderRef.current = null;
+    if (listening && voiceSessionRef.current) {
+      const session = voiceSessionRef.current;
+      voiceSessionRef.current = null;
       setListening(false);
       setTranscribing(true);
       try {
-        const wav = await rec.stop();
-        if (wav.size < 4096) {
-          toast("No speech was heard — try again.");
-          return;
-        }
-        const audio = await blobToBase64(wav);
-        const { text: heard } = await transcribeSpeech({
-          data: { audio, mime: wav.type || "audio/wav", ...(toKashmiri ? { language: "en" } : {}) },
-        });
-        const clean = heard.trim();
+        const heard = await session.stop();
+        const clean = heard.trim() || text.trim();
         if (!clean) {
           toast("No speech was heard — try again.");
           return;
         }
         setText(clean);
         await handleTranslate({ text: clean, direction });
-      } catch (err) {
-        toast.error("Couldn't understand that recording", {
-          description: String((err as Error)?.message ?? "").slice(0, 160),
-        });
+      } catch (err: any) {
+        if (err?.message === "server_not_configured_use_browser") {
+          toast.info("Please tap the microphone again to use browser speech recognition.");
+        } else {
+          toast.error("Couldn't understand that recording", {
+            description: String(err?.message ?? "").slice(0, 160),
+          });
+        }
       } finally {
         setTranscribing(false);
       }
       return;
     }
     try {
-      recorderRef.current = await startRecording();
-      setListening(true);
-    } catch (error) {
-      recorderRef.current = null;
-      toast.error("Microphone access is needed to speak.", {
-        description: microphoneErrorMessage(error),
+      voiceSessionRef.current = await startVoiceInput({
+        lang: toKashmiri ? "en-IN" : "ur-IN",
+        onInterim: (interim) => {
+          if (interim) setText(interim);
+        },
+        onAutoEnd: (finalText) => {
+          setListening(false);
+          voiceSessionRef.current = null;
+          if (finalText) setText(finalText);
+        },
       });
+      setListening(true);
+    } catch (error: any) {
+      voiceSessionRef.current = null;
+      if (error?.message === "speech_unsupported") {
+        toast.error("Speech recognition is not supported in this browser or configured on the server.");
+      } else {
+        toast.error("Microphone access is needed to speak.", {
+          description: microphoneErrorMessage(error),
+        });
+      }
     }
   };
 

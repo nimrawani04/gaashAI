@@ -217,11 +217,9 @@ export const synthesizeKashmiri = createServerFn({ method: "POST" })
     }),
   )
   .handler(async ({ data }) => {
-    const corpusAudio = await viaHuggingFaceCorpus(data.text);
-    if (corpusAudio) return { error: null, ...corpusAudio };
-
     const base = process.env.KASHMIRI_TTS_URL?.replace(/\/+$/, "");
-    // Ignore addresses that are Hugging Face pages (datasets/models), not voice servers.
+    // Prefer the deployed voice server. It can serve local corpus references
+    // without building a remote Hugging Face row index on every cold start.
     if (base && !/huggingface\.co\//.test(base)) {
       try {
         const audio = await viaCustomServer(base, data.text, data.dialect, data.voice);
@@ -230,6 +228,12 @@ export const synthesizeKashmiri = createServerFn({ method: "POST" })
         /* fall through to Matcha */
       }
     }
+
+    if (!base) {
+      const corpusAudio = await viaHuggingFaceCorpus(data.text);
+      if (corpusAudio) return { error: null, ...corpusAudio };
+    }
+
     try {
       const audio = await viaMatcha(data.text, data.voice);
       if (audio) return { error: null, ...audio };

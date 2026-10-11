@@ -97,25 +97,121 @@ async function transcribeFallback(
   return (json.text ?? "").trim();
 }
 
+async function transcribeWithOpenAiDirect(
+  apiKey: string,
+  bytes: Uint8Array,
+  language?: string,
+  mime = "audio/wav",
+): Promise<string> {
+  const form = new FormData();
+  form.append("model", "whisper-1");
+  const view = new Uint8Array(bytes.byteLength);
+  view.set(bytes);
+  const extension = mime.split("/", 2)[1]?.split(";", 1)[0] || "wav";
+  form.append("file", new Blob([view.buffer as ArrayBuffer], { type: mime }), `recording.${extension}`);
+  if (language) form.append("language", language);
+  form.append(
+    "prompt",
+    "The speaker talks in Kashmiri (koshur) or Urdu. Transcribe verbatim in the Perso-Arabic script.",
+  );
+
+  const res = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${apiKey}` },
+    body: form,
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    if (res.status === 429) throw new Error("Too many requests — please try again in a moment.");
+    throw new Error(`OpenAI transcription failed [${res.status}]: ${body.slice(0, 300)}`);
+  }
+
+  const json = (await res.json()) as { text?: string };
+  return (json.text ?? "").trim();
+}
+
+async function transcribeWithGeminiDirect(
+  apiKey: string,
+  base64Audio: string,
+  mime = "audio/wav",
+): Promise<string> {
+  const mimeType = mime.split(";")[0] || "audio/wav";
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [
+        {
+          parts: [
+            { text: KASHMIRI_PROMPT },
+            {
+              inline_data: {
+                mime_type: mimeType,
+                data: base64Audio,
+              },
+            },
+          ],
+        },
+      ],
+    }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    if (res.status === 429) throw new Error("Too many requests — please try again in a moment.");
+    throw new Error(`Gemini transcription failed [${res.status}]: ${body.slice(0, 300)}`);
+  }
+
+  const json = (await res.json()) as any;
+  const text = json.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+  return text.trim();
+}
+
+export const checkSttConfigured = createServerFn({ method: "GET" }).handler(
+  async (): Promise<{ configured: boolean }> => {
+    const hasKey = Boolean(
+      process.env["LOVABLE_API_KEY"] ||
+        process.env["OPENAI_API_KEY"] ||
+        process.env["GEMINI_API_KEY"]
+    );
+    return { configured: hasKey };
+  },
+);
+
 export const transcribeSpeech = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => Input.parse(data))
   .handler(async ({ data }): Promise<SttResult> => {
-    const apiKey = process.env["LOVABLE_API_KEY"];
-    if (!apiKey) throw new Error("Speech recognition is not configured.");
+    const lovableKey = process.env["LOVABLE_API_KEY"];
+    const openaiKey = process.env["OPENAI_API_KEY"];
+    const geminiKey = process.env["GEMINI_API_KEY"];
 
     const bytes = Uint8Array.from(atob(data.audio), (c) => c.charCodeAt(0));
     if (bytes.byteLength < 2048) return { text: "" };
 
-    try {
-      const text = await transcribeWithKashmiriModel(apiKey, data.audio, data.mime);
-      if (text) return { text };
-    } catch (err) {
-      const status = (err as { status?: number }).status;
-      if (status === 429) throw new Error("Too many requests — please try again in a moment.");
-      if (status === 402)
-        throw new Error("AI credits exhausted — please top up to keep using voice input.");
-      // fall through to the generic transcription endpoint
+    if (lovableKey) {
+      try {
+        const text = await transcribeWithKashmiriModel(lovableKey, data.audio, data.mime);
+        if (text) return { text };
+      } catch (err) {
+        const status = (err as { status?: number }).status;
+        if (status === 429) throw new Error("Too many requests — please try again in a moment.");
+        if (status === 402)
+          throw new Error("AI credits exhausted — please top up to keep using voice input.");
+        // fall through to the generic transcription endpoint
+      }
+
+      return { text: await transcribeFallback(lovableKey, bytes, data.language, data.mime) };
     }
 
-    return { text: await transcribeFallback(apiKey, bytes, data.language, data.mime) };
+    if (openaiKey) {
+      return { text: await transcribeWithOpenAiDirect(openaiKey, bytes, data.language, data.mime) };
+    }
+
+    if (geminiKey) {
+      return { text: await transcribeWithGeminiDirect(geminiKey, data.audio, data.mime) };
+    }
+
+    throw new Error("Speech recognition is not configured.");
   });

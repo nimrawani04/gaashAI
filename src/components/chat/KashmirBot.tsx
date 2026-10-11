@@ -1,7 +1,21 @@
 import { useEffect, useRef, useState, useCallback, memo, lazy, Suspense } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { readImage } from "@/lib/vision.functions";
-import { Mic, Send, LogOut, Menu, HeartHandshake, Paperclip, X, FileText, Loader2, Languages, GraduationCap, Copy, Check } from "lucide-react";
+import {
+  Mic,
+  Send,
+  LogOut,
+  Menu,
+  HeartHandshake,
+  Paperclip,
+  X,
+  FileText,
+  Loader2,
+  Languages,
+  GraduationCap,
+  Copy,
+  Check,
+} from "lucide-react";
 import ListenButton from "@/components/ListenButton";
 import { markSignedOut } from "@/lib/remember-me";
 import { Link } from "@tanstack/react-router";
@@ -11,8 +25,8 @@ import { supabase, type ChatSession, type ChatMessageRow } from "@/lib/supabase"
 const SessionsPanel = lazy(() => import("@/components/chat/SessionsPanel"));
 import FeedbackButtons from "@/components/chat/FeedbackButtons";
 import { cleanForSpeech } from "@/lib/tts";
-import { microphoneErrorMessage, startRecording, blobToBase64, type Recorder } from "@/lib/recorder";
-import { transcribeSpeech } from "@/lib/stt.functions";
+import { microphoneErrorMessage } from "@/lib/recorder";
+import { startVoiceInput, type VoiceInputSession } from "@/lib/voice-input";
 import ChinarLoader from "@/components/ChinarLoader";
 import GuestPrompt from "@/components/GuestPrompt";
 import { bumpGuestUses, guestLimitReached, type GuestFeature } from "@/lib/guest";
@@ -32,29 +46,60 @@ interface Message {
   isRTL: boolean;
 }
 
-const RTL_REGEX = /[\u0590-\u05FF\u0600-\u06FF\u0700-\u074F\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+const RTL_REGEX =
+  /[\u0590-\u05FF\u0600-\u06FF\u0700-\u074F\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
 const isRTL = (text: string) => RTL_REGEX.test(text);
 
-
-const UI_STRINGS: Record<Lang, {
-  subtitle: string;
-  empty: string;
-  placeholder: string;
-  send: string;
-  mic: string;
-  langLabel: string;
-  emptyDir: "rtl" | "ltr";
-  emptyClass: string;
-}> = {
-  ks: { subtitle: "Your Kashmiri Assistant", empty: "سلام! بہٕ چھُس گاش اے آئی (GaashAI)، تُہُنٛد کٲشُر اے آئی مَدَدگار۔ بہٕ کِتھ کٔنۍ ہٮ۪کہٕ اَز تُہنٛز مَدَد کٔرِتھ؟", placeholder: "کٮ۪نٛہہ تہِ پرژھِو یا پیغام لیٚکھِو، بہٕ چھُس تُہنٛد مدد کَرنہِ خٲطرٕ تیار۔ مےٚ ؤنِو، بہٕ کِتھ کٔنۍ ہیٚکہٕ تۄہہِ مدد کٔرِتھ۔", send: "بھیجِو", mic: "آواز", langLabel: "کٲشُر", emptyDir: "rtl", emptyClass: "font-nastaliq" },
-  ur: { subtitle: "آپ کا کشمیری معاون", empty: "سلام! میں آپ کی کیا مدد کر سکتا ہوں؟", placeholder: "یہاں لکھیں...", send: "بھیجیں", mic: "آواز", langLabel: "Urdu", emptyDir: "rtl", emptyClass: "font-nastaliq" },
-  en: { subtitle: "Your Kashmiri Assistant", empty: "Hello! How can I help you today?", placeholder: "Type a message...", send: "Send", mic: "Voice", langLabel: "English", emptyDir: "ltr", emptyClass: "" },
+const UI_STRINGS: Record<
+  Lang,
+  {
+    subtitle: string;
+    empty: string;
+    placeholder: string;
+    send: string;
+    mic: string;
+    langLabel: string;
+    emptyDir: "rtl" | "ltr";
+    emptyClass: string;
+  }
+> = {
+  ks: {
+    subtitle: "Your Kashmiri Assistant",
+    empty:
+      "سلام! بہٕ چھُس گاش اے آئی (GaashAI)، تُہُنٛد کٲشُر اے آئی مَدَدگار۔ بہٕ کِتھ کٔنۍ ہٮ۪کہٕ اَز تُہنٛز مَدَد کٔرِتھ؟",
+    placeholder:
+      "کٮ۪نٛہہ تہِ پرژھِو یا پیغام لیٚکھِو، بہٕ چھُس تُہنٛد مدد کَرنہِ خٲطرٕ تیار۔ مےٚ ؤنِو، بہٕ کِتھ کٔنۍ ہیٚکہٕ تۄہہِ مدد کٔرِتھ۔",
+    send: "بھیجِو",
+    mic: "آواز",
+    langLabel: "کٲشُر",
+    emptyDir: "rtl",
+    emptyClass: "font-nastaliq",
+  },
+  ur: {
+    subtitle: "آپ کا کشمیری معاون",
+    empty: "سلام! میں آپ کی کیا مدد کر سکتا ہوں؟",
+    placeholder: "یہاں لکھیں...",
+    send: "بھیجیں",
+    mic: "آواز",
+    langLabel: "Urdu",
+    emptyDir: "rtl",
+    emptyClass: "font-nastaliq",
+  },
+  en: {
+    subtitle: "Your Kashmiri Assistant",
+    empty: "Hello! How can I help you today?",
+    placeholder: "Type a message...",
+    send: "Send",
+    mic: "Voice",
+    langLabel: "English",
+    emptyDir: "ltr",
+    emptyClass: "",
+  },
 };
 
 const LANG_ORDER: Lang[] = ["ks", "ur", "en"];
 
 // TTS helpers live in @/lib/tts (voice loading, chunking, Chrome quirks).
-
 
 const ATTACH_RE = /^📎 \[(.+?)\]\((.+?)\)$/;
 const IMG_EXT_RE = /\.(png|jpe?g|gif|webp|avif|svg)(\?|$)/i;
@@ -69,7 +114,11 @@ function renderMessageContent(text: string) {
       if (isImage) {
         return (
           <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="mt-2 block">
-            <img src={url} alt={name} className="max-h-64 max-w-full rounded-lg border border-border/50" />
+            <img
+              src={url}
+              alt={name}
+              className="max-h-64 max-w-full rounded-lg border border-border/50"
+            />
           </a>
         );
       }
@@ -108,7 +157,6 @@ const MessageBubble = memo(function MessageBubble({
   const isUser = msg.role === "user";
   const [copied, setCopied] = useState(false);
 
-
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(msg.text);
@@ -122,10 +170,14 @@ const MessageBubble = memo(function MessageBubble({
 
   return (
     <div
-      className={`flex w-full ${isUser ? "justify-end" : "justify-start"} my-1`}
-      style={{ contentVisibility: "auto", containIntrinsicSize: "auto 72px" } as React.CSSProperties}
+      className={`flex w-full min-w-0 ${isUser ? "justify-end" : "justify-start"} my-1`}
+      style={
+        { contentVisibility: "auto", containIntrinsicSize: "auto 72px" } as React.CSSProperties
+      }
     >
-      <div className={`flex max-w-[92%] xs:max-w-[85%] sm:max-w-[80%] md:max-w-[75%] flex-col gap-1.5 ${isUser ? "items-end" : "items-start"}`}>
+      <div
+        className={`flex min-w-0 max-w-[calc(100vw-1rem)] xs:max-w-[88%] sm:max-w-[80%] md:max-w-[75%] flex-col gap-1.5 ${isUser ? "items-end" : "items-start"}`}
+      >
         {/* Role & Script Indicator */}
         <div className="flex items-center gap-1.5 px-1 text-[11px] font-medium text-muted-foreground">
           {isUser ? (
@@ -142,7 +194,7 @@ const MessageBubble = memo(function MessageBubble({
         <div
           dir={dir}
           className={[
-            "rounded-[16px] px-4 py-3 text-base sm:text-lg leading-relaxed shadow-sm transition-colors",
+            "max-w-full overflow-hidden break-words rounded-[16px] px-4 py-3 text-base sm:text-lg leading-relaxed shadow-sm transition-colors [overflow-wrap:anywhere]",
             msg.isRTL ? "font-nastaliq" : "",
             isUser
               ? "bg-primary text-primary-foreground rounded-br-[4px]"
@@ -153,19 +205,26 @@ const MessageBubble = memo(function MessageBubble({
         </div>
 
         {/* Action Bar: Copy (all messages), Audio & Feedback (assistant) */}
-        <div className={`flex items-center gap-2 pt-0.5 px-1 ${isUser ? "justify-end" : ""}`}>
+        <div
+          className={`flex w-full flex-wrap items-center gap-2 pt-0.5 px-1 ${isUser ? "justify-end" : ""}`}
+        >
           <button
             type="button"
             onClick={handleCopy}
             aria-label="Copy message"
             className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-[8px] px-3 text-xs font-medium transition border border-border bg-secondary text-secondary-foreground hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
           >
-            {copied ? <Check className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" /> : <Copy className="h-4 w-4 shrink-0" aria-hidden="true" />}
+            {copied ? (
+              <Check className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+            ) : (
+              <Copy className="h-4 w-4 shrink-0" aria-hidden="true" />
+            )}
             <span>{copied ? "Copied" : "Copy"}</span>
           </button>
           {!isUser && msg.isRTL ? <ListenButton text={msg.text} /> : null}
-          {!isUser && userId ? <FeedbackButtons messageId={msg.dbId ?? null} userId={userId} /> : null}
-
+          {!isUser && userId ? (
+            <FeedbackButtons messageId={msg.dbId ?? null} userId={userId} />
+          ) : null}
         </div>
       </div>
     </div>
@@ -187,7 +246,6 @@ function TypingIndicator() {
   );
 }
 
-
 // Memoized so typing in the composer never re-reconciles the whole thread.
 const MessageList = memo(function MessageList({
   messages,
@@ -203,19 +261,13 @@ const MessageList = memo(function MessageList({
   return (
     <>
       {messages.map((m) => (
-        <MessageBubble
-          key={m.id}
-          msg={m}
-          userId={userId}
-          lang={lang}
-        />
+        <MessageBubble key={m.id} msg={m} userId={userId} lang={lang} />
       ))}
 
       {isThinking && <TypingIndicator />}
     </>
   );
 });
-
 
 function rowToMessage(r: ChatMessageRow): Message {
   return {
@@ -240,6 +292,7 @@ export default function KashmirBot({
   const userId = session?.user.id ?? "";
   const [guestPrompt, setGuestPrompt] = useState<GuestFeature | null>(null);
   const [lang, setLang] = useState<Lang>("ks");
+  const [voiceLang, setVoiceLang] = useState<Lang>("ks");
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isThinking, setIsThinking] = useState(false);
@@ -253,16 +306,12 @@ export default function KashmirBot({
   const dragCounter = useRef(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isTranscribing, setIsTranscribing] = useState(false);
-  const recorderRef = useRef<Recorder | null>(null);
+  const voiceSessionRef = useRef<VoiceInputSession | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const t = UI_STRINGS[lang];
 
-
-
-
   const messagesRef = useRef<Message[]>(messages);
   messagesRef.current = messages;
-
 
   // Load sessions list + most recent session's messages
   const refreshSessions = useCallback(async () => {
@@ -280,21 +329,24 @@ export default function KashmirBot({
     return data ?? [];
   }, [userId]);
 
-  const loadMessagesFor = useCallback(async (sessionId: string) => {
-    if (!userId) return;
-    const { data, error } = await supabase
-      .from("chat_messages")
-      .select("*")
-      .eq("session_id", sessionId)
-      .order("created_at", { ascending: false })
-      .limit(20);
-    if (error) {
-      toast.error("Couldn't load messages");
-      return;
-    }
-    const rows = (data ?? []).slice().reverse();
-    setMessages(rows.map(rowToMessage));
-  }, [userId]);
+  const loadMessagesFor = useCallback(
+    async (sessionId: string) => {
+      if (!userId) return;
+      const { data, error } = await supabase
+        .from("chat_messages")
+        .select("*")
+        .eq("session_id", sessionId)
+        .order("created_at", { ascending: false })
+        .limit(20);
+      if (error) {
+        toast.error("Couldn't load messages");
+        return;
+      }
+      const rows = (data ?? []).slice().reverse();
+      setMessages(rows.map(rowToMessage));
+    },
+    [userId],
+  );
 
   useEffect(() => {
     (async () => {
@@ -322,32 +374,24 @@ export default function KashmirBot({
     return () => cancelAnimationFrame(id);
   }, [messageCount, isThinking]);
 
-
   const cycleLang = useCallback(() => {
-
-    setLang((l) => LANG_ORDER[(LANG_ORDER.indexOf(l) + 1) % LANG_ORDER.length]);
+    setLang((l) => {
+      const next = LANG_ORDER[(LANG_ORDER.indexOf(l) + 1) % LANG_ORDER.length];
+      setVoiceLang(next);
+      return next;
+    });
   }, []);
-
-
-
-
 
   const handleMicClick = async () => {
     if (isTranscribing) return;
-    if (isListening && recorderRef.current) {
-      const rec = recorderRef.current;
-      recorderRef.current = null;
+    if (isListening && voiceSessionRef.current) {
+      const session = voiceSessionRef.current;
+      voiceSessionRef.current = null;
       setIsListening(false);
       setIsTranscribing(true);
       try {
-        const wav = await rec.stop();
-        if (wav.size < 4096) {
-          toast("کوئی آواز نہیں سنی گئی");
-          return;
-        }
-        const audio = await blobToBase64(wav);
-        const { text } = await transcribeSpeech({ data: { audio, mime: wav.type || "audio/wav" } });
-        const clean = text.trim();
+        const text = await session.stop();
+        const clean = text.trim() || input.trim();
         if (!clean) {
           toast("کوئی آواز نہیں سنی گئی");
           return;
@@ -355,23 +399,50 @@ export default function KashmirBot({
         setInput("");
         await handleSend(clean);
       } catch (err: any) {
-        toast.error("آواز کی شناخت میں مسئلہ", { description: err?.message?.slice(0, 160) });
+        if (err?.message === "server_not_configured_use_browser") {
+          toast.info("براہ کرم مائیکروفون پر دوبارہ کلک کریں", {
+            description: "Server speech recognition is not configured. Retrying with browser speech recognition.",
+          });
+        } else {
+          toast.error("آواز کی شناخت میں مسئلہ", {
+            description: err?.message?.slice(0, 160) || "Speech recognition could not process the audio.",
+          });
+        }
       } finally {
         setIsTranscribing(false);
       }
       return;
     }
     try {
-      recorderRef.current = await startRecording();
-      setIsListening(true);
-    } catch (error) {
-      recorderRef.current = null;
-      toast.error("مائیکروفون کی اجازت درکار ہے", {
-        description: microphoneErrorMessage(error),
+      voiceSessionRef.current = await startVoiceInput({
+        lang: voiceLang,
+        onInterim: (interim) => {
+          if (interim) {
+            setInput(interim);
+          }
+        },
+        onAutoEnd: (finalText) => {
+          setIsListening(false);
+          voiceSessionRef.current = null;
+          if (finalText) {
+            setInput(finalText);
+          }
+        },
       });
+      setIsListening(true);
+    } catch (error: any) {
+      voiceSessionRef.current = null;
+      if (error?.message === "speech_unsupported") {
+        toast.error("آواز کی شناخت دستیاب نہیں ہے", {
+          description: "Speech recognition is not configured and not supported in this browser. Please use Chrome, Edge, or configure an API key.",
+        });
+      } else {
+        toast.error("مائیکروفون کی اجازت درکار ہے", {
+          description: microphoneErrorMessage(error),
+        });
+      }
     }
   };
-
 
   const ensureSession = async (firstUserText: string): Promise<string | null> => {
     if (!userId) return null; // guests keep the conversation in memory only
@@ -439,7 +510,6 @@ export default function KashmirBot({
     }
   };
 
-
   const sendWithRetry = async (userMsg: Message, sessionId: string | null) => {
     setIsThinking(true);
     const thinkingToast = toast.loading("سوچ رہا ہوں...");
@@ -496,7 +566,6 @@ export default function KashmirBot({
     }
   };
 
-
   const handleAttachClick = () => fileInputRef.current?.click();
 
   const uploadFiles = async (files: File[]) => {
@@ -529,7 +598,10 @@ export default function KashmirBot({
           toast.error(`Could not get link for ${file.name}`);
           continue;
         }
-        setAttachments((prev) => [...prev, { name: file.name, url: signed.signedUrl, type: file.type }]);
+        setAttachments((prev) => [
+          ...prev,
+          { name: file.name, url: signed.signedUrl, type: file.type },
+        ]);
       }
     } finally {
       setUploading(false);
@@ -597,7 +669,9 @@ export default function KashmirBot({
     const otherFiles = sent.filter((a) => !images.includes(a)).map((a) => a.name);
     const aiText = [
       text,
-      visionNotes ? `The user attached image(s). Extracted content:\n${visionNotes}\nAnswer the user's question using this content.` : "",
+      visionNotes
+        ? `The user attached image(s). Extracted content:\n${visionNotes}\nAnswer the user's question using this content.`
+        : "",
       otherFiles.length ? `The user also attached file(s): ${otherFiles.join(", ")}.` : "",
     ]
       .filter(Boolean)
@@ -614,51 +688,58 @@ export default function KashmirBot({
     }
   };
 
-  const handleSelectSession = useCallback(async (id: string) => {
-    setCurrentSessionId(id);
-    await loadMessagesFor(id);
-  }, [loadMessagesFor]);
+  const handleSelectSession = useCallback(
+    async (id: string) => {
+      setCurrentSessionId(id);
+      await loadMessagesFor(id);
+    },
+    [loadMessagesFor],
+  );
 
   const handleNewChat = useCallback(() => {
     setCurrentSessionId(null);
     setMessages([]);
   }, []);
 
-  const handleRenameSession = useCallback(async (id: string, title: string) => {
-    const { error } = await supabase
-      .from("chat_sessions")
-      .update({ title })
-      .eq("id", id)
-      .eq("user_id", userId);
-    if (error) {
-      toast.error("Couldn't rename chat");
-      return;
-    }
-    setSessions((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, title } : s)),
-    );
-  }, [userId]);
-
-  const handleDeleteSession = useCallback(async (id: string) => {
-    const { error } = await supabase
-      .from("chat_sessions")
-      .delete()
-      .eq("id", id)
-      .eq("user_id", userId);
-    if (error) {
-      toast.error("Couldn't delete chat");
-      return;
-    }
-    setSessions((prev) => prev.filter((s) => s.id !== id));
-    setCurrentSessionId((cur) => {
-      if (cur === id) {
-        setMessages([]);
-        return null;
+  const handleRenameSession = useCallback(
+    async (id: string, title: string) => {
+      const { error } = await supabase
+        .from("chat_sessions")
+        .update({ title })
+        .eq("id", id)
+        .eq("user_id", userId);
+      if (error) {
+        toast.error("Couldn't rename chat");
+        return;
       }
-      return cur;
-    });
-    toast.success("Chat deleted");
-  }, [userId]);
+      setSessions((prev) => prev.map((s) => (s.id === id ? { ...s, title } : s)));
+    },
+    [userId],
+  );
+
+  const handleDeleteSession = useCallback(
+    async (id: string) => {
+      const { error } = await supabase
+        .from("chat_sessions")
+        .delete()
+        .eq("id", id)
+        .eq("user_id", userId);
+      if (error) {
+        toast.error("Couldn't delete chat");
+        return;
+      }
+      setSessions((prev) => prev.filter((s) => s.id !== id));
+      setCurrentSessionId((cur) => {
+        if (cur === id) {
+          setMessages([]);
+          return null;
+        }
+        return cur;
+      });
+      toast.success("Chat deleted");
+    },
+    [userId],
+  );
 
   const handleSignOut = async () => {
     if (typeof window !== "undefined" && window.speechSynthesis) {
@@ -713,9 +794,7 @@ export default function KashmirBot({
           </div>
         </div>
       )}
-      {guestPrompt && (
-        <GuestPrompt feature={guestPrompt} onDismiss={() => setGuestPrompt(null)} />
-      )}
+      {guestPrompt && <GuestPrompt feature={guestPrompt} onDismiss={() => setGuestPrompt(null)} />}
       <Suspense fallback={null}>
         <SessionsPanel
           open={panelOpen}
@@ -742,10 +821,17 @@ export default function KashmirBot({
               <Menu className="h-5 w-5" />
             </button>
             <div className="hidden h-11 w-11 shrink-0 items-center justify-center sm:flex">
-              <img src="/chinar-leaf.jpg" alt="Chinar Leaf" className="h-full w-full object-contain" />
+              <img
+                src="/chinar-leaf.jpg"
+                alt="Chinar Leaf"
+                className="h-full w-full object-contain"
+              />
             </div>
             <div className="min-w-0">
-              <h1 className="font-nastaliq truncate text-2xl sm:text-3xl text-foreground leading-normal" dir="rtl">
+              <h1
+                className="font-nastaliq truncate text-2xl sm:text-3xl text-foreground leading-normal"
+                dir="rtl"
+              >
                 کٲشُر مددگار
               </h1>
               <p className="truncate text-xs sm:text-sm text-muted-foreground">{t.subtitle}</p>
@@ -782,7 +868,6 @@ export default function KashmirBot({
 
             <ThemeToggle />
 
-
             <button
               onClick={isGuest ? onExitGuest : handleSignOut}
               aria-label={isGuest ? "Sign in" : "Sign out"}
@@ -804,7 +889,11 @@ export default function KashmirBot({
           {messages.length === 0 && !isThinking ? (
             <div className="flex min-h-[50vh] xs:min-h-[60vh] flex-col items-center justify-center text-center px-4">
               <div className="mb-4 xs:mb-6 flex h-20 w-20 xs:h-24 xs:w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 items-center justify-center">
-                <img src="/chinar-leaf.jpg" alt="Chinar Leaf" className="h-full w-full object-contain drop-shadow-lg" />
+                <img
+                  src="/chinar-leaf.jpg"
+                  alt="Chinar Leaf"
+                  className="h-full w-full object-contain drop-shadow-lg"
+                />
               </div>
               <p
                 dir={t.emptyDir}
@@ -823,13 +912,7 @@ export default function KashmirBot({
               </div>
             </div>
           ) : (
-            <MessageList
-              messages={messages}
-              isThinking={isThinking}
-              userId={userId}
-              lang={lang}
-
-            />
+            <MessageList messages={messages} isThinking={isThinking} userId={userId} lang={lang} />
           )}
         </div>
       </div>
@@ -847,7 +930,11 @@ export default function KashmirBot({
                     className="group relative flex items-center gap-1.5 xs:gap-2 rounded-lg border border-border bg-secondary/60 px-1.5 xs:px-2 py-1 xs:py-1.5 text-xs xs:text-sm"
                   >
                     {isImg ? (
-                      <img src={a.url} alt={a.name} className="h-6 w-6 xs:h-8 xs:w-8 rounded object-cover" />
+                      <img
+                        src={a.url}
+                        alt={a.name}
+                        className="h-6 w-6 xs:h-8 xs:w-8 rounded object-cover"
+                      />
                     ) : (
                       <FileText className="h-4 w-4 xs:h-5 xs:w-5 text-muted-foreground" />
                     )}
@@ -882,9 +969,13 @@ export default function KashmirBot({
               title="Attach file"
               className="flex min-h-[44px] min-w-[44px] h-11 w-11 xs:h-12 xs:w-12 shrink-0 items-center justify-center rounded-[8px] border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
             >
-              {uploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Paperclip className="h-5 w-5" />}
+              {uploading ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <Paperclip className="h-5 w-5" />
+              )}
             </button>
-            <div className="relative shrink-0">
+            <div className="relative shrink-0 flex flex-col items-center">
               {isListening && <span className="mic-listening-ring" aria-hidden="true" />}
               <button
                 type="button"
@@ -896,7 +987,19 @@ export default function KashmirBot({
                   isListening ? "mic-listening" : "",
                 ].join(" ")}
               >
-                {isTranscribing ? <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" /> : <Mic className="h-5 w-5" aria-hidden="true" />}
+                {isTranscribing ? (
+                  <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
+                ) : (
+                  <Mic className="h-5 w-5" aria-hidden="true" />
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => setVoiceLang((v) => (v === "ks" ? "en" : v === "en" ? "ur" : "ks"))}
+                title={`Voice mode: ${voiceLang === "ks" ? "Kashmiri (کٲشُر)" : voiceLang === "ur" ? "Urdu (اردو)" : "English"}. Click to switch.`}
+                className="mt-1 text-[10px] font-semibold text-muted-foreground hover:text-foreground transition px-1.5 py-0.5 rounded bg-secondary/80 border border-border/50"
+              >
+                {voiceLang === "ks" ? "کٲشُر" : voiceLang === "ur" ? "اردو" : "ENG"}
               </button>
             </div>
             <textarea
@@ -925,7 +1028,6 @@ export default function KashmirBot({
               <Send className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>
-
         </div>
       </div>
     </div>

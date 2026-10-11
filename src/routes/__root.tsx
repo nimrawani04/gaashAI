@@ -82,11 +82,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       {
         name: "viewport",
-        content:
-          "width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover",
+        content: "width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover",
       },
       { title: "KashmirBot — Your Kashmiri Assistant" },
-      { name: "description", content: "KashmirBot, a friendly Kashmiri-language chat assistant for everyday questions." },
+      {
+        name: "description",
+        content: "KashmirBot, a friendly Kashmiri-language chat assistant for everyday questions.",
+      },
       { name: "theme-color", content: "#0f5132" },
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
@@ -94,7 +96,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { name: "format-detection", content: "telephone=no" },
       { property: "og:title", content: "KashmirBot — Your Kashmiri Assistant" },
-      { property: "og:description", content: "Chat in Kashmiri, Urdu, or English with KashmirBot." },
+      {
+        property: "og:description",
+        content: "Chat in Kashmiri, Urdu, or English with KashmirBot.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -145,7 +150,11 @@ function RootComponent() {
       <ThemeProvider>
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
-        <Toaster position="bottom-right" />
+        <Toaster
+          position="bottom-right"
+          mobileOffset={{ bottom: "6.75rem", left: "0.75rem", right: "0.75rem" }}
+          offset={{ bottom: "1rem", right: "1rem" }}
+        />
       </ThemeProvider>
     </QueryClientProvider>
   );

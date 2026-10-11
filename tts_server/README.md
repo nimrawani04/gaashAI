@@ -17,6 +17,8 @@ pip install -r ../kashmiriBot/tts_server/requirements.txt
 export MATCHA_CHECKPOINT=/models/kashmiri-finetuned.ckpt
 export HIFIGAN_CHECKPOINT=/models/g_02500000
 export MATCHA_SPEAKER=423
+export MATCHA_STEPS=8
+export MATCHA_TEMPERATURE=0.55
 export KASHMIRI_CORPUS_ROWS=/models/kashmiri-tts/rows.jsonl
 cd ../kashmiriBot
 PYTHONPATH=../Bolbosh:. uvicorn tts_server.app:app --host 0.0.0.0 --port 8000
@@ -52,3 +54,13 @@ service then returns the normalized 22.05 kHz male reference WAV for an exact
 corpus transcript and uses the fine-tuned model for unseen text. `/healthz`
 reports the number of loaded reference pairs so deployment can be verified
 without guessing which voice is being used.
+
+## Speed and clarity
+
+Generated files are cached by text, dialect, speaker, checkpoint, diffusion
+steps, and temperature, so repeated phrases return immediately from disk.
+`MATCHA_STEPS=8` is the default speed/quality balance. Increase it to `10` or
+`12` for clearer but slower audio; reduce it to `6` only when latency matters
+more than naturalness. `MATCHA_TEMPERATURE=0.55` keeps the male voice steadier
+than the public demo default. The runtime removes DC offset, normalizes RMS,
+limits peaks, and adds short fades before writing 16-bit WAV output.

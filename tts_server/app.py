@@ -8,12 +8,12 @@ of this service in KASHMIRI_TTS_URL.
 from __future__ import annotations
 
 import os
+import hashlib
 import json
 import re
 import shutil
 import time
 import unicodedata
-import uuid
 from pathlib import Path
 
 import torch
@@ -30,7 +30,8 @@ VOCODER_CHECKPOINT = os.environ.get("HIFIGAN_CHECKPOINT")
 DEVICE_NAME = os.environ.get("MATCHA_DEVICE", "auto")
 OUTPUT_DIR = Path(os.environ.get("TTS_OUTPUT_DIR", "/tmp/kashmiri-tts-audio"))
 SPEAKER_ID = int(os.environ.get("MATCHA_SPEAKER", "423"))
-STEPS = int(os.environ.get("MATCHA_STEPS", "10"))
+STEPS = int(os.environ.get("MATCHA_STEPS", "8"))
+TEMPERATURE = float(os.environ.get("MATCHA_TEMPERATURE", "0.55"))
 CORPUS_ROWS = os.environ.get("KASHMIRI_CORPUS_ROWS", "")
 SUPPORTED_DIALECTS = {"kupwara", "bandipora", "shopian", "islamabad"}
 
@@ -98,6 +99,22 @@ def remove_old_audio(max_age_seconds: int = 1800) -> None:
             pass
 
 
+def output_name(text: str, dialect: str, speaker: int) -> str:
+    key = json.dumps(
+        {
+            "text": clean_corpus_text(text),
+            "dialect": dialect,
+            "speaker": speaker,
+            "steps": STEPS,
+            "temperature": TEMPERATURE,
+            "checkpoint": CHECKPOINT,
+        },
+        ensure_ascii=False,
+        sort_keys=True,
+    )
+    return hashlib.sha256(key.encode("utf-8")).hexdigest()[:32] + ".wav"
+
+
 @app.get("/healthz")
 def healthz() -> dict[str, str]:
     return {
@@ -120,14 +137,25 @@ def synthesize(payload: SynthesisRequest, request: Request) -> dict[str, str]:
     if speaker < 0 or speaker >= voice.model.n_spks:
         raise HTTPException(status_code=400, detail=f"speaker_id must be in the checkpoint range 0..{voice.model.n_spks - 1}")
     try:
-        filename = f"{uuid.uuid4().hex}.wav"
-        path = OUTPUT_DIR / filename
         reference = corpus_references.get(clean_corpus_text(payload.text))
         if reference:
+            filename = output_name(payload.text, dialect, speaker)
+            path = OUTPUT_DIR / filename
             shutil.copyfile(reference, path)
             source = "dataset_reference"
         else:
-            path.write_bytes(voice.wav(payload.text.strip(), STEPS, speaker))
+            filename = output_name(payload.text, dialect, speaker)
+            path = OUTPUT_DIR / filename
+            if not path.is_file():
+                path.write_bytes(
+                    voice.wav(
+                        payload.text.strip(),
+                        steps=STEPS,
+                        speaker=speaker,
+                        temperature=TEMPERATURE,
+                        length_scale=1.0 / payload.speaking_rate,
+                    )
+                )
             source = "fine_tuned_dataset"
         remove_old_audio()
     except Exception as exc:
@@ -147,4 +175,4 @@ def audio(filename: str) -> FileResponse:
     path = OUTPUT_DIR / filename
     if not path.is_file():
         raise HTTPException(status_code=404, detail="audio not found")
-    return FileResponse(path, media_type="audio/wav", filename=filename)
+    return FileResponse(path, media_type="audio/wav", filename=filename, headers={"Cache-Control": "public, max-age=86400"})
