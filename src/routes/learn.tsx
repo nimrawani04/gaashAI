@@ -36,7 +36,7 @@ import { LessonHistoryView } from "@/components/learn/LessonHistoryView";
 import { QuizReviewDialog } from "@/components/learn/QuizReviewDialog";
 import { SyllabusDialog, type TopicInfo } from "@/components/learn/SyllabusDialog";
 import { getSpeech } from "@/lib/ttsCache";
-import { getKashmiriAudio } from "@/lib/kashmiri-voice-player";
+import { getBackupKashmiriAudio } from "@/lib/kashmiri-voice-player";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
