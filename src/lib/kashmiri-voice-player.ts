@@ -1,4 +1,12 @@
 import { synthesizeKashmiri } from "@/lib/kashmiri-voice.functions";
+import { getSpeech } from "@/lib/ttsCache";
+
+/** Second Kashmiri voice (built-in AI voice) used when the primary voice fails. */
+export async function getBackupKashmiriAudio(text: string): Promise<string> {
+  const clip = await getSpeech(text, "kashmiri");
+  if (!clip?.audio) throw new Error("no_audio");
+  return clip.audio.startsWith("data:") ? clip.audio : `data:${clip.mime};base64,${clip.audio}`;
+}
 
 const cache = new Map<string, Promise<string>>();
 let current: HTMLAudioElement | null = null;
@@ -17,12 +25,13 @@ export function getKashmiriAudio(text: string): Promise<string> {
   if (!clean) return Promise.reject(new Error("empty"));
   let p = cache.get(clean);
   if (!p) {
-    p = synthesizeKashmiri({ data: { text: clean, dialect: "kupwara", voice: "Male" } }).then(
-      (res) => {
+    p = synthesizeKashmiri({ data: { text: clean, dialect: "kupwara", voice: "Male" } })
+      .then((res) => {
         if (!res.audio) throw new Error(res.error ?? "no_audio");
         return res.audio;
-      },
-    );
+      })
+      // Backup voice: if GAASH Lab's voice is offline, use the built-in AI voice.
+      .catch(() => getBackupKashmiriAudio(clean));
     p.catch(() => cache.delete(clean));
     cache.set(clean, p);
   }
