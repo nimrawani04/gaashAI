@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Loader2, Square, Volume2 } from "lucide-react";
 import { toast } from "sonner";
-import { synthesizeKashmiri, type KashmiriAudioSource } from "@/lib/kashmiri-voice.functions";
+import { synthesizeKashmiri, type KashmiriAudioSource as PrimarySource } from "@/lib/kashmiri-voice.functions";
+import { getBackupKashmiriAudio } from "@/lib/kashmiri-voice-player";
+
+type KashmiriAudioSource = PrimarySource | "backup_voice";
 
 const cache = new Map<string, { audio: string; source: KashmiriAudioSource }>();
 let current: HTMLAudioElement | null = null;
@@ -14,6 +17,7 @@ const SOURCE_LABELS: Record<KashmiriAudioSource, string> = {
   dataset_reference: "Original corpus audio",
   fine_tuned_dataset: "Kashmiri corpus model",
   existing_checkpoint: "Kashmiri checkpoint",
+  backup_voice: "Backup Kashmiri voice",
 };
 
 export default function ListenButton({
@@ -48,13 +52,18 @@ export default function ListenButton({
       if (!clip) {
         const res = await synthesizeKashmiri({
           data: { text: clean, dialect: "kupwara", voice: "Male" },
-        });
-        if (!res.audio) {
-          toast.error(MESSAGES[res.error ?? ""] ?? "Couldn't create the voice for this text.");
-          setState("idle");
-          return;
+        }).catch(() => ({ audio: null, error: "unreachable", source: undefined }));
+        if (res.audio) {
+          clip = { audio: res.audio, source: res.source ?? "existing_checkpoint" };
+        } else {
+          try {
+            clip = { audio: await getBackupKashmiriAudio(clean), source: "backup_voice" };
+          } catch {
+            toast.error(MESSAGES[res.error ?? ""] ?? "Couldn't create the voice for this text.");
+            setState("idle");
+            return;
+          }
         }
-        clip = { audio: res.audio, source: res.source ?? "existing_checkpoint" };
         cache.set(clean, clip);
       }
       current?.pause();
