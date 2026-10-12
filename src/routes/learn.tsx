@@ -828,7 +828,8 @@ function LearnPage() {
     try {
       let audioSource: string;
       if (language === "kashmiri") {
-        audioSource = await getKashmiriAudio(text);
+        // Always use the built-in AI voice on Lessons so Listen works even if the trained voice is offline.
+        audioSource = await getBackupKashmiriAudio(text);
       } else {
         const clip = await getSpeech(text, "urdu");
         audioSource = `data:${clip.mime};base64,${clip.audio}`;
