@@ -36,7 +36,7 @@ import { LessonHistoryView } from "@/components/learn/LessonHistoryView";
 import { QuizReviewDialog } from "@/components/learn/QuizReviewDialog";
 import { SyllabusDialog, type TopicInfo } from "@/components/learn/SyllabusDialog";
 import { getSpeech } from "@/lib/ttsCache";
-import { getKashmiriAudio } from "@/lib/kashmiri-voice-player";
+import { getBackupKashmiriAudio } from "@/lib/kashmiri-voice-player";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -828,7 +828,8 @@ function LearnPage() {
     try {
       let audioSource: string;
       if (language === "kashmiri") {
-        audioSource = await getKashmiriAudio(text);
+        // Always use the built-in AI voice on Lessons so Listen works even if the trained voice is offline.
+        audioSource = await getBackupKashmiriAudio(text);
       } else {
         const clip = await getSpeech(text, "urdu");
         audioSource = `data:${clip.mime};base64,${clip.audio}`;
