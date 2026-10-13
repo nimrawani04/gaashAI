@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Loader2, Square, Volume2 } from "lucide-react";
+import { Loader2, Play, Square, Volume2 } from "lucide-react";
 import { toast } from "sonner";
 import { synthesizeKashmiri, type KashmiriAudioSource as PrimarySource } from "@/lib/kashmiri-voice.functions";
 import { getBackupKashmiriAudio } from "@/lib/kashmiri-voice-player";
@@ -23,9 +23,12 @@ const SOURCE_LABELS: Record<KashmiriAudioSource, string> = {
 export default function ListenButton({
   text,
   className = "",
+  variant = "label",
 }: {
   text: string;
   className?: string;
+  /** "label" = speaker + word; "play" = compact round ▶ button. */
+  variant?: "label" | "play";
 }) {
   const [state, setState] = useState<"idle" | "loading" | "playing">("idle");
   const [source, setSource] = useState<KashmiriAudioSource | null>(null);
@@ -80,6 +83,26 @@ export default function ListenButton({
       setState("idle");
     }
   };
+
+  if (variant === "play") {
+    return (
+      <button
+        type="button"
+        onClick={play}
+        aria-label={state === "playing" ? "Stop" : "Play Kashmiri phrase"}
+        title={source ? SOURCE_LABELS[source] : "Play Kashmiri audio"}
+        className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring ${className}`}
+      >
+        {state === "loading" ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : state === "playing" ? (
+          <Square className="h-4 w-4" />
+        ) : (
+          <Play className="h-4 w-4" />
+        )}
+      </button>
+    );
+  }
 
   return (
     <button

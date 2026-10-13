@@ -545,7 +545,7 @@ function TranslatePage() {
                   </span>
                   <span className="mt-0.5 block text-xs italic text-muted-foreground">{p.roman}</span>
                 </button>
-                <ListenButton text={p.ks} className="min-w-[44px] shrink-0 px-2" />
+                <ListenButton text={p.ks} variant="play" className="mt-1" />
               </li>
             ))}
           </ul>
