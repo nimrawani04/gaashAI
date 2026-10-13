@@ -6,8 +6,17 @@ import { getBackupKashmiriAudio } from "@/lib/kashmiri-voice-player";
 
 type KashmiriAudioSource = PrimarySource | "backup_voice";
 
-const cache = new Map<string, { audio: string; source: KashmiriAudioSource }>();
+/** In-flight promise cache: prefetching on hover and clicking share one request. */
+const cache = new Map<string, Promise<{ audio: string; source: KashmiriAudioSource }>>();
 let current: HTMLAudioElement | null = null;
+/** Fired before any new playback starts so every other player stops itself. */
+export const STOP_AUDIO_EVENT = "kb-stop-audio";
+
+export function stopAllAudio() {
+  current?.pause();
+  current = null;
+  if (typeof window !== "undefined") window.dispatchEvent(new Event(STOP_AUDIO_EVENT));
+}
 
 const MESSAGES: Record<string, string> = {
   unreachable: "The Kashmiri voice server is offline right now.",
@@ -19,6 +28,36 @@ const SOURCE_LABELS: Record<KashmiriAudioSource, string> = {
   existing_checkpoint: "Kashmiri checkpoint",
   backup_voice: "Backup Kashmiri voice",
 };
+
+function cleanText(text: string) {
+  return text
+    .replace(/https?:\/\/\S+/g, "")
+    .replace(/[*_`#>]/g, "")
+    .trim()
+    .slice(0, 1500);
+}
+
+function fetchClip(clean: string) {
+  let pending = cache.get(clean);
+  if (!pending) {
+    pending = (async () => {
+      const res = await synthesizeKashmiri({
+        data: { text: clean, dialect: "kupwara", voice: "Male" },
+      }).catch(() => ({ audio: null, error: "unreachable", source: undefined }));
+      if (res.audio) {
+        return { audio: res.audio, source: (res.source ?? "existing_checkpoint") as KashmiriAudioSource };
+      }
+      try {
+        return { audio: await getBackupKashmiriAudio(clean), source: "backup_voice" as const };
+      } catch {
+        throw new Error(res.error ?? "no_audio");
+      }
+    })();
+    cache.set(clean, pending);
+    void pending.catch(() => cache.delete(clean));
+  }
+  return pending;
+}
 
 export default function ListenButton({
   text,
@@ -34,42 +73,39 @@ export default function ListenButton({
   const [source, setSource] = useState<KashmiriAudioSource | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  useEffect(() => () => audioRef.current?.pause(), []);
+  useEffect(() => {
+    const onStop = () => {
+      audioRef.current?.pause();
+      setState("idle");
+    };
+    window.addEventListener(STOP_AUDIO_EVENT, onStop);
+    return () => {
+      window.removeEventListener(STOP_AUDIO_EVENT, onStop);
+      audioRef.current?.pause();
+    };
+  }, []);
 
   const stop = () => {
     audioRef.current?.pause();
     setState("idle");
   };
 
+  /** Start synthesis as soon as the user reaches for the button. */
+  const prefetch = () => {
+    if (state !== "idle") return;
+    const clean = cleanText(text);
+    if (clean) void fetchClip(clean).catch(() => {});
+  };
+
   const play = async () => {
     if (state === "playing") return stop();
-    const clean = text
-      .replace(/https?:\/\/\S+/g, "")
-      .replace(/[*_`#>]/g, "")
-      .trim()
-      .slice(0, 1500);
+    const clean = cleanText(text);
     if (!clean) return;
+    // Stop whatever else is playing (other buttons, lessons page, chat).
+    stopAllAudio();
     setState("loading");
     try {
-      let clip = cache.get(clean);
-      if (!clip) {
-        const res = await synthesizeKashmiri({
-          data: { text: clean, dialect: "kupwara", voice: "Male" },
-        }).catch(() => ({ audio: null, error: "unreachable", source: undefined }));
-        if (res.audio) {
-          clip = { audio: res.audio, source: res.source ?? "existing_checkpoint" };
-        } else {
-          try {
-            clip = { audio: await getBackupKashmiriAudio(clean), source: "backup_voice" };
-          } catch {
-            toast.error(MESSAGES[res.error ?? ""] ?? "Couldn't create the voice for this text.");
-            setState("idle");
-            return;
-          }
-        }
-        cache.set(clean, clip);
-      }
-      current?.pause();
+      const clip = await fetchClip(clean);
       setSource(clip.source);
       const audio = new Audio(clip.audio);
       audioRef.current = audio;
@@ -78,8 +114,9 @@ export default function ListenButton({
       audio.onpause = () => setState("idle");
       await audio.play();
       setState("playing");
-    } catch {
-      toast.error("Couldn't play the voice.");
+    } catch (error) {
+      const key = error instanceof Error ? error.message : "";
+      toast.error(MESSAGES[key] ?? "Couldn't create the voice for this text.");
       setState("idle");
     }
   };
@@ -89,6 +126,9 @@ export default function ListenButton({
       <button
         type="button"
         onClick={play}
+        onPointerEnter={prefetch}
+        onPointerDown={prefetch}
+        onFocus={prefetch}
         aria-label={state === "playing" ? "Stop" : "Play Kashmiri phrase"}
         title={source ? SOURCE_LABELS[source] : "Play Kashmiri audio"}
         className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring ${className}`}
@@ -108,6 +148,9 @@ export default function ListenButton({
     <button
       type="button"
       onClick={play}
+      onPointerEnter={prefetch}
+      onPointerDown={prefetch}
+      onFocus={prefetch}
       aria-label={state === "playing" ? "Stop" : "Listen in Kashmiri"}
       title={source ? SOURCE_LABELS[source] : "Play Kashmiri audio"}
       className={`inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-[8px] border border-border bg-secondary px-3 text-xs font-medium text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring ${className}`}

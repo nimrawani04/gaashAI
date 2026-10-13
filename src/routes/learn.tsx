@@ -37,6 +37,7 @@ import { QuizReviewDialog } from "@/components/learn/QuizReviewDialog";
 import { SyllabusDialog, type TopicInfo } from "@/components/learn/SyllabusDialog";
 import { getSpeech } from "@/lib/ttsCache";
 import { getBackupKashmiriAudio } from "@/lib/kashmiri-voice-player";
+import { stopAllAudio } from "@/components/ListenButton";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -819,6 +820,7 @@ function LearnPage() {
 
   async function listen(id: string, text: string) {
     if (!text.trim()) return;
+    stopAllAudio();
     audioRef.current?.pause();
     if (speaking === id) {
       setSpeaking(null);
