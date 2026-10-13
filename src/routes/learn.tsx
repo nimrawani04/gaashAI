@@ -819,6 +819,7 @@ function LearnPage() {
 
   async function listen(id: string, text: string) {
     if (!text.trim()) return;
+    stopAllAudio();
     audioRef.current?.pause();
     if (speaking === id) {
       setSpeaking(null);
