@@ -111,9 +111,11 @@ export default function ListenButton({
   const [state, setState] = useState<"idle" | "loading" | "playing">("idle");
   const [source, setSource] = useState<KashmiriAudioSource | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const runRef = useRef(0);
 
   useEffect(() => {
     const onStop = () => {
+      runRef.current++;
       audioRef.current?.pause();
       setState("idle");
     };
@@ -125,6 +127,7 @@ export default function ListenButton({
   }, []);
 
   const stop = () => {
+    runRef.current++;
     audioRef.current?.pause();
     setState("idle");
   };
@@ -143,6 +146,7 @@ export default function ListenButton({
     // Stop whatever else is playing (other buttons, lessons page, chat).
     stopAllAudio();
     setState("loading");
+    const run = ++runRef.current;
     const pieces = fetchClips(clean);
     let played = 0;
     let stopped = false;
@@ -153,7 +157,7 @@ export default function ListenButton({
       } catch {
         continue; // skip a piece that failed, keep reading the rest
       }
-      if (stopped || (played > 0 && audioRef.current?.paused && current !== audioRef.current)) break;
+      if (run !== runRef.current) return;
       setSource(clip.source);
       const audio = new Audio(clip.audio);
       audioRef.current = audio;
@@ -167,6 +171,7 @@ export default function ListenButton({
         break;
       }
     }
+    if (run !== runRef.current) return;
     if (!played && !stopped) toast.error("Couldn't create the voice for this text.");
     setState("idle");
   };
