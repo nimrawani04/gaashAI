@@ -133,31 +133,42 @@ export default function ListenButton({
   const prefetch = () => {
     if (state !== "idle") return;
     const clean = cleanText(text);
-    if (clean) void fetchClip(clean).catch(() => {});
+    if (clean) fetchClips(clean).forEach((p) => void p.catch(() => {}));
   };
 
   const play = async () => {
-    if (state === "playing") return stop();
+    if (state !== "idle") return stop();
     const clean = cleanText(text);
     if (!clean) return;
     // Stop whatever else is playing (other buttons, lessons page, chat).
     stopAllAudio();
     setState("loading");
-    try {
-      const clip = await fetchClip(clean);
+    const pieces = fetchClips(clean);
+    let played = 0;
+    let stopped = false;
+    for (const piece of pieces) {
+      let clip: Clip;
+      try {
+        clip = await piece;
+      } catch {
+        continue; // skip a piece that failed, keep reading the rest
+      }
+      if (stopped || (played > 0 && audioRef.current?.paused && current !== audioRef.current)) break;
       setSource(clip.source);
       const audio = new Audio(clip.audio);
       audioRef.current = audio;
       current = audio;
-      audio.onended = () => setState("idle");
-      audio.onpause = () => setState("idle");
-      await audio.play();
       setState("playing");
-    } catch (error) {
-      const key = error instanceof Error ? error.message : "";
-      toast.error(MESSAGES[key] ?? "Couldn't create the voice for this text.");
-      setState("idle");
+      try {
+        await playOne(audio);
+        played++;
+      } catch {
+        stopped = true;
+        break;
+      }
     }
+    if (!played && !stopped) toast.error("Couldn't create the voice for this text.");
+    setState("idle");
   };
 
   if (variant === "play") {
