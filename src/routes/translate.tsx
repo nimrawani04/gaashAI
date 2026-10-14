@@ -297,6 +297,14 @@ function TranslatePage() {
             </p>
           </div>
           <Link
+            to="/kashmiri"
+            aria-label="Kashmiri language pack"
+            className="inline-flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-md border border-border bg-secondary px-3 text-sm font-semibold text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+          >
+            <BookOpen className="h-4 w-4 text-primary" />
+            <span className="hidden xs:inline">Language</span>
+          </Link>
+          <Link
             to="/learn"
             aria-label="Adaptive learning lessons"
             className="inline-flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-md border border-border bg-secondary px-3 text-sm font-semibold text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
