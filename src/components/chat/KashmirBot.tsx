@@ -812,7 +812,7 @@ export default function KashmirBot({
       <header className="border-b border-border bg-card/90 backdrop-blur supports-[backdrop-filter]:bg-card/75">
         <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-2 px-3 py-3 sm:px-4 lg:max-w-4xl xl:max-w-5xl">
           {/* Signature Kashmiri Wordmark */}
-          <div className="flex items-center gap-2.5 min-w-0">
+          <div className="flex items-center gap-2 min-w-0 sm:gap-2.5">
             <button
               onClick={() => (isGuest ? setGuestPrompt("sessions") : setPanelOpen(true))}
               aria-label="Previous chats"
@@ -829,7 +829,7 @@ export default function KashmirBot({
             </div>
             <div className="min-w-0">
               <h1
-                className="font-nastaliq truncate text-2xl sm:text-3xl text-foreground leading-normal"
+                className="font-nastaliq truncate text-xl xs:text-2xl sm:text-3xl text-foreground leading-normal"
                 dir="rtl"
               >
                 کٲشُر مددگار
@@ -839,11 +839,11 @@ export default function KashmirBot({
           </div>
 
           {/* Clean, 2-3 Action Cluster with Labels */}
-          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-2">
             <Link
               to="/translate"
               aria-label="Translate English and Kashmiri"
-              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-[8px] border border-border bg-secondary px-3 py-2 text-xs font-semibold text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-[8px] border border-border bg-secondary px-2.5 py-2 text-xs sm:px-3 font-semibold text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
             >
               <Languages className="h-4 w-4 shrink-0 text-primary" />
               <span className="hidden sm:inline">Translate</span>
@@ -852,7 +852,7 @@ export default function KashmirBot({
             <Link
               to="/learn"
               aria-label="Adaptive learning lessons"
-              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-[8px] border border-border bg-secondary px-3 py-2 text-xs font-semibold text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-[8px] border border-border bg-secondary px-2.5 py-2 text-xs sm:px-3 font-semibold text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
             >
               <GraduationCap className="h-4 w-4 shrink-0 text-primary" />
               <span className="hidden sm:inline">Learn</span>
@@ -861,7 +861,7 @@ export default function KashmirBot({
             <button
               onClick={cycleLang}
               aria-label="Switch language"
-              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-[8px] border border-border bg-secondary px-3 py-2 text-xs font-semibold text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-[8px] border border-border bg-secondary px-2.5 py-2 text-xs sm:px-3 font-semibold text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
             >
               <span className={lang === "ks" ? "font-nastaliq text-sm" : ""}>{t.langLabel}</span>
             </button>
@@ -871,7 +871,7 @@ export default function KashmirBot({
             <button
               onClick={isGuest ? onExitGuest : handleSignOut}
               aria-label={isGuest ? "Sign in" : "Sign out"}
-              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-[8px] border border-border bg-secondary px-3 py-2 text-xs font-semibold text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-[8px] border border-border bg-secondary px-2.5 py-2 text-xs sm:px-3 font-semibold text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
             >
               <LogOut className="h-4 w-4 shrink-0" />
               <span className="hidden md:inline">{isGuest ? "Sign in" : "Sign out"}</span>
