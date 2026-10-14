@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ContributeRouteImport } from './routes/contribute'
+import { Route as KashmiriRouteImport } from './routes/kashmiri'
 import { Route as LearnRouteImport } from './routes/learn'
 import { Route as OauthCallbackRouteImport } from './routes/oauth-callback'
 import { Route as TranslateRouteImport } from './routes/translate'
@@ -37,6 +38,11 @@ const ContributeRoute = ContributeRouteImport.update({
   path: '/contribute',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KashmiriRoute = KashmiriRouteImport.update({
+  id: '/kashmiri',
+  path: '/kashmiri',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LearnRoute = LearnRouteImport.update({
   id: '/learn',
   path: '/learn',
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/contribute': typeof ContributeRoute
+  '/kashmiri': typeof KashmiriRoute
   '/learn': typeof LearnRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/translate': typeof TranslateRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/contribute': typeof ContributeRoute
+  '/kashmiri': typeof KashmiriRoute
   '/learn': typeof LearnRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/translate': typeof TranslateRoute
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/contribute': typeof ContributeRoute
+  '/kashmiri': typeof KashmiriRoute
   '/learn': typeof LearnRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/translate': typeof TranslateRoute
@@ -88,6 +97,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/contribute'
+    | '/kashmiri'
     | '/learn'
     | '/oauth-callback'
     | '/translate'
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/contribute'
+    | '/kashmiri'
     | '/learn'
     | '/oauth-callback'
     | '/translate'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/contribute'
+    | '/kashmiri'
     | '/learn'
     | '/oauth-callback'
     | '/translate'
@@ -116,6 +128,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   ContributeRoute: typeof ContributeRoute
+  KashmiriRoute: typeof KashmiriRoute
   LearnRoute: typeof LearnRoute
   OauthCallbackRoute: typeof OauthCallbackRoute
   TranslateRoute: typeof TranslateRoute
@@ -151,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContributeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/kashmiri': {
+      id: '/kashmiri'
+      path: '/kashmiri'
+      fullPath: '/kashmiri'
+      preLoaderRoute: typeof KashmiriRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/learn': {
       id: '/learn'
       path: '/learn'
@@ -180,6 +200,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   ContributeRoute: ContributeRoute,
+  KashmiriRoute: KashmiriRoute,
   LearnRoute: LearnRoute,
   OauthCallbackRoute: OauthCallbackRoute,
   TranslateRoute: TranslateRoute,
