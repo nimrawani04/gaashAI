@@ -32,12 +32,37 @@ const SOURCE_LABELS: Record<KashmiriAudioSource, string> = {
 function cleanText(text: string) {
   return text
     .replace(/https?:\/\/\S+/g, "")
-    .replace(/[*_`#>]/g, "")
+    .replace(/[*_`#>~|]/g, "")
+    .replace(/\s+/g, " ")
     .trim()
     .slice(0, 1500);
 }
 
-function fetchClip(clean: string) {
+/** Long replies fail on the voice servers; split into short sentence pieces. */
+function splitChunks(text: string, max = 180): string[] {
+  const parts = text.split(/(?<=[.!?؟۔:،,;\n])\s+/).filter(Boolean);
+  const out: string[] = [];
+  let cur = "";
+  for (const p of parts) {
+    if (p.length > max) {
+      if (cur) out.push(cur), (cur = "");
+      const words = p.split(" ");
+      for (const w of words) {
+        if ((cur + " " + w).trim().length > max && cur) out.push(cur), (cur = w);
+        else cur = (cur + " " + w).trim();
+      }
+    } else if ((cur + " " + p).trim().length > max && cur) {
+      out.push(cur);
+      cur = p;
+    } else cur = (cur + " " + p).trim();
+  }
+  if (cur) out.push(cur);
+  return out.filter((c) => /[\p{L}\p{N}]/u.test(c));
+}
+
+type Clip = { audio: string; source: KashmiriAudioSource };
+
+function fetchPiece(clean: string): Promise<Clip> {
   let pending = cache.get(clean);
   if (!pending) {
     pending = (async () => {
@@ -57,6 +82,20 @@ function fetchClip(clean: string) {
     void pending.catch(() => cache.delete(clean));
   }
   return pending;
+}
+
+/** Starts all pieces at once; returns promises in reading order. */
+function fetchClips(clean: string): Promise<Clip>[] {
+  return splitChunks(clean).map(fetchPiece);
+}
+
+function playOne(audio: HTMLAudioElement) {
+  return new Promise<void>((resolve, reject) => {
+    audio.onended = () => resolve();
+    audio.onpause = () => reject(new Error("stopped"));
+    audio.onerror = () => resolve();
+    audio.play().catch(reject);
+  });
 }
 
 export default function ListenButton({
