@@ -32,12 +32,37 @@ const SOURCE_LABELS: Record<KashmiriAudioSource, string> = {
 function cleanText(text: string) {
   return text
     .replace(/https?:\/\/\S+/g, "")
-    .replace(/[*_`#>]/g, "")
+    .replace(/[*_`#>~|]/g, "")
+    .replace(/\s+/g, " ")
     .trim()
     .slice(0, 1500);
 }
 
-function fetchClip(clean: string) {
+/** Long replies fail on the voice servers; split into short sentence pieces. */
+function splitChunks(text: string, max = 180): string[] {
+  const parts = text.split(/(?<=[.!?؟۔:،,;\n])\s+/).filter(Boolean);
+  const out: string[] = [];
+  let cur = "";
+  for (const p of parts) {
+    if (p.length > max) {
+      if (cur) out.push(cur), (cur = "");
+      const words = p.split(" ");
+      for (const w of words) {
+        if ((cur + " " + w).trim().length > max && cur) out.push(cur), (cur = w);
+        else cur = (cur + " " + w).trim();
+      }
+    } else if ((cur + " " + p).trim().length > max && cur) {
+      out.push(cur);
+      cur = p;
+    } else cur = (cur + " " + p).trim();
+  }
+  if (cur) out.push(cur);
+  return out.filter((c) => /[\p{L}\p{N}]/u.test(c));
+}
+
+type Clip = { audio: string; source: KashmiriAudioSource };
+
+function fetchPiece(clean: string): Promise<Clip> {
   let pending = cache.get(clean);
   if (!pending) {
     pending = (async () => {
@@ -59,6 +84,20 @@ function fetchClip(clean: string) {
   return pending;
 }
 
+/** Starts all pieces at once; returns promises in reading order. */
+function fetchClips(clean: string): Promise<Clip>[] {
+  return splitChunks(clean).map(fetchPiece);
+}
+
+function playOne(audio: HTMLAudioElement) {
+  return new Promise<void>((resolve, reject) => {
+    audio.onended = () => resolve();
+    audio.onpause = () => reject(new Error("stopped"));
+    audio.onerror = () => resolve();
+    audio.play().catch(reject);
+  });
+}
+
 export default function ListenButton({
   text,
   className = "",
@@ -72,9 +111,11 @@ export default function ListenButton({
   const [state, setState] = useState<"idle" | "loading" | "playing">("idle");
   const [source, setSource] = useState<KashmiriAudioSource | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const runRef = useRef(0);
 
   useEffect(() => {
     const onStop = () => {
+      runRef.current++;
       audioRef.current?.pause();
       setState("idle");
     };
@@ -86,6 +127,7 @@ export default function ListenButton({
   }, []);
 
   const stop = () => {
+    runRef.current++;
     audioRef.current?.pause();
     setState("idle");
   };
@@ -94,31 +136,44 @@ export default function ListenButton({
   const prefetch = () => {
     if (state !== "idle") return;
     const clean = cleanText(text);
-    if (clean) void fetchClip(clean).catch(() => {});
+    if (clean) fetchClips(clean).forEach((p) => void p.catch(() => {}));
   };
 
   const play = async () => {
-    if (state === "playing") return stop();
+    if (state !== "idle") return stop();
     const clean = cleanText(text);
     if (!clean) return;
     // Stop whatever else is playing (other buttons, lessons page, chat).
     stopAllAudio();
     setState("loading");
-    try {
-      const clip = await fetchClip(clean);
+    const run = ++runRef.current;
+    const pieces = fetchClips(clean);
+    let played = 0;
+    let stopped = false;
+    for (const piece of pieces) {
+      let clip: Clip;
+      try {
+        clip = await piece;
+      } catch {
+        continue; // skip a piece that failed, keep reading the rest
+      }
+      if (run !== runRef.current) return;
       setSource(clip.source);
       const audio = new Audio(clip.audio);
       audioRef.current = audio;
       current = audio;
-      audio.onended = () => setState("idle");
-      audio.onpause = () => setState("idle");
-      await audio.play();
       setState("playing");
-    } catch (error) {
-      const key = error instanceof Error ? error.message : "";
-      toast.error(MESSAGES[key] ?? "Couldn't create the voice for this text.");
-      setState("idle");
+      try {
+        await playOne(audio);
+        played++;
+      } catch {
+        stopped = true;
+        break;
+      }
     }
+    if (run !== runRef.current) return;
+    if (!played && !stopped) toast.error("Couldn't create the voice for this text.");
+    setState("idle");
   };
 
   if (variant === "play") {
