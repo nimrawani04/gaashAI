@@ -3,8 +3,9 @@ import { Loader2, Play, Square, Volume2 } from "lucide-react";
 import { toast } from "sonner";
 import { synthesizeKashmiri, type KashmiriAudioSource as PrimarySource } from "@/lib/kashmiri-voice.functions";
 import { getBackupKashmiriAudio } from "@/lib/kashmiri-voice-player";
+import { getSpeech, type SpeechLang } from "@/lib/ttsCache";
 
-type KashmiriAudioSource = PrimarySource | "backup_voice";
+type KashmiriAudioSource = PrimarySource | "backup_voice" | "ai_voice";
 
 /** In-flight promise cache: prefetching on hover and clicking share one request. */
 const cache = new Map<string, Promise<{ audio: string; source: KashmiriAudioSource }>>();
@@ -27,6 +28,7 @@ const SOURCE_LABELS: Record<KashmiriAudioSource, string> = {
   fine_tuned_dataset: "Kashmiri corpus model",
   existing_checkpoint: "Kashmiri checkpoint",
   backup_voice: "Backup Kashmiri voice",
+  ai_voice: "AI voice",
 };
 
 function cleanText(text: string) {
@@ -62,10 +64,17 @@ function splitChunks(text: string, max = 180): string[] {
 
 type Clip = { audio: string; source: KashmiriAudioSource };
 
-function fetchPiece(clean: string): Promise<Clip> {
-  let pending = cache.get(clean);
+function fetchPiece(clean: string, language: SpeechLang = "kashmiri"): Promise<Clip> {
+  const key = `${language}:${clean}`;
+  let pending = cache.get(key);
   if (!pending) {
     pending = (async () => {
+      if (language !== "kashmiri") {
+        const clip = await getSpeech(clean, language);
+        if (!clip?.audio) throw new Error("no_audio");
+        const audio = clip.audio.startsWith("data:") ? clip.audio : `data:${clip.mime};base64,${clip.audio}`;
+        return { audio, source: "ai_voice" as const };
+      }
       const res = await synthesizeKashmiri({
         data: { text: clean, dialect: "kupwara", voice: "Male" },
       }).catch(() => ({ audio: null, error: "unreachable", source: undefined }));
@@ -78,15 +87,15 @@ function fetchPiece(clean: string): Promise<Clip> {
         throw new Error(res.error ?? "no_audio");
       }
     })();
-    cache.set(clean, pending);
-    void pending.catch(() => cache.delete(clean));
+    cache.set(key, pending);
+    void pending.catch(() => cache.delete(key));
   }
   return pending;
 }
 
 /** Starts all pieces at once; returns promises in reading order. */
-function fetchClips(clean: string): Promise<Clip>[] {
-  return splitChunks(clean).map(fetchPiece);
+function fetchClips(clean: string, language: SpeechLang = "kashmiri"): Promise<Clip>[] {
+  return splitChunks(clean).map((c) => fetchPiece(c, language));
 }
 
 function playOne(audio: HTMLAudioElement) {
@@ -102,7 +111,10 @@ export default function ListenButton({
   text,
   className = "",
   variant = "label",
+  language = "kashmiri",
 }: {
+  /** Which voice reads the text. Kashmiri uses the trained voice first. */
+  language?: SpeechLang;
   text: string;
   className?: string;
   /** "label" = speaker + word; "play" = compact round ▶ button. */
@@ -136,7 +148,7 @@ export default function ListenButton({
   const prefetch = () => {
     if (state !== "idle") return;
     const clean = cleanText(text);
-    if (clean) fetchClips(clean).forEach((p) => void p.catch(() => {}));
+    if (clean) fetchClips(clean, language).forEach((p) => void p.catch(() => {}));
   };
 
   const play = async () => {
@@ -147,7 +159,7 @@ export default function ListenButton({
     stopAllAudio();
     setState("loading");
     const run = ++runRef.current;
-    const pieces = fetchClips(clean);
+    const pieces = fetchClips(clean, language);
     let played = 0;
     let stopped = false;
     for (const piece of pieces) {
@@ -206,7 +218,7 @@ export default function ListenButton({
       onPointerEnter={prefetch}
       onPointerDown={prefetch}
       onFocus={prefetch}
-      aria-label={state === "playing" ? "Stop" : "Listen in Kashmiri"}
+      aria-label={state === "playing" ? "Stop" : `Listen in ${language}`}
       title={source ? SOURCE_LABELS[source] : "Play Kashmiri audio"}
       className={`inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-[8px] border border-border bg-secondary px-3 text-xs font-medium text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring ${className}`}
     >

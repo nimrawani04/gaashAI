@@ -221,7 +221,12 @@ const MessageBubble = memo(function MessageBubble({
             )}
             <span>{copied ? "Copied" : "Copy"}</span>
           </button>
-          {!isUser && msg.isRTL ? <ListenButton text={msg.text} /> : null}
+          {!isUser ? (
+            <ListenButton
+              text={msg.text}
+              language={!msg.isRTL ? "english" : lang === "ur" ? "urdu" : "kashmiri"}
+            />
+          ) : null}
           {!isUser && userId ? (
             <FeedbackButtons messageId={msg.dbId ?? null} userId={userId} />
           ) : null}
