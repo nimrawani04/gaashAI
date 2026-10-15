@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, BookOpen, MessageSquareQuote, Mic } from "lucide-react";
+import { ArrowLeft, BookMarked, BookOpen, MessageSquareQuote, Mic } from "lucide-react";
 import ListenButton from "@/components/ListenButton";
 import { GRAMMAR, PHRASES, SOUNDS, type PackPhrase } from "@/lib/kashmiri-pack";
 
@@ -52,6 +52,10 @@ function LanguagePack() {
             <h1 className="truncate text-lg sm:text-2xl font-semibold text-foreground">Kashmiri Language Pack</h1>
             <p dir="rtl" className="truncate text-left font-nastaliq text-sm text-muted-foreground">کٲشُر زَبان</p>
           </div>
+          <Link to="/dictionary" className="inline-flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-[8px] border border-border bg-secondary px-3 text-xs font-medium text-secondary-foreground hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring">
+            <BookMarked className="h-4 w-4" />
+            Dictionary
+          </Link>
         </div>
       </header>
 
