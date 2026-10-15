@@ -116,7 +116,7 @@ function DictionaryPage() {
         </p>
 
         <div className="grid gap-2 sm:grid-cols-2">
-          {results.map((e) => <EntryCard key={e.ks} entry={e} />)}
+          {results.map((e, i) => <EntryCard key={`${e.ks}-${e.roman}-${i}`} entry={e} />)}
         </div>
 
         {results.length === 0 && (
