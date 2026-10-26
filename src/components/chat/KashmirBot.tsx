@@ -883,6 +883,7 @@ export default function KashmirBot({
             </button>
           </div>
         </div>
+        <div aria-hidden="true" className="sozni-border opacity-70" />
       </header>
 
       {/* Messages */}
