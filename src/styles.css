@@ -34,7 +34,10 @@
   --color-ring: var(--ring);
   --color-bot-bubble: var(--bot-bubble);
   --color-bot-bubble-foreground: var(--bot-bubble-foreground);
-  --font-sans: "Inter", system-ui, sans-serif;
+  --font-sans: "Manrope", system-ui, sans-serif;
+  --font-display: "Fraunces", Georgia, serif;
+  --color-chinar: var(--chinar);
+  --color-walnut: var(--walnut);
   --font-nastaliq: "Noto Nastaliq Urdu", serif;
   
   /* Responsive font sizes */
@@ -54,33 +57,28 @@
   --radius-pill: 9999px;
   --radius: 16px;
   
-  /* Warm, high-contrast palette inspired by Kashmiri saffron + chinar greens */
-  --background: oklch(0.985 0.012 90);
-  --foreground: oklch(0.20 0.03 150);
+  /* Kashmir palette: walnut wood, chinar autumn, saffron, Dal lake */
+  --background: oklch(0.975 0.018 80);
+  --foreground: oklch(0.24 0.035 50);
+  --card: oklch(0.993 0.008 85);
+  --card-foreground: oklch(0.24 0.035 50);
+  --primary: oklch(0.47 0.15 32);           /* chinar red */
+  --primary-foreground: oklch(0.985 0.012 85);
+  --secondary: oklch(0.92 0.035 70);
+  --secondary-foreground: oklch(0.28 0.05 45);
+  --muted: oklch(0.94 0.025 75);
+  --muted-foreground: oklch(0.45 0.04 50);
+  --accent: oklch(0.80 0.15 75);            /* saffron */
+  --accent-foreground: oklch(0.24 0.05 50);
+  --border: oklch(0.85 0.04 70);
+  --input: oklch(0.88 0.035 70);
+  --ring: oklch(0.47 0.15 32);
+  --bot-bubble: oklch(0.95 0.03 190);       /* Dal lake mist */
+  --bot-bubble-foreground: oklch(0.22 0.04 220);
+  --chinar: oklch(0.58 0.18 38);
+  --walnut: oklch(0.36 0.05 50);
+  --pattern: oklch(0.47 0.15 32 / 0.06);
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.20 0.03 150);
-
-  --primary: oklch(0.48 0.12 155);          /* deep chinar green */
-  --primary-foreground: oklch(0.99 0.01 100);
-
-  /* High contrast secondary color replacing tan/beige-on-cream */
-  --secondary: oklch(0.90 0.04 150);        /* distinct muted chinar tint */
-  --secondary-foreground: oklch(0.20 0.04 150);
-
-  --muted: oklch(0.94 0.03 90);
-  --muted-foreground: oklch(0.40 0.03 150);
-
-  --accent: oklch(0.78 0.16 70);            /* saffron */
-  --accent-foreground: oklch(0.20 0.04 60);
-
-  --border: oklch(0.84 0.03 90);
-  --input: oklch(0.88 0.03 90);
-  --ring: oklch(0.48 0.12 155);
-
-  --bot-bubble: oklch(0.96 0.02 90);
-  --bot-bubble-foreground: oklch(0.18 0.03 150);
-  
   /* Base font size adjusts based on viewport */
   font-size: clamp(14px, 1.2vw, 18px);
 }
@@ -90,24 +88,26 @@
   --radius-card: 16px;
   --radius-pill: 9999px;
   --radius: 16px;
-
-  --background: oklch(0.18 0.02 150);
-  --foreground: oklch(0.98 0.01 90);
-  --card: oklch(0.22 0.025 150);
-  --card-foreground: oklch(0.98 0.01 90);
-  --primary: oklch(0.78 0.15 70);
-  --primary-foreground: oklch(0.18 0.03 60);
-  --secondary: oklch(0.28 0.04 150);
-  --secondary-foreground: oklch(0.98 0.01 90);
-  --muted: oklch(0.28 0.03 150);
-  --muted-foreground: oklch(0.78 0.02 90);
-  --accent: oklch(0.78 0.16 70);
-  --accent-foreground: oklch(0.18 0.04 60);
-  --border: oklch(1 0 0 / 14%);
+  --background: oklch(0.19 0.022 45);       /* walnut night */
+  --foreground: oklch(0.96 0.015 80);
+  --card: oklch(0.23 0.026 45);
+  --card-foreground: oklch(0.96 0.015 80);
+  --primary: oklch(0.72 0.16 45);
+  --primary-foreground: oklch(0.18 0.03 40);
+  --secondary: oklch(0.29 0.035 45);
+  --secondary-foreground: oklch(0.96 0.015 80);
+  --muted: oklch(0.28 0.03 45);
+  --muted-foreground: oklch(0.78 0.03 75);
+  --accent: oklch(0.80 0.15 75);
+  --accent-foreground: oklch(0.18 0.04 50);
+  --border: oklch(1 0 0 / 13%);
   --input: oklch(1 0 0 / 16%);
-  --ring: oklch(0.78 0.15 70);
-  --bot-bubble: oklch(0.26 0.03 150);
-  --bot-bubble-foreground: oklch(0.98 0.01 90);
+  --ring: oklch(0.72 0.16 45);
+  --bot-bubble: oklch(0.27 0.035 210);
+  --bot-bubble-foreground: oklch(0.96 0.015 80);
+  --chinar: oklch(0.68 0.17 40);
+  --walnut: oklch(0.80 0.04 70);
+  --pattern: oklch(0.80 0.15 75 / 0.05);
 }
 
 @layer base {
@@ -120,7 +120,29 @@
     font-size: 18px;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    position: relative;
   }
+  /* Khatamband (walnut lattice ceiling) motif behind every page */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-color: var(--pattern);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='black' stroke-width='1.4'%3E%3Cpath d='M32 4l8 20 20 8-20 8-8 20-8-20-20-8 20-8z'/%3E%3Cpath d='M0 0l16 16M64 0L48 16M0 64l16-16M64 64L48 48'/%3E%3Ccircle cx='32' cy='32' r='4'/%3E%3C/g%3E%3C/svg%3E") repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='black' stroke-width='1.4'%3E%3Cpath d='M32 4l8 20 20 8-20 8-8 20-8-20-20-8 20-8z'/%3E%3Cpath d='M0 0l16 16M64 0L48 16M0 64l16-16M64 64L48 48'/%3E%3Ccircle cx='32' cy='32' r='4'/%3E%3C/g%3E%3C/svg%3E") repeat;
+  }
+  h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.01em; }
+  [dir="rtl"] h1, [dir="rtl"] h2, h1.font-nastaliq, h2.font-nastaliq { font-family: var(--font-nastaliq); }
+  header { border-bottom-color: color-mix(in oklab, var(--color-accent) 45%, var(--color-border)); }
+  ::selection { background: color-mix(in oklab, var(--color-accent) 45%, transparent); }
+}
+
+/* Sozni-style embroidered divider */
+@utility sozni-border {
+  background-image: repeating-linear-gradient(90deg, var(--color-chinar) 0 6px, transparent 6px 10px, var(--color-accent) 10px 14px, transparent 14px 18px);
+  height: 3px;
 }
 
 /* ---------- Native app shell (Capacitor) ---------- */
