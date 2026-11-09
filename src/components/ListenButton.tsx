@@ -4,8 +4,9 @@ import { toast } from "sonner";
 import { synthesizeKashmiri, type KashmiriAudioSource as PrimarySource } from "@/lib/kashmiri-voice.functions";
 import { getBackupKashmiriAudio } from "@/lib/kashmiri-voice-player";
 import { getSpeech, type SpeechLang } from "@/lib/ttsCache";
+import { speak, stopSpeaking } from "@/lib/tts";
 
-type KashmiriAudioSource = PrimarySource | "backup_voice" | "ai_voice";
+export type KashmiriAudioSource = PrimarySource | "backup_voice" | "ai_voice" | "browser_voice";
 
 /** In-flight promise cache: prefetching on hover and clicking share one request. */
 const cache = new Map<string, Promise<{ audio: string; source: KashmiriAudioSource }>>();
@@ -16,12 +17,9 @@ export const STOP_AUDIO_EVENT = "kb-stop-audio";
 export function stopAllAudio() {
   current?.pause();
   current = null;
+  stopSpeaking();
   if (typeof window !== "undefined") window.dispatchEvent(new Event(STOP_AUDIO_EVENT));
 }
-
-const MESSAGES: Record<string, string> = {
-  unreachable: "The Kashmiri voice server is offline right now.",
-};
 
 const SOURCE_LABELS: Record<KashmiriAudioSource, string> = {
   dataset_reference: "Original corpus audio",
@@ -29,6 +27,7 @@ const SOURCE_LABELS: Record<KashmiriAudioSource, string> = {
   existing_checkpoint: "Kashmiri checkpoint",
   backup_voice: "Backup Kashmiri voice",
   ai_voice: "AI voice",
+  browser_voice: "Device speech",
 };
 
 function cleanText(text: string) {
@@ -69,23 +68,31 @@ function fetchPiece(clean: string, language: SpeechLang = "kashmiri"): Promise<C
   let pending = cache.get(key);
   if (!pending) {
     pending = (async () => {
-      if (language !== "kashmiri") {
-        const clip = await getSpeech(clean, language);
-        if (!clip?.audio) throw new Error("no_audio");
-        const audio = clip.audio.startsWith("data:") ? clip.audio : `data:${clip.mime};base64,${clip.audio}`;
-        return { audio, source: "ai_voice" as const };
-      }
-      const res = await synthesizeKashmiri({
-        data: { text: clean, dialect: "kupwara", voice: "Male" },
-      }).catch(() => ({ audio: null, error: "unreachable", source: undefined }));
-      if (res.audio) {
-        return { audio: res.audio, source: (res.source ?? "existing_checkpoint") as KashmiriAudioSource };
-      }
-      try {
-        return { audio: await getBackupKashmiriAudio(clean), source: "backup_voice" as const };
-      } catch {
-        throw new Error(res.error ?? "no_audio");
-      }
+      const fetchPromise = (async () => {
+        if (language !== "kashmiri") {
+          const clip = await getSpeech(clean, language);
+          if (!clip?.audio) throw new Error("no_audio");
+          const audio = clip.audio.startsWith("data:") ? clip.audio : `data:${clip.mime};base64,${clip.audio}`;
+          return { audio, source: "ai_voice" as const };
+        }
+        const res = await synthesizeKashmiri({
+          data: { text: clean, dialect: "kupwara", voice: "Male" },
+        }).catch(() => ({ audio: null, error: "unreachable", source: undefined }));
+        if (res.audio) {
+          return { audio: res.audio, source: (res.source ?? "existing_checkpoint") as KashmiriAudioSource };
+        }
+        try {
+          return { audio: await getBackupKashmiriAudio(clean), source: "backup_voice" as const };
+        } catch {
+          throw new Error(res.error ?? "no_audio");
+        }
+      })();
+
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("timeout")), 3500),
+      );
+
+      return Promise.race([fetchPromise, timeoutPromise]);
     })();
     cache.set(key, pending);
     void pending.catch(() => cache.delete(key));
@@ -129,18 +136,21 @@ export default function ListenButton({
     const onStop = () => {
       runRef.current++;
       audioRef.current?.pause();
+      stopSpeaking();
       setState("idle");
     };
     window.addEventListener(STOP_AUDIO_EVENT, onStop);
     return () => {
       window.removeEventListener(STOP_AUDIO_EVENT, onStop);
       audioRef.current?.pause();
+      stopSpeaking();
     };
   }, []);
 
   const stop = () => {
     runRef.current++;
     audioRef.current?.pause();
+    stopSpeaking();
     setState("idle");
   };
 
@@ -184,7 +194,42 @@ export default function ListenButton({
       }
     }
     if (run !== runRef.current) return;
-    if (!played && !stopped) toast.error("Couldn't create the voice for this text.");
+    if (stopped) {
+      setState("idle");
+      return;
+    }
+
+    // If server models were offline or failed, fall back to browser speech synthesis
+    if (!played) {
+      try {
+        setSource("browser_voice");
+        setState("playing");
+        const res = await speak(clean, {
+          language,
+          onStart: () => {
+            if (run === runRef.current) setState("playing");
+          },
+          onEnd: () => {
+            if (run === runRef.current) setState("idle");
+          },
+          onError: () => {
+            if (run === runRef.current) {
+              setState("idle");
+              toast.error("Couldn't play audio for this text.");
+            }
+          },
+        });
+        if (res === "unsupported") {
+          toast.error("Speech synthesis is not supported on this browser.");
+          setState("idle");
+        }
+      } catch {
+        toast.error("Couldn't play audio for this text.");
+        setState("idle");
+      }
+      return;
+    }
+
     setState("idle");
   };
 
@@ -196,8 +241,8 @@ export default function ListenButton({
         onPointerEnter={prefetch}
         onPointerDown={prefetch}
         onFocus={prefetch}
-        aria-label={state === "playing" ? "Stop" : "Play Kashmiri phrase"}
-        title={source ? SOURCE_LABELS[source] : "Play Kashmiri audio"}
+        aria-label={state === "playing" ? "Stop" : `Play in ${language}`}
+        title={source ? SOURCE_LABELS[source] : "Play audio"}
         className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring ${className}`}
       >
         {state === "loading" ? (
@@ -219,7 +264,7 @@ export default function ListenButton({
       onPointerDown={prefetch}
       onFocus={prefetch}
       aria-label={state === "playing" ? "Stop" : `Listen in ${language}`}
-      title={source ? SOURCE_LABELS[source] : "Play Kashmiri audio"}
+      title={source ? SOURCE_LABELS[source] : "Play audio"}
       className={`inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-[8px] border border-border bg-secondary px-3 text-xs font-medium text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring ${className}`}
     >
       {state === "loading" ? (
@@ -236,7 +281,9 @@ export default function ListenButton({
             ? "Listen · corpus"
             : source === "fine_tuned_dataset"
               ? "Listen · model"
-              : "Listen"}
+              : source === "browser_voice"
+                ? "Listen · device"
+                : "Listen"}
       </span>
     </button>
   );

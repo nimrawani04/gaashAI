@@ -19,41 +19,79 @@ export type TtsResult = {
 };
 
 /**
- * Reads Kashmiri (Nastaliq) text aloud. Gemini-TTS handles Perso-Arabic script
- * far better than the browser's speechSynthesis, which has no Kashmiri voice.
+ * Server text-to-speech helper.
+ * Tries the AI gateway speech model first, returning base64 audio.
  */
 export const speakKashmiri = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => Input.parse(data))
+  .validator((data: unknown) => Input.parse(data))
   .handler(async ({ data }): Promise<TtsResult> => {
     const apiKey = process.env["LOVABLE_API_KEY"];
     if (!apiKey) throw new Error("Voice output is not configured.");
 
     const prompt = `${READ_PROMPT[data.language] ?? READ_PROMPT.kashmiri} ${data.text}`;
 
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/audio/speech", {
+    // 1. Try standard OpenAI-compatible audio/speech on Lovable AI gateway
+    let res = await fetch("https://ai.gateway.lovable.dev/v1/audio/speech", {
       method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Lovable-API-Key": apiKey,
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash-tts",
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig: {
-          responseModalities: ["AUDIO"],
-          speechConfig: {
-            voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } },
-          },
-        },
+        model: "tts-1",
+        input: prompt,
+        voice: data.language === "english" ? "alloy" : "nova",
       }),
-    });
+    }).catch(() => null);
 
-    if (!res.ok) {
-      const body = await res.text().catch(() => "");
-      if (res.status === 429) throw new Error("Too many requests — please try again in a moment.");
-      if (res.status === 402)
-        throw new Error("AI credits exhausted — please top up to keep using voice output.");
-      throw new Error(`Voice output failed [${res.status}]: ${body.slice(0, 200)}`);
+    // 2. If tts-1 is not accepted, try Gemini multimodal speech format
+    if (!res || !res.ok) {
+      const geminiRes = await fetch("https://ai.gateway.lovable.dev/v1/audio/speech", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Lovable-API-Key": apiKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash-tts",
+          contents: [{ role: "user", parts: [{ text: prompt }] }],
+          generationConfig: {
+            responseModalities: ["AUDIO"],
+            speechConfig: {
+              voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } },
+            },
+          },
+        }),
+      }).catch(() => null);
+
+      if (geminiRes && geminiRes.ok) {
+        res = geminiRes;
+      }
     }
 
-    const mime = res.headers.get("content-type") ?? "audio/wav";
+    if (!res || !res.ok) {
+      const status = res?.status ?? 500;
+      if (status === 429) throw new Error("Too many requests — please try again in a moment.");
+      if (status === 402)
+        throw new Error("AI credits exhausted — please top up to keep using voice output.");
+      throw new Error(`Voice output unavailable [${status}]`);
+    }
+
+    const contentType = res.headers.get("content-type") ?? "audio/mpeg";
+
+    // If the response is JSON (e.g. Gemini returned inline base64 data)
+    if (contentType.includes("application/json")) {
+      const json = await res.json().catch(() => null);
+      const inlineData = json?.candidates?.[0]?.content?.parts?.[0]?.inlineData;
+      if (inlineData?.data) {
+        return { audio: inlineData.data, mime: inlineData.mimeType || "audio/mp3" };
+      }
+      throw new Error("No audio was returned from speech model.");
+    }
+
+    // Binary audio response
     const buf = new Uint8Array(await res.arrayBuffer());
     if (!buf.byteLength) throw new Error("No audio was generated.");
 
@@ -62,5 +100,5 @@ export const speakKashmiri = createServerFn({ method: "POST" })
     for (let i = 0; i < buf.length; i += CHUNK) {
       binary += String.fromCharCode(...buf.subarray(i, i + CHUNK));
     }
-    return { audio: btoa(binary), mime: mime.split(";")[0] };
+    return { audio: btoa(binary), mime: contentType.split(";")[0] || "audio/mpeg" };
   });

@@ -38,6 +38,7 @@ import { SyllabusDialog, type TopicInfo } from "@/components/learn/SyllabusDialo
 import { getSpeech } from "@/lib/ttsCache";
 import { getBackupKashmiriAudio } from "@/lib/kashmiri-voice-player";
 import { stopAllAudio } from "@/components/ListenButton";
+import { speak, stopSpeaking } from "@/lib/tts";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -821,6 +822,7 @@ function LearnPage() {
   async function listen(id: string, text: string) {
     if (!text.trim()) return;
     stopAllAudio();
+    stopSpeaking();
     audioRef.current?.pause();
     if (speaking === id) {
       setSpeaking(null);
@@ -841,8 +843,23 @@ function LearnPage() {
       audio.onended = () => setSpeaking(null);
       await audio.play();
     } catch {
-      setSpeaking(null);
-      toast.error("Audio is unavailable right now.");
+      // Fallback seamlessly to device speech synthesis
+      try {
+        const lang = language === "kashmiri" ? "kashmiri" : "urdu";
+        const res = await speak(text, {
+          language: lang,
+          onStart: () => setSpeaking(id),
+          onEnd: () => setSpeaking(null),
+          onError: () => setSpeaking(null),
+        });
+        if (res !== "ok") {
+          setSpeaking(null);
+          toast.error("Audio is unavailable right now.");
+        }
+      } catch {
+        setSpeaking(null);
+        toast.error("Audio is unavailable right now.");
+      }
     }
   }
 

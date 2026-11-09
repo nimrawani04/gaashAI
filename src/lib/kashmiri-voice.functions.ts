@@ -183,29 +183,40 @@ async function viaCustomServer(
 }
 
 async function viaMatcha(text: string, voice: "Male" | "Female"): Promise<AudioResult | null> {
-  const start = await fetch(`${MATCHA_SPACE}/gradio_api/call/pipeline`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ data: [text, false, voice, "Medium"] }),
-  });
-  if (!start.ok) return null;
-  const { event_id } = (await start.json()) as { event_id?: string };
-  if (!event_id) return null;
-  const stream = await fetch(`${MATCHA_SPACE}/gradio_api/call/pipeline/${event_id}`);
-  if (!stream.ok) return null;
-  const body = await stream.text();
-  const m = body.match(/event:\s*complete\s*\ndata:\s*(.+)/);
-  if (!m) return null;
-  const out = JSON.parse(m[1]) as [string, { url?: string; path?: string } | null];
-  const file = out?.[1];
-  const url = file?.url ?? (file?.path ? `${MATCHA_SPACE}/gradio_api/file=${file.path}` : null);
-  if (!url) return null;
-  const audioRes = await fetch(url);
-  if (!audioRes.ok) return null;
-  return {
-    audio: toDataUrl(new Uint8Array(await audioRes.arrayBuffer())),
-    source: "existing_checkpoint",
-  };
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 3000);
+  try {
+    const start = await fetch(`${MATCHA_SPACE}/gradio_api/call/pipeline`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ data: [text, false, voice, "Medium"] }),
+      signal: controller.signal,
+    });
+    if (!start.ok) return null;
+    const { event_id } = (await start.json()) as { event_id?: string };
+    if (!event_id) return null;
+    const stream = await fetch(`${MATCHA_SPACE}/gradio_api/call/pipeline/${event_id}`, {
+      signal: controller.signal,
+    });
+    if (!stream.ok) return null;
+    const body = await stream.text();
+    const m = body.match(/event:\s*complete\s*\ndata:\s*(.+)/);
+    if (!m) return null;
+    const out = JSON.parse(m[1]) as [string, { url?: string; path?: string } | null];
+    const file = out?.[1];
+    const url = file?.url ?? (file?.path ? `${MATCHA_SPACE}/gradio_api/file=${file.path}` : null);
+    if (!url) return null;
+    const audioRes = await fetch(url, { signal: controller.signal });
+    if (!audioRes.ok) return null;
+    return {
+      audio: toDataUrl(new Uint8Array(await audioRes.arrayBuffer())),
+      source: "existing_checkpoint",
+    };
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 export const synthesizeKashmiri = createServerFn({ method: "POST" })

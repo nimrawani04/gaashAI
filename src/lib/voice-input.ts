@@ -49,8 +49,36 @@ export async function startVoiceInput(options: {
   onInterim?: (text: string) => void;
   onAutoEnd?: (finalText: string) => void;
 }): Promise<VoiceInputSession> {
-  const serverConfigured = await hasServerStt();
+  // 1. Prefer native real-time Web Speech recognition (Chrome, Edge, Safari)
+  // Provides instant real-time transcription feedback and works with zero latency
+  if (isWebSpeechSupported()) {
+    try {
+      const session: BrowserSpeechSession = startBrowserSpeechRecognition({
+        lang: options.lang,
+        onInterim: options.onInterim,
+        onAutoEnd: options.onAutoEnd,
+      });
 
+      return {
+        mode: "browser",
+        stop: async (): Promise<string> => {
+          const text = await session.stop();
+          return text.trim();
+        },
+        cancel: () => {
+          session.cancel();
+        },
+      };
+    } catch (err: any) {
+      if (err?.name === "NotAllowedError" || err?.message?.includes("denied")) {
+        throw err;
+      }
+      // If native recognition couldn't initialize, fall through to server recorder
+    }
+  }
+
+  // 2. Fall back to server audio recording & transcription
+  const serverConfigured = await hasServerStt();
   if (serverConfigured) {
     let recorder: Recorder | null = await startRecording();
 
@@ -74,13 +102,6 @@ export async function startVoiceInput(options: {
           });
           return text.trim();
         } catch (err: any) {
-          if (err?.message?.includes("not configured")) {
-            cachedServerConfigured = false;
-            // If browser speech is available, suggest re-tapping or use it
-            if (isWebSpeechSupported()) {
-              throw new Error("server_not_configured_use_browser");
-            }
-          }
           throw err;
         }
       },
@@ -89,26 +110,6 @@ export async function startVoiceInput(options: {
           recorder.cancel();
           recorder = null;
         }
-      },
-    };
-  }
-
-  // If server is not configured, fall back to browser Web Speech API
-  if (isWebSpeechSupported()) {
-    const session: BrowserSpeechSession = startBrowserSpeechRecognition({
-      lang: options.lang,
-      onInterim: options.onInterim,
-      onAutoEnd: options.onAutoEnd,
-    });
-
-    return {
-      mode: "browser",
-      stop: async (): Promise<string> => {
-        const text = await session.stop();
-        return text.trim();
-      },
-      cancel: () => {
-        session.cancel();
       },
     };
   }

@@ -42,14 +42,39 @@ export function getVoices(timeoutMs = 2000): Promise<SpeechSynthesisVoice[]> {
   });
 }
 
-/** Best available voice for Kashmiri/Urdu text, degrading to *any* voice. */
-export function pickVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null {
+/** Best available voice for the specified language and text. */
+export function pickVoice(
+  voices: SpeechSynthesisVoice[],
+  lang?: "kashmiri" | "urdu" | "english" | string,
+  text?: string,
+): SpeechSynthesisVoice | null {
   if (!voices.length) return null;
   const by = (fn: (v: SpeechSynthesisVoice) => boolean) => voices.find(fn) ?? null;
+
+  const isEnglish =
+    lang === "english" ||
+    lang === "en" ||
+    (lang?.toLowerCase().startsWith("en") ?? false) ||
+    (!lang && text && !/[\u0600-\u06FF]/.test(text));
+
+  if (isEnglish) {
+    return (
+      by((v) => v.lang.toLowerCase() === "en-in") ||
+      by((v) => v.lang.toLowerCase() === "en-us") ||
+      by((v) => v.lang.toLowerCase() === "en-gb") ||
+      by((v) => v.lang.toLowerCase().startsWith("en")) ||
+      by((v) => v.default) ||
+      voices[0]
+    );
+  }
+
+  // Kashmiri / Urdu / Indic / Perso-Arabic text
   return (
-    by((v) => v.lang === "ur-PK") ||
+    by((v) => v.lang.toLowerCase() === "ur-pk") ||
     by((v) => v.lang.toLowerCase().startsWith("ur")) ||
-    by((v) => v.lang === "ks-IN") ||
+    by((v) => v.lang.toLowerCase() === "ks-in") ||
+    by((v) => v.lang.toLowerCase().startsWith("ks")) ||
+    by((v) => v.lang.toLowerCase() === "hi-in") ||
     by((v) => v.lang.toLowerCase().startsWith("hi")) ||
     by((v) => v.lang.toLowerCase().startsWith("fa")) ||
     by((v) => v.lang.toLowerCase().startsWith("ar")) ||
@@ -114,7 +139,8 @@ export function stopSpeaking() {
   }
 }
 
-type SpeakOptions = {
+export type SpeakOptions = {
+  language?: "kashmiri" | "urdu" | "english" | string;
   onStart?: () => void;
   onEnd?: () => void;
   onError?: (reason: string) => void;
@@ -122,7 +148,7 @@ type SpeakOptions = {
 
 /**
  * Speak text. Resolves once speaking has been *started* (or failed).
- * Must be triggered from a user gesture the first time on iOS/Safari.
+ * Automatically unlocks speech on the first user gesture.
  */
 export async function speak(rawText: string, opts: SpeakOptions = {}): Promise<SpeakResult> {
   const s = synth();
@@ -142,10 +168,9 @@ export async function speak(rawText: string, opts: SpeakOptions = {}): Promise<S
 
   stopSpeaking();
   // cancel() is async in Chrome; give the queue a tick before re-queuing.
-  await new Promise((r) => setTimeout(r, 80));
+  await new Promise((r) => setTimeout(r, 60));
 
   // On some devices Chrome leaves the queue in a "paused" state after cancel().
-  // One extra resume() + a tiny yield clears it.
   try {
     s.resume();
   } catch {
@@ -154,12 +179,18 @@ export async function speak(rawText: string, opts: SpeakOptions = {}): Promise<S
   await new Promise((r) => setTimeout(r, 20));
 
   const voices = await getVoices();
-  const voice = pickVoice(voices);
+  const voice = pickVoice(voices, opts.language, text);
   const pieces = chunk(text);
 
   let started = false;
   let index = 0;
   let errored = false;
+
+  const isEnglish =
+    opts.language === "english" ||
+    opts.language === "en" ||
+    (opts.language?.toLowerCase().startsWith("en") ?? false) ||
+    (!opts.language && !/[\u0600-\u06FF]/.test(text));
 
   const finish = () => {
     stopKeepAlive();
@@ -176,7 +207,7 @@ export async function speak(rawText: string, opts: SpeakOptions = {}): Promise<S
       utter.voice = voice;
       utter.lang = voice.lang;
     } else {
-      utter.lang = "ur-PK";
+      utter.lang = isEnglish ? "en-US" : "ur-PK";
     }
     utter.rate = 0.95;
     utter.pitch = 1;
@@ -224,45 +255,16 @@ export async function speak(rawText: string, opts: SpeakOptions = {}): Promise<S
     cur.resume();
   }, 10_000);
 
-  // Give the engine time to start; on slower devices voice loading can take
-  // longer than 250ms. Use 800ms so we don't falsely abort.
-  await new Promise((r) => setTimeout(r, 800));
-  if (!s.speaking && !s.pending && !started) {
-    stopKeepAlive();
-    opts.onError?.("no-audio");
-    return "error";
-  }
+  // Give the engine a moment to start
+  await new Promise((r) => setTimeout(r, 150));
+  if (errored) return "error";
 
-  // Watchdog: inside sandboxed iframes / before a user gesture the utterance
-  // can sit queued forever without ever firing `start`. Detect and report it.
-  setTimeout(() => {
-    if (started || errored) return;
-    const cur = synth();
-    if (!cur) return;
-    if (cur.speaking || cur.pending) {
-      // Try one nudge before giving up.
-      cur.pause();
-      cur.resume();
-    }
-    setTimeout(() => {
-      if (started || errored) return;
-      errored = true;
-      stopSpeaking();
-      opts.onEnd?.();
-      opts.onError?.(ttsUnlocked ? "no-audio" : "blocked");
-    }, 2000);
-  }, 2500);
-
-  return errored ? "error" : "ok";
+  return "ok";
 }
 
 // ---------------------------------------------------------------------------
 // Autoplay unlock
 // ---------------------------------------------------------------------------
-// Browsers (and sandboxed preview iframes especially) refuse to produce audio
-// until the page has seen a real user gesture. Speaking a silent utterance on
-// the first interaction "unlocks" the engine so later auto-reads work.
-
 let ttsUnlocked = false;
 let unlockBound = false;
 let unlockPromise: Promise<void> | null = null;
@@ -271,19 +273,15 @@ export function isTtsUnlocked() {
   return ttsUnlocked;
 }
 
-/**
- * Wait for any in-flight unlock attempt to settle.
- * This prevents the race where speak() cancels the unlock utterance.
- */
 function waitForUnlock(): Promise<void> {
   return unlockPromise ?? Promise.resolve();
 }
 
-/** Call once from a user gesture (or let installTtsUnlock do it for you). */
+/** Call once from a user gesture. */
 export function unlockTts() {
   const s = synth();
   if (!s || ttsUnlocked) return;
-  if (unlockPromise) return; // already in progress
+  if (unlockPromise) return;
 
   unlockPromise = new Promise<void>((resolve) => {
     try {
@@ -297,7 +295,6 @@ export function unlockTts() {
       };
       u.onend = done;
       u.onerror = done;
-      // Safety timeout — some browsers never fire events for silent utterances
       setTimeout(done, 500);
       s.resume();
       s.speak(u);
@@ -320,4 +317,9 @@ export function installTtsUnlock(): () => void {
     events.forEach((e) => window.removeEventListener(e, handler));
     unlockBound = false;
   };
+}
+
+// Automatically install unlock listeners in browser
+if (typeof window !== "undefined") {
+  installTtsUnlock();
 }

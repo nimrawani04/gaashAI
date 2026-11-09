@@ -262,7 +262,8 @@ function TranslatePage() {
 
   const handleSpeak = async (value: string) => {
     if (!value) return;
-    const res = await speak(value);
+    const lang = toKashmiri ? "kashmiri" : "english";
+    const res = await speak(value, { language: lang });
     if (res === "unsupported") toast.error("Your browser doesn't support speech.");
     else if (res === "error") toast.error("Couldn't play audio — tap the page once, then try again.");
   };
@@ -424,17 +425,10 @@ function TranslatePage() {
               <p className="mt-2 text-xs xs:text-sm italic text-muted-foreground">{result.roman}</p>
             ) : null}
             <div className="mt-2 xs:mt-3 flex items-center gap-2">
-              {toKashmiri ? (
-                <ListenButton text={result.translation} />
-              ) : (
-                <button
-                  onClick={() => handleSpeak(result.translation)}
-                  aria-label="Read translation aloud"
-                  className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-[8px] border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
-                >
-                  <Volume2 className="h-4 w-4" />
-                </button>
-              )}
+              <ListenButton
+                text={result.translation}
+                language={toKashmiri ? "kashmiri" : "english"}
+              />
               <button
                 onClick={() => handleCopy(result.translation)}
                 aria-label="Copy translation"
@@ -504,17 +498,10 @@ function TranslatePage() {
                     ) : null}
                   </button>
                   <div className="flex shrink-0 flex-col gap-1">
-                    {h.direction === "en2ks" ? (
-                      <ListenButton text={h.translation} />
-                    ) : (
-                      <button
-                        onClick={() => handleSpeak(h.translation)}
-                        aria-label="Read this translation aloud"
-                        className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-[8px] border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
-                      >
-                        <Volume2 className="h-4 w-4" />
-                      </button>
-                    )}
+                    <ListenButton
+                      text={h.translation}
+                      language={h.direction === "en2ks" ? "kashmiri" : "english"}
+                    />
                     <button
                       onClick={() => persist(history.filter((x) => x.id !== h.id), h)}
                       aria-label="Remove from history"

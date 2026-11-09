@@ -1,5 +1,6 @@
 import { synthesizeKashmiri } from "@/lib/kashmiri-voice.functions";
 import { getSpeech } from "@/lib/ttsCache";
+import { speak, stopSpeaking } from "@/lib/tts";
 
 /** Second Kashmiri voice (built-in AI voice) used when the primary voice fails. */
 export async function getBackupKashmiriAudio(text: string): Promise<string> {
@@ -38,18 +39,24 @@ export function getKashmiriAudio(text: string): Promise<string> {
   return p;
 }
 
-/** Plays Kashmiri speech; stops any other Kashmiri clip already playing. */
-export async function playKashmiri(text: string): Promise<HTMLAudioElement> {
-  const src = await getKashmiriAudio(text);
+/** Plays Kashmiri speech; stops any other Kashmiri clip already playing. Falls back to device speech. */
+export async function playKashmiri(text: string): Promise<HTMLAudioElement | void> {
   current?.pause();
-  const audio = new Audio(src);
-  current = audio;
-  await audio.play();
-  return audio;
+  stopSpeaking();
+  try {
+    const src = await getKashmiriAudio(text);
+    const audio = new Audio(src);
+    current = audio;
+    await audio.play();
+    return audio;
+  } catch {
+    await speak(text, { language: "kashmiri" });
+  }
 }
 
 export function stopKashmiri() {
   current?.pause();
+  stopSpeaking();
 }
 
 export const hasNastaliq = (t: string) => /[\u0600-\u06FF]/.test(t);

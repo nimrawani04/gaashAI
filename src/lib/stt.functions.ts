@@ -68,7 +68,7 @@ async function transcribeFallback(
   mime = "audio/wav",
 ): Promise<string> {
   const form = new FormData();
-  form.append("model", "openai/gpt-4o-transcribe");
+  form.append("model", "whisper-1");
   const view = new Uint8Array(bytes.byteLength);
   view.set(bytes);
   const extension = mime.split("/", 2)[1]?.split(";", 1)[0] || "wav";
@@ -81,7 +81,10 @@ async function transcribeFallback(
 
   const res = await fetch("https://ai.gateway.lovable.dev/v1/audio/transcriptions", {
     method: "POST",
-    headers: { Authorization: `Bearer ${apiKey}` },
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Lovable-API-Key": apiKey,
+    },
     body: form,
   });
 
