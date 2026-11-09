@@ -52,7 +52,6 @@ export default function SplashScreen({ onDone }: { onDone: () => void }) {
         </div>
         <div className="splash-title flex flex-col items-center gap-1">
           <h1 className="font-nastaliq text-3xl text-foreground sm:text-4xl">کٲشُر مددگار</h1>
-          <p className="text-sm tracking-wide text-muted-foreground sm:text-base">KashmirBot</p>
         </div>
         <div className="splash-bar h-1 w-32 overflow-hidden rounded-full bg-muted">
           <span className="block h-full w-1/3 rounded-full bg-primary" />

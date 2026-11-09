@@ -15,6 +15,8 @@ import {
   GraduationCap,
   Copy,
   Check,
+  BookMarked,
+  Sparkles,
 } from "lucide-react";
 import ListenButton from "@/components/ListenButton";
 import { markSignedOut } from "@/lib/remember-me";
@@ -67,8 +69,7 @@ const UI_STRINGS: Record<
     subtitle: "Your Kashmiri Assistant",
     empty:
       "سلام! بہٕ چھُس گاش اے آئی (GaashAI)، تُہُنٛد کٲشُر اے آئی مَدَدگار۔ بہٕ کِتھ کٔنۍ ہٮ۪کہٕ اَز تُہنٛز مَدَد کٔرِتھ؟",
-    placeholder:
-      "کٮ۪نٛہہ تہِ پرژھِو یا پیغام لیٚکھِو، بہٕ چھُس تُہنٛد مدد کَرنہِ خٲطرٕ تیار۔ مےٚ ؤنِو، بہٕ کِتھ کٔنۍ ہیٚکہٕ تۄہہِ مدد کٔرِتھ۔",
+    placeholder: "کٮ۪نٛہہ تہِ پرژھِو یا پیغام لیٚکھِو...",
     send: "بھیجِو",
     mic: "آواز",
     langLabel: "کٲشُر",
@@ -78,7 +79,7 @@ const UI_STRINGS: Record<
   ur: {
     subtitle: "آپ کا کشمیری معاون",
     empty: "سلام! میں آپ کی کیا مدد کر سکتا ہوں؟",
-    placeholder: "یہاں لکھیں...",
+    placeholder: "یہاں لکھیں یا سوال پوچھیں...",
     send: "بھیجیں",
     mic: "آواز",
     langLabel: "Urdu",
@@ -88,7 +89,7 @@ const UI_STRINGS: Record<
   en: {
     subtitle: "Your Kashmiri Assistant",
     empty: "Hello! How can I help you today?",
-    placeholder: "Type a message...",
+    placeholder: "Ask anything or type a message...",
     send: "Send",
     mic: "Voice",
     langLabel: "English",
@@ -814,18 +815,18 @@ export default function KashmirBot({
       </Suspense>
 
       {/* Header */}
-      <header className="border-b border-border bg-card/90 backdrop-blur supports-[backdrop-filter]:bg-card/75">
-        <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-2 px-3 py-3 sm:px-4 lg:max-w-4xl xl:max-w-5xl">
+      <header className="border-b border-border/50 bg-card/85 backdrop-blur-md sticky top-0 z-20">
+        <div className="mx-auto flex w-full max-w-4xl xl:max-w-5xl items-center justify-between gap-3 px-3 py-2.5 sm:px-6">
           {/* Signature Kashmiri Wordmark */}
-          <div className="flex items-center gap-2 min-w-0 sm:gap-2.5">
+          <div className="flex items-center gap-2.5 min-w-0">
             <button
               onClick={() => (isGuest ? setGuestPrompt("sessions") : setPanelOpen(true))}
               aria-label="Previous chats"
-              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-[8px] border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border/60 bg-secondary/70 text-secondary-foreground transition hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring"
             >
               <Menu className="h-5 w-5" />
             </button>
-            <div className="hidden h-11 w-11 shrink-0 items-center justify-center sm:flex">
+            <div className="h-9 w-9 shrink-0 items-center justify-center flex rounded-xl overflow-hidden bg-primary/5 border border-primary/20">
               <img
                 src="/chinar-leaf.jpg"
                 alt="Chinar Leaf"
@@ -834,39 +835,49 @@ export default function KashmirBot({
             </div>
             <div className="min-w-0">
               <h1
-                className="font-nastaliq truncate text-xl xs:text-2xl sm:text-3xl text-foreground leading-normal"
+                className="font-nastaliq truncate text-lg xs:text-xl sm:text-2xl text-foreground leading-tight"
                 dir="rtl"
               >
                 کٲشُر مددگار
               </h1>
-              <p className="truncate text-xs sm:text-sm text-muted-foreground">{t.subtitle}</p>
+              <p className="truncate text-[11px] sm:text-xs text-muted-foreground">{t.subtitle}</p>
             </div>
           </div>
 
-          {/* Clean, 2-3 Action Cluster with Labels */}
-          <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+          {/* Action Cluster */}
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             <Link
               to="/translate"
               aria-label="Translate English and Kashmiri"
-              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-[8px] border border-border bg-secondary px-2.5 py-2 text-xs sm:px-3 font-semibold text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+              className="inline-flex h-9 sm:h-10 items-center gap-1.5 rounded-xl border border-border/60 bg-secondary/60 px-2.5 sm:px-3 text-xs font-semibold text-secondary-foreground transition hover:bg-secondary hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
               <Languages className="h-4 w-4 shrink-0 text-primary" />
-              <span className="hidden sm:inline">Translate</span>
+              <span className="hidden md:inline">Translate</span>
             </Link>
 
             <Link
               to="/learn"
               aria-label="Adaptive learning lessons"
-              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-[8px] border border-border bg-secondary px-2.5 py-2 text-xs sm:px-3 font-semibold text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+              className="inline-flex h-9 sm:h-10 items-center gap-1.5 rounded-xl border border-border/60 bg-secondary/60 px-2.5 sm:px-3 text-xs font-semibold text-secondary-foreground transition hover:bg-secondary hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
               <GraduationCap className="h-4 w-4 shrink-0 text-primary" />
-              <span className="hidden sm:inline">Learn</span>
+              <span className="hidden md:inline">Learn</span>
+            </Link>
+
+            <Link
+              to="/dictionary"
+              aria-label="Kashmiri Dictionary"
+              className="hidden lg:inline-flex h-10 items-center gap-1.5 rounded-xl border border-border/60 bg-secondary/60 px-3 text-xs font-semibold text-secondary-foreground transition hover:bg-secondary hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <BookMarked className="h-4 w-4 shrink-0 text-primary" />
+              <span>Dictionary</span>
             </Link>
 
             <button
               onClick={cycleLang}
               aria-label="Switch language"
-              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-[8px] border border-border bg-secondary px-2.5 py-2 text-xs sm:px-3 font-semibold text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+              title="Switch language (Kashmiri / Urdu / English)"
+              className="inline-flex h-9 sm:h-10 items-center justify-center rounded-xl border border-border/60 bg-secondary/60 px-2.5 sm:px-3 text-xs font-semibold text-secondary-foreground transition hover:bg-secondary hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
               <span className={lang === "ks" ? "font-nastaliq text-sm" : ""}>{t.langLabel}</span>
             </button>
@@ -876,14 +887,14 @@ export default function KashmirBot({
             <button
               onClick={isGuest ? onExitGuest : handleSignOut}
               aria-label={isGuest ? "Sign in" : "Sign out"}
-              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-[8px] border border-border bg-secondary px-2.5 py-2 text-xs sm:px-3 font-semibold text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+              title={isGuest ? "Sign in" : "Sign out"}
+              className="inline-flex h-9 sm:h-10 items-center justify-center gap-1.5 rounded-xl border border-border/60 bg-secondary/60 px-2.5 sm:px-3 text-xs font-semibold text-secondary-foreground transition hover:bg-secondary hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
               <LogOut className="h-4 w-4 shrink-0" />
-              <span className="hidden md:inline">{isGuest ? "Sign in" : "Sign out"}</span>
+              <span className="hidden lg:inline">{isGuest ? "Sign in" : "Sign out"}</span>
             </button>
           </div>
         </div>
-        <div aria-hidden="true" className="sozni-border opacity-70" />
       </header>
 
       {/* Messages */}
@@ -891,29 +902,130 @@ export default function KashmirBot({
         ref={scrollRef}
         className="flex-1 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch] [contain:layout_paint] [transform:translateZ(0)]"
       >
-        <div className="mx-auto flex w-full max-w-3xl lg:max-w-4xl xl:max-w-5xl flex-col gap-3 xs:gap-4 md:gap-5 px-2 xs:px-3 sm:px-4 md:px-6 py-3 xs:py-4 sm:py-6">
+        <div className="mx-auto flex w-full max-w-4xl xl:max-w-5xl flex-col gap-3 xs:gap-4 md:gap-5 px-3 sm:px-6 py-4 sm:py-6">
           {messages.length === 0 && !isThinking ? (
-            <div className="flex min-h-[50vh] xs:min-h-[60vh] flex-col items-center justify-center text-center px-4">
-              <div className="mb-4 xs:mb-6 flex h-20 w-20 xs:h-24 xs:w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 items-center justify-center">
+            <div className="flex min-h-[50vh] flex-col items-center justify-center text-center px-2 sm:px-4 py-3 sm:py-6">
+              {/* Emblem */}
+              <div className="relative mb-3 flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-2xl border border-primary/20 bg-primary/5 p-2.5 shadow-xs backdrop-blur-sm transition-transform hover:scale-105">
                 <img
                   src="/chinar-leaf.jpg"
                   alt="Chinar Leaf"
-                  className="h-full w-full object-contain drop-shadow-lg"
+                  className="h-full w-full object-contain drop-shadow-sm"
                 />
               </div>
-              <p
-                dir={t.emptyDir}
-                className={`max-w-2xl text-xl xs:text-2xl sm:text-3xl text-foreground leading-[2.5] py-2 ${t.emptyClass}`}
-              >
-                {t.empty}
-              </p>
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+
+              {/* Bot Identity & Greeting */}
+              <div className="max-w-xl mx-auto space-y-1.5">
+                <div className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-secondary/70 px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                  <span>گاش اے آئی • GaashAI</span>
+                </div>
+                <h2
+                  dir={t.emptyDir}
+                  className={`text-lg xs:text-xl sm:text-2xl text-foreground font-semibold leading-loose ${t.emptyClass}`}
+                >
+                  {t.empty}
+                </h2>
+                <p className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto">
+                  {lang === "ks"
+                    ? "تُہُنٛد کٲشُر مددگار — سوال پرژھِو، سبق ہیٚچھِو، یا لفظن ہُنٛد مطلب مَلوم کٔرِو۔"
+                    : lang === "ur"
+                    ? "آپ کا کشمیری معاون — سوالات پوچھیں، اسباق سیکھیں یا لغت دیکھیں"
+                    : "Your Kashmiri AI assistant — ask questions, translate, learn lessons, or explore vocabulary."}
+                </p>
+              </div>
+
+              {/* Feature & Prompt Starter Grid — utilizes large screen space beautifully */}
+              <div className="mt-5 sm:mt-6 grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3.5 w-full max-w-2xl text-left">
+                <Link
+                  to="/learn"
+                  className="group flex items-start gap-3.5 rounded-2xl border border-border/70 bg-card/60 p-4 transition-all hover:border-primary/50 hover:bg-card hover:shadow-md"
+                >
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-transform group-hover:scale-110">
+                    <GraduationCap className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">Adaptive Learning</span>
+                      <span className="font-nastaliq text-xs text-primary" dir="rtl">سبق ہیٚچھِو</span>
+                    </div>
+                    <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
+                      Teach any lesson or textbook page in Kashmiri with quizzes.
+                    </p>
+                  </div>
+                </Link>
+
+                <Link
+                  to="/dictionary"
+                  className="group flex items-start gap-3.5 rounded-2xl border border-border/70 bg-card/60 p-4 transition-all hover:border-primary/50 hover:bg-card hover:shadow-md"
+                >
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-transform group-hover:scale-110">
+                    <BookMarked className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">Kashmiri Dictionary</span>
+                      <span className="font-nastaliq text-xs text-primary" dir="rtl">کٲشُر ڈِکشنری</span>
+                    </div>
+                    <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
+                      Search 70+ words with English meanings & audio voice.
+                    </p>
+                  </div>
+                </Link>
+
+                <Link
+                  to="/translate"
+                  className="group flex items-start gap-3.5 rounded-2xl border border-border/70 bg-card/60 p-4 transition-all hover:border-primary/50 hover:bg-card hover:shadow-md"
+                >
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-transform group-hover:scale-110">
+                    <Languages className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">Translate Tool</span>
+                      <span className="font-nastaliq text-xs text-primary" dir="rtl">ترجمہٕ کٔرِو</span>
+                    </div>
+                    <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
+                      Translate between English, Urdu & Kashmiri with Roman script.
+                    </p>
+                  </div>
+                </Link>
+
+                <button
+                  type="button"
+                  onClick={() => handleSend("سلام! تُہہِ کِتھ پٲٹھؠ چھِو؟")}
+                  className="group flex items-start gap-3.5 rounded-2xl border border-border/70 bg-card/60 p-4 text-left transition-all hover:border-primary/50 hover:bg-card hover:shadow-md"
+                >
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-transform group-hover:scale-110">
+                    <Sparkles className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">Start Conversation</span>
+                      <span className="font-nastaliq text-xs text-primary" dir="rtl">کَتھ باتھ</span>
+                    </div>
+                    <p className="font-nastaliq mt-1 text-xs text-muted-foreground line-clamp-2" dir="rtl">
+                      "سلام! تُہہِ کِتھ پٲٹھؠ چھِو؟"
+                    </p>
+                  </div>
+                </button>
+              </div>
+
+              {/* Community contribution & Language pack link */}
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
                 <Link
                   to="/contribute"
-                  className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-border bg-secondary px-4 py-2 text-sm font-semibold text-secondary-foreground transition hover:bg-accent"
+                  className="inline-flex min-h-[38px] items-center gap-2 rounded-full border border-border/60 bg-secondary/60 px-4 py-1.5 text-xs font-semibold text-secondary-foreground transition hover:bg-secondary hover:text-foreground"
                 >
-                  <HeartHandshake className="h-4 w-4 text-primary" />
-                  <span>Contribute (دیو مدد)</span>
+                  <HeartHandshake className="h-3.5 w-3.5 text-primary" />
+                  <span>Contribute phrases (دیو مدد)</span>
+                </Link>
+                <Link
+                  to="/kashmiri"
+                  className="inline-flex min-h-[38px] items-center gap-2 rounded-full border border-border/60 bg-secondary/60 px-4 py-1.5 text-xs font-semibold text-secondary-foreground transition hover:bg-secondary hover:text-foreground"
+                >
+                  <span className="font-nastaliq text-sm">کٲشُر زَبان</span>
+                  <span className="text-xs text-muted-foreground">Pack</span>
                 </Link>
               </div>
             </div>
@@ -924,8 +1036,8 @@ export default function KashmirBot({
       </div>
 
       {/* Composer */}
-      <div className="border-t border-border bg-card pb-[env(safe-area-inset-bottom)]">
-        <div className="mx-auto w-full max-w-3xl lg:max-w-4xl xl:max-w-5xl px-2 xs:px-3 sm:px-4 md:px-6 py-2 xs:py-3 sm:py-4">
+      <div className="border-t border-border/50 bg-card/90 backdrop-blur-md pb-[env(safe-area-inset-bottom)]">
+        <div className="mx-auto w-full max-w-4xl xl:max-w-5xl px-3 sm:px-6 py-2.5 sm:py-3.5">
           {attachments.length > 0 && (
             <div className="mb-2 flex flex-wrap gap-1.5 xs:gap-2">
               {attachments.map((a, i) => {
@@ -958,7 +1070,7 @@ export default function KashmirBot({
               })}
             </div>
           )}
-          <div className="flex items-end gap-1.5 xs:gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-2.5">
             <input
               ref={fileInputRef}
               type="file"
@@ -973,7 +1085,7 @@ export default function KashmirBot({
               disabled={uploading}
               aria-label="Attach file"
               title="Attach file"
-              className="flex min-h-[44px] min-w-[44px] h-11 w-11 xs:h-12 xs:w-12 shrink-0 items-center justify-center rounded-[8px] border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+              className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl border border-border/60 bg-secondary/70 text-secondary-foreground transition hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
             >
               {uploading ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
@@ -981,7 +1093,8 @@ export default function KashmirBot({
                 <Paperclip className="h-5 w-5" />
               )}
             </button>
-            <div className="relative shrink-0 flex flex-col items-center">
+
+            <div className="relative shrink-0">
               {isListening && <span className="mic-listening-ring" aria-hidden="true" />}
               <button
                 type="button"
@@ -989,7 +1102,7 @@ export default function KashmirBot({
                 aria-label={t.mic}
                 aria-pressed={isListening}
                 className={[
-                  "flex min-h-[44px] min-w-[44px] h-11 w-11 xs:h-12 xs:w-12 items-center justify-center rounded-[8px] border border-border bg-secondary text-secondary-foreground transition hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring",
+                  "flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-xl border border-border/60 bg-secondary/70 text-secondary-foreground transition hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring",
                   isListening ? "mic-listening" : "",
                 ].join(" ")}
               >
@@ -999,15 +1112,20 @@ export default function KashmirBot({
                   <Mic className="h-5 w-5" aria-hidden="true" />
                 )}
               </button>
+              {/* Voice language badge as a sleek corner indicator */}
               <button
                 type="button"
-                onClick={() => setVoiceLang((v) => (v === "ks" ? "en" : v === "en" ? "ur" : "ks"))}
-                title={`Voice mode: ${voiceLang === "ks" ? "Kashmiri (کٲشُر)" : voiceLang === "ur" ? "Urdu (اردو)" : "English"}. Click to switch.`}
-                className="mt-1 text-[10px] font-semibold text-muted-foreground hover:text-foreground transition px-1.5 py-0.5 rounded bg-secondary/80 border border-border/50"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setVoiceLang((v) => (v === "ks" ? "en" : v === "en" ? "ur" : "ks"));
+                }}
+                title={`Voice mode: ${voiceLang === "ks" ? "Kashmiri" : voiceLang === "ur" ? "Urdu" : "English"}. Click to switch.`}
+                className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-primary-foreground shadow-xs transition hover:scale-110"
               >
-                {voiceLang === "ks" ? "کٲشُر" : voiceLang === "ur" ? "اردو" : "ENG"}
+                {voiceLang === "ks" ? "ک" : voiceLang === "ur" ? "اردو" : "EN"}
               </button>
             </div>
+
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -1020,16 +1138,17 @@ export default function KashmirBot({
               autoCorrect="on"
               spellCheck={false}
               className={[
-                "min-h-[52px] max-h-36 flex-1 resize-none rounded-[12px] border border-border bg-background px-3.5 py-2.5 text-base text-foreground shadow-sm placeholder:text-muted-foreground placeholder:opacity-80 focus:outline-none focus:ring-2 focus:ring-ring",
+                "min-h-[44px] sm:min-h-[48px] max-h-36 flex-1 resize-none rounded-2xl border border-border/70 bg-background/95 px-3.5 py-2.5 sm:py-3 text-sm sm:text-base text-foreground shadow-xs placeholder:text-muted-foreground/75 focus:outline-none focus:ring-2 focus:ring-primary/40 leading-normal",
                 inputIsRTL ? "font-nastaliq" : "",
               ].join(" ")}
             />
+
             <button
               type="button"
               onClick={() => handleSend()}
               disabled={(!input.trim() && attachments.length === 0) || isThinking || uploading}
               aria-label={t.send}
-              className="flex min-h-[44px] min-w-[44px] h-11 w-11 xs:h-12 xs:w-12 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm transition hover:opacity-90 active:scale-95 focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Send className="h-5 w-5" aria-hidden="true" />
             </button>

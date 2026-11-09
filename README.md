@@ -1,39 +1,37 @@
 GaashAI-گاش اے آئی
 
-> **Your Kashmiri AI Assistant** — A powerful multilingual translation bot and chatbot that helps users communicate in Kashmiri (کٲشُر), Urdu, and English, featuring advanced image recognition capabilities.
+> **Your Kashmiri AI Assistant & Learning Platform** — A comprehensive multilingual assistant, translation tool, dictionary, and adaptive learning engine designed for Kashmiri (کٲشُر), Urdu, and English, featuring native speech synthesis, vision OCR, and offline-first mobile capabilities.
 
-GaashAI serves as a comprehensive tool for bridging language gaps, acting primarily as a sophisticated **translation bot** and conversational agent. It empowers users to converse naturally across Kashmiri, Urdu, and English while offering a dedicated translation interface. The integrated **image recognition** feature takes this a step further, allowing users to upload images, extract text automatically, and receive instant translations—making it easier than ever to digitize and understand physical documents.
+GaashAI serves as a powerful bridge for the Kashmiri language, empowering native speakers, students, teachers, and language enthusiasts. It combines conversational AI in authentic Nastaliq script with a dedicated bidirectional translation interface, an interactive adaptive learning engine, a searchable Kashmiri dictionary, a structured language pack, and advanced multimodal image recognition.
 
 ---
 
 ## ✨ Features
 
-| Feature                     | Details                                                                 |
-| --------------------------- | ----------------------------------------------------------------------- |
-| **Trilingual Chat**         | Kashmiri (Nastaliq script), Urdu, and English — switch with one tap     |
-| **Translation Tool**        | Dedicated page to translate Kashmiri, Urdu, and English text             |
-| **Image Recognition**       | Analyze images and extract text with AI vision capabilities             |
-| **AI-Powered Responses**    | Powered by Lovable AI via Supabase Edge Functions                       |
-| **Kashmiri TTS**            | GAASH-Lab Matcha-TTS-Kashmiri with a Listen button in chat, translation, and lessons |
-| **Voice Input**             | Speak your message using the built-in microphone button                 |
-| **RTL Support**             | Automatic right-to-left layout for Kashmiri and Urdu text               |
-| **Chat Sessions**           | Persistent conversation history stored in Supabase                      |
-| **File Attachments**        | Drag & drop or click to attach images, PDFs, and documents              |
-| **Community Contributions** | Users can submit Kashmiri phrases to grow the knowledge base            |
-| **Feedback System**         | Thumbs up/down on bot responses to improve quality                      |
-| **Accessibility**           | Large fonts, high contrast, and elder-friendly design                   |
+| Feature | Description |
+| --- | --- |
+| **Trilingual Chat** | Conversational AI in Kashmiri (Nastaliq), Urdu, and English |
+| **Adaptive Learning (`/learn`)** | Converts textbook pages into grade-level Kashmiri lessons with quizzes |
+| **Kashmiri Dictionary (`/dictionary`)** | 70+ word searchable lexicon with Roman spelling, examples, and audio |
+| **Language Pack (`/kashmiri`)** | Everyday phrases, essential grammar rules, and pronunciation guides |
+| **Translation Tool (`/translate`)** | Bidirectional English ⇄ Kashmiri translation with Roman transliteration |
+| **Image & PDF OCR** | AI vision text extraction from textbook photos and documents |
+| **Voice TTS & STT** | Native Kashmiri voice synthesis (Matcha-TTS/KTTS) and microphone input |
+| **Offline-First Mobile** | Native Capacitor storage keeps lesson progress available offline with cloud sync |
+| **Kashmiri Design** | Authentic Chinar-themed UI, Nastaliq typography, and dark/light modes |
 
 ---
 
 ## 🛠️ Tech Stack
 
 - **Framework:** [TanStack Start](https://tanstack.com/start) + [React 19](https://react.dev)
-- **Bundler:** [Vite 8](https://vite.dev)
-- **Styling:** [Tailwind CSS 4](https://tailwindcss.com)
+- **Bundler:** [Vite](https://vite.dev)
+- **Styling:** [Tailwind CSS 4](https://tailwindcss.com) + Kashmiri Nastaliq typography
+- **Mobile Runtime:** [Capacitor](https://capacitorjs.com) (Preferences, Haptics, App, Status Bar)
 - **Backend:** [Supabase](https://supabase.com) (Auth, Database, Edge Functions, Storage)
+- **Speech Synthesis (TTS):** [Bolbosh](https://github.com/gaash-lab/Bolbosh) + [Matcha-TTS](https://huggingface.co/GAASH-Lab/Matcha-TTS-Kashmiri)
 - **Language:** TypeScript
 - **UI Components:** [Radix UI](https://www.radix-ui.com) + [shadcn/ui](https://ui.shadcn.com)
-- **Deployment:** Cloudflare (via Nitro)
 
 ---
 
@@ -42,37 +40,72 @@ GaashAI serves as a comprehensive tool for bridging language gaps, acting primar
 ```
 kashmiriBot/
 ├── scripts/
-│   ├── prepare_kashmiri_tts.py       # HF download, validation, cleaning, splits
-│   ├── evaluate_kashmiri_tts.py      # checkpoint/audio/MCD/ASR/MOS evaluation
+│   ├── prepare_kashmiri_tts.py       # Audio corpus validation, resampling, and manifests
+│   ├── evaluate_kashmiri_tts.py      # Checkpoint evaluation (MCD, ASR proxy, listener ratings)
 │   └── fine_tune_kashmiri.py         # Bolbosh fine-tuning launcher
 ├── tts_server/
-│   ├── app.py                         # HTTP adapter for a local fine-tuned model
-│   └── README.md                      # GPU deployment instructions
+│   ├── app.py                         # HTTP synthesis API for local PyTorch/HiFi-GAN checkpoint
+│   └── README.md                      # GPU deployment guide
 ├── src/
-│   ├── data/               # BPCC corpus & dataset files (bpcc_kashmiri_training_data.csv)
 │   ├── components/
-│   │   ├── chat/           # KashmirBot, SessionsPanel, FeedbackButtons
-│   │   ├── auth/           # Authentication components
-│   │   ├── admin/          # Admin dashboard
-│   │   └── ui/             # Reusable shadcn/ui components
+│   │   ├── chat/                      # KashmirBot, SessionsPanel, FeedbackButtons
+│   │   ├── learn/                     # ConceptDiagram, LessonChat, LessonHistoryView, QuizReviewDialog, SyllabusDialog
+│   │   ├── auth/                      # Authentication & Guest login screens
+│   │   ├── admin/                     # Community submissions & admin dashboard
+│   │   ├── ListenButton.tsx           # Multi-tier Kashmiri audio player component
+│   │   └── ui/                        # Reusable shadcn/ui components
 │   ├── lib/
-│   │   ├── kashmiri-voice.functions.ts # Matcha-TTS server function
-│   │   ├── kashmiri-voice-player.ts    # Cached model audio playback
-│   │   └── tts.ts          # Browser fallback for English/Urdu and chunking
-│   │   └── supabase.ts     # Supabase client
+│   │   ├── learn.functions.ts         # Adaptive lesson & quiz generation functions
+│   │   ├── lesson-progress.ts         # Offline-first Capacitor Preferences & cloud sync
+│   │   ├── lexicon.ts                 # Searchable Kashmiri dictionary dataset & normalizer
+│   │   ├── kashmiri-pack.ts           # Curated phrases, grammar rules, and phonetic data
+│   │   ├── kashmiri-voice-player.ts   # Audio playback & fallback cascade
+│   │   ├── translate.functions.ts     # Translation API handler
+│   │   └── vision.functions.ts        # OCR and textbook document extraction
 │   ├── routes/
-│   │   ├── index.tsx        # Main chat page
-│   │   ├── auth.tsx         # Login / signup
-│   │   ├── contribute.tsx   # Community contribution form
-│   │   ├── translate.tsx    # Translation tool and phrasebook
-│   │   └── admin.tsx        # Admin dashboard
-│   └── styles.css           # Global styles & design tokens
+│   │   ├── index.tsx                  # Trilingual chat assistant
+│   │   ├── learn.tsx                  # Adaptive Learning Engine (textbook → lesson)
+│   │   ├── dictionary.tsx             # Searchable Kashmiri lexicon with audio
+│   │   ├── kashmiri.tsx               # Kashmiri Language Pack (phrases, grammar, sounds)
+│   │   ├── translate.tsx              # English ⇄ Kashmiri translation tool & phrasebook
+│   │   ├── contribute.tsx             # Community phrase contribution ("دیو مدد")
+│   │   ├── auth.tsx                   # User authentication & OAuth callback
+│   │   └── admin.tsx                  # Admin dashboard for reviewed submissions
+│   └── styles.css                     # Global styles, Chinar theme tokens, Nastaliq fonts
 ├── supabase/
-│   ├── functions/           # Edge Functions (chat, embed)
-│   └── migrations/          # Database migrations
-├── .env.example             # Environment variable template
+│   ├── functions/                     # Supabase Edge Functions (chat, embed, vision)
+│   └── migrations/                    # Database migrations & schemas
+├── .env.example                       # Environment variable template
 └── package.json
 ```
+
+---
+
+## 📖 Feature Overview
+
+### 🎓 Adaptive Learning Engine (`/learn`)
+Converts textbook photos, PDFs, or syllabus topics into grade-level Kashmiri lessons. Automatically generates simplified explanations in Nastaliq script, local Kashmiri analogies (e.g. Kangri, Dal Lake), voice narration, visual concept diagrams, interactive in-lesson tutor chat, and diagnostic quizzes that spot weak concepts.
+
+### 📚 Kashmiri Dictionary (`/dictionary`)
+Searchable Kashmiri lexicon (70+ entries) with instant lookup across Nastaliq, Roman transliteration, or English definitions. Each card displays grammatical tags, variant spellings, contextual example sentences, and one-tap voice pronunciation.
+
+### 🗣️ Kashmiri Language Pack (`/kashmiri`)
+A structured Kashmiri learning resource divided into three areas:
+- **Everyday Phrases:** Common greetings, courtesies, and conversational essentials.
+- **Grammar Guide:** Core rules on verb-second (V2) word order, noun cases, postpositions, and gender agreement.
+- **Pronunciation:** Native audio guides for distinct Kashmiri vowels and aspirated consonants.
+
+### 🌐 Trilingual Translation (`/translate`)
+Dedicated bidirectional English ⇄ Kashmiri translator with Roman pronunciation guides, persistent translation history, and quick-tap everyday phrase cards.
+
+### 👁️ Image & Document OCR
+Multimodal AI vision that extracts text directly from textbook snapshots, PDFs, and uploaded documents for immediate translation, lookup, or lesson creation.
+
+### 🔊 Kashmiri Voice Synthesis (TTS & STT)
+High-fidelity speech synthesis powered by Bolbosh & Matcha-TTS trained on the KTTS Kashmiri male corpus, featuring automatic audio caching and fallback support. Includes speech-to-text voice input for hands-free messaging.
+
+### 📱 Offline-First Mobile Experience
+Built with Capacitor for Android, iOS, and Web. Quiz results and lesson progress are stored directly in device storage (`@capacitor/preferences`) for full offline access, and automatically synchronized to Supabase when an internet connection is available.
 
 ---
 
@@ -114,9 +147,7 @@ VITE_SUPABASE_PUBLISHABLE_KEY=your-publishable-public-key
 SUPABASE_URL=https://your-project-ref.supabase.co
 SUPABASE_PUBLISHABLE_KEY=your-publishable-public-key
 ```
-
-> ⚠️ **Never commit your `.env` file.** It is excluded via `.gitignore`.
-
+ 
 ### 4. Run the dev server
 
 ```bash
@@ -124,106 +155,5 @@ npm run dev
 ```
 
 The app will be available at `http://localhost:5173`.
-
----
-
-## 🔊 Kashmiri audio model
-
-The target production voice is the male **[KTTS Single Speaker Dataset](https://data.mendeley.com/datasets/5c4dcvxdmb/2)** corpus: 2,984 Kashmiri WAV recordings with `textcorpus.csv`, published as Mendeley Data version 2 under CC BY NC 3.0. The app requests `voice: "Male"` by default and sends the selected dialect to the configured service. For new text, set `KASHMIRI_TTS_URL` to the service built from the fine-tuned checkpoint; the app calls its `POST /api/synthesize` endpoint and receives a WAV URL. The server validates the dialect (`kupwara`, `bandipora`, `shopian`, or `islamabad`) and rejects non-male requests for this checkpoint so the app cannot silently fall back to the wrong voice. The public Kashmiri-specific **[GAASH-Lab/Matcha-TTS-Kashmiri](https://huggingface.co/GAASH-Lab/Matcha-TTS-Kashmiri)** demo is retained as a last-resort fallback. Listen buttons identify whether they played corpus audio, the fine-tuned corpus model, or the existing checkpoint. See [`tts_server/README.md`](tts_server/README.md) for the PyTorch/HiFi-GAN service.
-
-Source roles:
-
-- **[Mendeley KTTS Single Speaker Dataset](https://data.mendeley.com/datasets/5c4dcvxdmb/2)**: primary male TTS fine-tuning source.
-- **[gaash-lab/Bolbosh](https://github.com/gaash-lab/Bolbosh)**: Matcha-TTS/HiFi-GAN Kashmiri framework used for training and serving.
-- **[programindz/kashmiri-audio-corpus](https://huggingface.co/datasets/programindz/kashmiri-audio-corpus)**: playable audio/text reference corpus and optional supplemental training data.
-- **[Omarrran/kashmiri_words_dataset_restructured](https://huggingface.co/datasets/Omarrran/kashmiri_words_dataset_restructured)**: spoken-word recognition/pronunciation coverage data; not a full-sentence TTS source.
-- **[Kaggle converteddatanew](https://www.kaggle.com/datasets/umar1103/converteddatanew)**: optional local audio+CSV import when downloaded with Kaggle credentials.
-
-### Reproduce the data preparation
-
-Download and extract the Mendeley KTTS archive, then point the preparation script at the extracted folder containing `Recordings/` and `Text Files/textcorpus.csv`:
-
-```bash
-python -m pip install datasets soundfile scipy huggingface_hub
-python scripts/prepare_kashmiri_tts.py --mendeley-dir path/to/KTTS --output-dir artifacts/kashmiri-tts
-```
-
-For the Kaggle download or another local WAV+CSV corpus, point the generic local importer at the extracted folder:
-
-```bash
-python scripts/prepare_kashmiri_tts.py \
-  --local-csv-dir path/to/converteddatanew \
-  --local-source-name kaggle-converteddatanew \
-  --local-source-url https://www.kaggle.com/datasets/umar1103/converteddatanew \
-  --output-dir artifacts/kashmiri-tts-kaggle
-```
-
-The script still supports the previous pinned Hugging Face corpus when `--mendeley-dir` is omitted. The command:
-
-- validates encoded WAVs, finite samples, loudness/silence, clipping, and the presence of Perso-Arabic script;
-- resamples valid audio to mono 22.05 kHz for Matcha-TTS;
-- applies NFC and safe orthographic cleanup while retaining Arabic combining marks, joining characters, punctuation, letters, names, and digits; and
-- writes `train`, `validation`, and `test` file lists plus `metadata.json`, `rejected.json`, `rows.jsonl`, and a vocabulary audit.
-
-The Mendeley KTTS source is a single male speaker, so all prepared rows use speaker slot `0`. For older sources without speaker labels, the script keeps deterministic recording proxy speaker slots and records that limitation in metadata.
-
-The validation run performed during implementation found **1,955 source rows**, **1,871 valid pairs**, **84 rejected rows**, and **2.172 hours** after filtering. It produced **1,566 train / 162 validation / 143 test** examples. The corpus contained 209 44.1 kHz and 23 32 kHz source files despite the dataset card's 16 kHz description; all valid files are normalized to 22.05 kHz.
-
-### Evaluate the existing Kashmiri checkpoint first
-
-The evaluator uses the public GAASH-Lab Gradio Space and keeps generated audio out of git:
-
-```bash
-python scripts/evaluate_kashmiri_tts.py \
-  --manifest artifacts/kashmiri-tts/manifests/test.txt \
-  --limit 8 \
-  --label GAASH-Lab/Matcha-TTS-Kashmiri
-```
-
-It checks generated WAVs, computes a DTW-aligned MFCC distance proxy when `librosa` is available, and writes a native-speaker rating sheet with 1–5 columns for intelligibility, pronunciation, and naturalness. Use `--ratings path/to/completed-ratings.csv` to add human means to the report. An optional ASR proxy can be supplied with `--asr-model`; gated models such as AI4Bharat's Kashmiri Conformer require an authenticated Hugging Face account.
-
-The existing checkpoint was smoke-evaluated against three held-out examples during implementation: all three generated valid 22.05 kHz, unclipped WAVs. Human pronunciation and naturalness scores are intentionally not invented; complete the generated `ratings.csv` with native Kashmiri listeners.
-
-### Fine-tune Bolbosh/Matcha-TTS
-
-Use the existing Kashmiri checkpoint as the initialization after the baseline evaluation. The launcher uses PyTorch directly, so it can run on a GPU host without Hydra's external trainer wrapper:
-
-```bash
-git clone https://github.com/gaash-lab/Bolbosh.git ../Bolbosh
-# Use Python 3.10 or 3.11 for the upstream Bolbosh/NumPy dependency set.
-python -m pip install -r ../Bolbosh/requirements.txt
-python -m pip install soundfile scipy huggingface_hub
-
-python scripts/fine_tune_kashmiri.py \
-  --data-dir artifacts/kashmiri-tts \
-  --bolbosh-dir ../Bolbosh \
-  --base-checkpoint GAASH-Lab/Matcha-TTS-Kashmiri \
-  --output-dir artifacts/kashmiri-finetune \
-  --batch-size 2 --epochs 20
-```
-
-The launcher uses the official script-aware 272-grapheme Bolbosh architecture/checkpoint, KashmiriNormalizer-compatible character conditioning, 80-bin mel features, 22.05 kHz statistics, recording-disjoint validation, and a low learning rate (`1e-5`) for transfer learning. It downloads the pinned `model.ckpt` from Hugging Face when a local checkpoint is not supplied. New graphemes are initialized from the base embedding mean and recorded in `run.json`; pretrained rows are never reindexed. A GPU is strongly recommended. Use `--dry-run` to validate the manifest, OOV policy, and split isolation without updating weights. The server runtime can use the same portable NumPy alignment fallback on machines without a C compiler.
-
-After exporting a best checkpoint behind `tts_server/app.py`, run the same evaluator with its Gradio-compatible endpoint or local generated WAVs, complete the listener sheet, and compare the fine-tuned report with the existing-checkpoint report before switching production traffic.
-
-## 📦 Scripts
-
-| Command           | Description                  |
-| ----------------- | ---------------------------- |
-| `npm run dev`     | Start the development server |
-| `npm run build`   | Build for production         |
-| `npm run preview` | Preview the production build |
-| `npm run lint`    | Run ESLint                   |
-| `npm run format`  | Format code with Prettier    |
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! You can help by:
-
-1. **Adding Kashmiri phrases** — Use the in-app "دیو مدد" (Contribute) page
-2. **Reporting bugs** — Open a GitHub issue
-3. **Submitting PRs** — Fork, branch, and submit a pull request
 
 ---
