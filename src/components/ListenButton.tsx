@@ -89,7 +89,7 @@ function fetchPiece(clean: string, language: SpeechLang = "kashmiri"): Promise<C
       })();
 
       const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("timeout")), 3500),
+        setTimeout(() => reject(new Error("timeout")), 30000),
       );
 
       return Promise.race([fetchPromise, timeoutPromise]);
