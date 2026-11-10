@@ -184,7 +184,9 @@ async function viaCustomServer(
 
 async function viaMatcha(text: string, voice: "Male" | "Female"): Promise<AudioResult | null> {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 3000);
+  // The voice server takes ~5s per clip (longer after it wakes from sleep),
+  // so give it room instead of abandoning the request.
+  const timer = setTimeout(() => controller.abort(), 25000);
   try {
     const start = await fetch(`${MATCHA_SPACE}/gradio_api/call/pipeline`, {
       method: "POST",

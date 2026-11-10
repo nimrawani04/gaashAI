@@ -30,8 +30,8 @@ export const speakKashmiri = createServerFn({ method: "POST" })
 
     const prompt = `${READ_PROMPT[data.language] ?? READ_PROMPT.kashmiri} ${data.text}`;
 
-    // 1. Try standard OpenAI-compatible audio/speech on Lovable AI gateway
-    let res = await fetch("https://ai.gateway.lovable.dev/v1/audio/speech", {
+    // Gemini multimodal speech format on the Lovable AI gateway.
+    const res = await fetch("https://ai.gateway.lovable.dev/v1/audio/speech", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -39,37 +39,16 @@ export const speakKashmiri = createServerFn({ method: "POST" })
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "tts-1",
-        input: prompt,
-        voice: data.language === "english" ? "alloy" : "nova",
+        model: "google/gemini-2.5-flash-tts",
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        generationConfig: {
+          responseModalities: ["AUDIO"],
+          speechConfig: {
+            voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } },
+          },
+        },
       }),
     }).catch(() => null);
-
-    // 2. If tts-1 is not accepted, try Gemini multimodal speech format
-    if (!res || !res.ok) {
-      const geminiRes = await fetch("https://ai.gateway.lovable.dev/v1/audio/speech", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Lovable-API-Key": apiKey,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "google/gemini-2.5-flash-tts",
-          contents: [{ role: "user", parts: [{ text: prompt }] }],
-          generationConfig: {
-            responseModalities: ["AUDIO"],
-            speechConfig: {
-              voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } },
-            },
-          },
-        }),
-      }).catch(() => null);
-
-      if (geminiRes && geminiRes.ok) {
-        res = geminiRes;
-      }
-    }
 
     if (!res || !res.ok) {
       const status = res?.status ?? 500;
